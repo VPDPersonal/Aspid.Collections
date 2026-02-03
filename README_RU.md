@@ -1,8 +1,8 @@
 # Aspid.Collections
 
 [![Unity 2021.3+](https://img.shields.io/badge/2021.3%2B-000000?style=flat&logo=unity&logoColor=white&color=4fa35d)](https://unity.com/)
-[![Releases](https://img.shields.io/github/release/VPDPersonal/Aspid.Collections?color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
-[![License](https://img.shields.io/badge/License-MIT-green.svg?color=4fa35d)](LICENSE)
+[![Releases](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
+[![License](https://img.shields.io/github/license/VPDPersonal/Aspid.Collections?label=License&labelColor=254d2c&color=4fa35d)](LICENSE)
 
 Библиотека наблюдаемых коллекций с поддержкой ковариантности, синхронизации между коллекциями, фильтрации и сортировки.
 
