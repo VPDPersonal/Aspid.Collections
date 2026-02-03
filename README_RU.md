@@ -23,10 +23,10 @@
 - [Примеры использования](#примеры-использования)
 
 ## Установка
-
-Добавьте пакет в ваш Unity проект через Package Manager:
-- Имя пакета: `com.aspid.collections`
-- Минимальная версия Unity: 2022.3
+1. Добавьте следующие пакеты в ваш Unity проект через Package Manager:
+   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
+   - Aspid.Collections: `https://github.com/VPDPersonal/Aspid.Collections.git`
+2. Или скачайте .unitypackage: с [странице релиза на GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) и импортируйте его в проект.
 
 ## Основные возможности
 
@@ -476,3 +476,5 @@ public class InventoryManager : IDisposable
     public void Dispose() => _events.Dispose();
 }
 ```
+## License
+MIT License - смотрите файл [LICENSE](LICENSE).

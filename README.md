@@ -23,10 +23,10 @@ Observable collections library with support for covariance, collection synchroni
 - [Usage Examples](#usage-examples)
 
 ## Installation
-
-Add the package to your Unity project via Package Manager:
-- Package name: `com.aspid.collections`
-- Minimum Unity version: 2022.3
+1. Add the following packages to your Unity project via Package Manager:
+   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
+   - Aspid.Collections: `https://github.com/VPDPersonal/Aspid.Collections.git`
+2. Or download .unitypackage: from the [release page on GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) and import it into the project.
 
 ## Key Features
 
@@ -478,6 +478,5 @@ public class InventoryManager : IDisposable
 ```
 
 ## License
-
 MIT License - see [LICENSE](LICENSE) file for details.
 
