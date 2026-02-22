@@ -66,60 +66,50 @@ namespace Aspid.Collections.Observable.Filtered
         
         public void Update()
         {
-            Count = _list.Count;
-
             if (Comparer is not null && Filter is not null)
             {
-                _indexes = _list.Select((_, index) => index)
-                    .Where(IsVisible)
-                    .OrderBy(index => _list[index], _comparer)
+                _indexes = Enumerable.Range(0, _list.Count)
+                    .Where(i => Filter(_list[i]))
+                    .OrderBy(i => _list[i], Comparer)
                     .ToArray();
             }
             else if (Comparer is not null)
             {
-                _indexes = _list.Select((_, index) => index)
-                    .OrderBy(index => _list[index], _comparer)
+                _indexes = Enumerable.Range(0, _list.Count)
+                    .OrderBy(i => _list[i], Comparer)
                     .ToArray();
             }
             else if (Filter is not null)
             {
-                _indexes = _list.Select((_, index) => index)
-                    .Where(IsVisible)
+                _indexes = Enumerable.Range(0, _list.Count)
+                    .Where(i => Filter(_list[i]))
                     .ToArray();
             }
             else
             {
                 _indexes = null;
             }
-            
+
+            Count = _indexes?.Length ?? _list.Count;
             CollectionChanged?.Invoke();
-            return;
-            
-            bool IsVisible(int index)
-            {
-                if (Filter.Invoke(_list[index]))
-                    return true;
-                
-                Count--;
-                return false;
-            }
         }
         
         public IEnumerator<T> GetEnumerator()
         {
-            var items = _indexes is not null
-                ? _indexes.Select(i => _list[i])
-                : _list;
-            
-            foreach (var item in items)
+            if (_indexes is not null)
             {
-                if (Filter?.Invoke(item) ?? true) 
+                foreach (var index in _indexes)
+                    yield return _list[index];
+            }
+            else
+            {
+                foreach (var item in _list)
                     yield return item;
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator() =>
-            _list.GetEnumerator();
+            GetEnumerator();
         
         private void OnCollectionChanged(INotifyCollectionChangedEventArgs<T> e) =>
             Update();
