@@ -68,20 +68,21 @@ namespace Aspid.Collections.Observable
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    _added?.Invoke(e.IsSingleItem 
-                            ? new[] { e.NewItem! } : e.NewItems!,
+                    _added?.Invoke(
+                        e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!,
                         e.NewStartingIndex);
                     break;
                 
                 case NotifyCollectionChangedAction.Move:
-                    _moved?.Invoke(e.IsSingleItem 
-                            ? new[] { e.NewItem! } : e.NewItems!,
-                        e.OldStartingIndex, e.NewStartingIndex);
+                    _moved?.Invoke(
+                        e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!,
+                        e.OldStartingIndex,
+                        e.NewStartingIndex);
                     break;
                 
                 case NotifyCollectionChangedAction.Remove:
-                    _removed?.Invoke(e.IsSingleItem 
-                            ? new[] { e.OldItem }! : e.OldItems!, 
+                    _removed?.Invoke(
+                        e.IsSingleItem ? new[] { e.OldItem }! : e.OldItems!, 
                         e.OldStartingIndex);
                     break;
                 
