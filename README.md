@@ -387,6 +387,24 @@ var largeEvenNumbers = evenNumbers.CreateFiltered(x => x > 5);
 ### MVVM Pattern with Synchronization
 
 ```csharp
+public class Todo
+{
+    // Some code.
+}
+
+public class TodoService
+{
+    private readonly ObservableList<Todo> _todos = new();
+
+    public IReadOnlyObservableList<Todo> Todos => _todos;
+
+    public void Add(Todo todo) =>
+        _todos.Add(todo);
+
+    public void Remove(Todo todo) =>
+        _todos.Remove(todo);
+}
+
 public class TodoListViewModel : IDisposable
 {
     private readonly TodoService _service;
@@ -400,12 +418,24 @@ public class TodoListViewModel : IDisposable
         
         // Automatic Model -> ViewModel synchronization
         _items = _service.Todos.CreateSync(
-            model => new TodoItemViewModel(model, _service),
+            model => new TodoItemViewModel(model),
             isDisposable: true
         );
     }
     
     public void Dispose() => _items.Dispose();
+}
+
+public class TodoItemViewModel
+{
+    private Todo _model;
+
+    public TodoItemViewModel(Todo model)
+    {
+        _model = model;
+    }
+
+    // Some code.
 }
 ```
 
