@@ -1,6 +1,6 @@
 {
   "name": "com.aspid.collections",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Aspid.Collections",
   "description": "A set of covariate observation collections with easy synchronization between two collections, filtering and sorting.",
   "unity": "2022.3",
