@@ -23,10 +23,11 @@ Observable collections library with support for covariance, collection synchroni
 - [Usage Examples](#usage-examples)
 
 ## Installation
-1. Add the following packages to your Unity project via Package Manager:
-   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
+1. Add the package to your Unity project via Package Manager:
    - Aspid.Collections: `https://github.com/VPDPersonal/Aspid.Collections.git`
-2. Or download .unitypackage: from the [release page on GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) and import it into the project.
+2. _(Optional)_ Add Aspid.Internal.Unity for custom script icons — runtime works without it:
+   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
+3. Or download .unitypackage from the [release page on GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) and import it into the project.
 
 ## Key Features
 
@@ -70,6 +71,23 @@ list.InsertRange(0, new[] { "x", "y" });
 
 // Move
 list.Move(0, 2); // Move element from index 0 to index 2
+
+// Queries / inspection
+int index = list.IndexOf("item");
+bool contains = list.Contains("item");
+list.ForEach(item => Console.WriteLine(item));
+
+// Copy to array
+var buffer = new string[list.Count];
+list.CopyTo(buffer, 0);
+```
+
+Extensions (`Aspid.Collections.Observable.Extensions`):
+
+```csharp
+using Aspid.Collections.Observable.Extensions;
+
+list.Swap(0, 3); // Swap two elements by index
 ```
 
 ### ObservableDictionary
@@ -78,7 +96,9 @@ using Aspid.Collections.Observable;
 
 // Creation
 var dict = new ObservableDictionary<string, int>();
+var dictWithCapacity = new ObservableDictionary<string, int>(capacity: 16);
 var dictWithComparer = new ObservableDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+var dictWithBoth = new ObservableDictionary<string, int>(capacity: 16, StringComparer.OrdinalIgnoreCase);
 var dictFromCollection = new ObservableDictionary<string, int>(
     new[] { KeyValuePair.Create("a", 1), KeyValuePair.Create("b", 2) }
 );
@@ -102,6 +122,12 @@ dict.Dispose();
 // Data access
 bool exists = dict.TryGetValue("key", out var value);
 bool contains = dict.ContainsKey("key");
+bool containsPair = dict.Contains(KeyValuePair.Create("key", 100));
+
+// Enumerations / introspection
+IEnumerable<string> keys = dict.Keys;
+IEnumerable<int> values = dict.Values;
+IEqualityComparer<string> comparer = dict.Comparer;
 ```
 
 ### ObservableHashSet
@@ -126,7 +152,25 @@ set.Clear();
 
 // Clear set and events
 set.Dispose();
+
+// Queries
+bool contains = set.Contains("item");
+IEqualityComparer<string> comparer = set.Comparer;
+
+// Set operations (read-only; do not mutate the source)
+var other = new[] { "a", "b", "c" };
+bool isSub       = set.IsSubsetOf(other);
+bool isSuper     = set.IsSupersetOf(other);
+bool isProperSub = set.IsProperSubsetOf(other);
+bool isProperSup = set.IsProperSupersetOf(other);
+bool overlaps    = set.Overlaps(other);
+bool equals      = set.SetEquals(other);
 ```
+
+> `ObservableHashSet<T>` intentionally does **not** implement `ISet<T>`:
+> mutating set operations (`UnionWith`, `IntersectWith`, …) can't emit
+> accurate added/removed notifications, so only the read-only set
+> predicates above are exposed.
 
 ### ObservableQueue
 ```csharp
@@ -136,6 +180,7 @@ using Aspid.Collections.Observable;
 var queue = new ObservableQueue<string>();
 var queueWithCapacity = new ObservableQueue<string>(10);
 var queueFromCollection = new ObservableQueue<string>(new[] { "a", "b", "c" });
+var queueWrappingExisting = new ObservableQueue<string>(new Queue<string>()); // wraps, does not copy
 
 // Subscribe to changes
 queue.CollectionChanged += args =>
@@ -161,6 +206,10 @@ queue.Dispose();
 // Batch dequeue
 var buffer = new string[3];
 queue.DequeueRange(buffer);
+
+// Snapshot / capacity
+string[] snapshot = queue.ToArray();
+queue.TrimExcess();
 ```
 
 ### ObservableStack
@@ -196,31 +245,79 @@ stack.Dispose();
 // Batch pop
 var buffer = new string[3];
 stack.PopRange(buffer);
+
+// Snapshot / capacity
+string[] snapshot = stack.ToArray();
+stack.TrimExcess();
 ```
 
 ## Interfaces
+
+All interfaces expose their element type as **covariant** (`out T`), so
+you can assign e.g. `IReadOnlyObservableList<Cat>` to
+`IReadOnlyObservableList<Animal>`.
+
 ### Core Interfaces
 
 | Interface | Description |
 |-----------|-------------|
-| `IObservableCollection<T>` | Base interface for all observable collections |
-| `IReadOnlyObservableList<T>` | Read-only list with notifications |
+| `IObservableCollection<out T>` | Base interface for all observable collections |
+| `IReadOnlyObservableList<out T>` | Read-only list with notifications |
 | `IReadOnlyObservableDictionary<TKey, TValue>` | Read-only dictionary with notifications |
+
+### Synchronization Interfaces (`Aspid.Collections.Observable.Synchronizer`)
+
+Returned by `CreateSync(...)` extensions. Every sync wrapper implements
+`IDisposable` and owns its subscription to the source collection.
+
+| Interface | Description |
+|-----------|-------------|
+| `IReadOnlyObservableCollectionSync<out T>` | Base for synced non-list collections (Queue/Stack/HashSet) |
+| `IReadOnlyObservableListSync<out T>` | Synced list projection (extends `IReadOnlyObservableList<T>`) |
+| `IReadOnlyObservableDictionarySync<TKey, T>` | Synced dictionary projection |
+
+### Filtering Interfaces (`Aspid.Collections.Observable.Filtered`)
+
+| Interface | Description |
+|-----------|-------------|
+| `IReadOnlyFilteredList<out T>` | Read-only filtered/sorted view over an `IReadOnlyList<T>` (raises a parameterless `CollectionChanged`) |
+
+### Event Handling Interfaces
+
+| Interface | Description |
+|-----------|-------------|
+| `IObservableEvents<out T>` | Disposable wrapper returned by `SplitByEvents(...)` exposing individual `Added` / `Removed` / `Moved` / `Replaced` / `Reset` events |
 
 ### Interface Hierarchy
 ```
-IObservableCollection<T>
+IObservableCollection<out T>
 ├── IReadOnlyCollection<T>
 ├── CollectionChanged event
 └── SyncRoot property
 
-IReadOnlyObservableList<T>
+IReadOnlyObservableList<out T>
 ├── IObservableCollection<T>
 └── IReadOnlyList<T>
 
 IReadOnlyObservableDictionary<TKey, TValue>
 ├── IObservableCollection<KeyValuePair<TKey, TValue>>
 └── IReadOnlyDictionary<TKey, TValue>
+
+IReadOnlyObservableCollectionSync<out T>
+├── IObservableCollection<T>
+└── IDisposable
+
+IReadOnlyObservableListSync<out T>
+├── IReadOnlyObservableList<T>
+└── IReadOnlyObservableCollectionSync<T>
+
+IReadOnlyFilteredList<out T>
+├── IReadOnlyList<T>
+└── CollectionChanged event (Action)
+
+IObservableEvents<out T>
+├── IDisposable
+└── Added / Removed / Moved / Replaced / Reset events
 ```
 
 ## Events
@@ -303,6 +400,10 @@ var viewModels2 = models.CreateSync(
     model => new UserViewModel(model),
     removed: vm => vm.Cleanup()
 );
+// Note: for ObservableQueue / ObservableStack / ObservableHashSet /
+// IReadOnlyObservableDictionary the removal callback parameter is named
+// `remove:` (not `removed:`). Using a positional argument avoids the
+// mismatch.
 
 // All changes in models are automatically reflected in viewModels
 models.Add(new UserModel { Name = "John" });
