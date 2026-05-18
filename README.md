@@ -8,7 +8,7 @@ Observable collections library with support for covariance, collection synchroni
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Integration](#integration)
 - [Key Features](#key-features)
 - [Collections](#collections)
   - [ObservableList](#observablelist)
@@ -22,11 +22,19 @@ Observable collections library with support for covariance, collection synchroni
 - [Filtering and Sorting](#filtering-and-sorting)
 - [Usage Examples](#usage-examples)
 
-## Installation
-1. Add the following packages to your Unity project via Package Manager:
-   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
-   - Aspid.Collections: `https://github.com/VPDPersonal/Aspid.Collections.git`
-2. Or download .unitypackage: from the [release page on GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) and import it into the project.
+## Integration
+
+Install Aspid.Collections via UPM (Unity Package Manager) — add the package using its Git URL. The package layout sits at the repository root, so no `?path=` query is needed:
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git
+```
+
+To install a specific version, target the immutable per-release tag `vX.Y.Z` (see [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases) for the list of available versions):
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git#v1.0.1
+```
 
 ## Key Features
 

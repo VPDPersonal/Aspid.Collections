@@ -8,7 +8,7 @@
 
 ## Содержание
 
-- [Установка](#установка)
+- [Integration](#integration)
 - [Основные возможности](#основные-возможности)
 - [Коллекции](#коллекции)
   - [ObservableList](#observablelist)
@@ -22,11 +22,19 @@
 - [Фильтрация и сортировка](#фильтрация-и-сортировка)
 - [Примеры использования](#примеры-использования)
 
-## Установка
-1. Добавьте следующие пакеты в ваш Unity проект через Package Manager:
-   - Aspid.Internal.Unity: `https://github.com/VPDPersonal/Aspid.Internal.Unity.git`
-   - Aspid.Collections: `https://github.com/VPDPersonal/Aspid.Collections.git`
-2. Или скачайте .unitypackage: с [странице релиза на GitHub](https://github.com/VPDPersonal/Aspid.Collections/releases) и импортируйте его в проект.
+## Integration
+
+Установите Aspid.Collections через UPM (Unity Package Manager) — добавьте пакет по его Git URL. Содержимое пакета лежит в корне репозитория, поэтому параметр `?path=` указывать не нужно:
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git
+```
+
+Чтобы установить конкретную версию, укажите неизменяемый per-release тег `vX.Y.Z` (список доступных версий — на странице [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases)):
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git#v1.0.1
+```
 
 ## Основные возможности
 
