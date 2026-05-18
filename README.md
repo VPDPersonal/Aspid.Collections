@@ -24,16 +24,16 @@ Observable collections library with support for covariance, collection synchroni
 
 ## Integration
 
-Install Aspid.Collections via UPM (Unity Package Manager) — add the package using its Git URL. The package layout sits at the repository root, so no `?path=` query is needed:
+Install Aspid.Collections via UPM (Unity Package Manager) — add the package using its Git URL. The release workflow publishes a `upm` branch containing only the package contents at its root, so no `?path=` query is needed:
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git
+https://github.com/VPDPersonal/Aspid.Collections.git#upm
 ```
 
-To install a specific version, target the immutable per-release tag `vX.Y.Z` (see [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases) for the list of available versions):
+To install a specific version, target the immutable per-release tag `upm/<version>` (see [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases) for the list of available versions):
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git#v1.0.1
+https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.0.1
 ```
 
 ## Key Features

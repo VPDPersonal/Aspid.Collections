@@ -117,6 +117,44 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
+      - name: Checkout release tag
+        run: |
+          set -euo pipefail
+          git fetch origin "refs/tags/${{ steps.version.outputs.tag }}:refs/tags/${{ steps.version.outputs.tag }}" || true
+          git checkout "${{ steps.version.outputs.tag }}"
+
+      - name: Publish UPM tag and branch
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          UPM_TAG="upm/$VERSION"
+
+          if git ls-remote --exit-code --tags origin "$UPM_TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $UPM_TAG already exists on origin. Refusing to overwrite a published UPM tag."
+            exit 1
+          fi
+
+          # Build a tree containing only the Unity package contents — strip
+          # repo-only paths so consumers don't pull workflows, CI configs, etc.
+          export GIT_INDEX_FILE
+          GIT_INDEX_FILE=$(mktemp)
+          trap 'rm -f "$GIT_INDEX_FILE"' EXIT
+          git read-tree "$TAG"
+          git rm -r --cached --quiet --ignore-unmatch .github
+          TREE=$(git write-tree)
+          unset GIT_INDEX_FILE
+          COMMIT=$(git commit-tree "$TREE" -p "$TAG" -m "UPM release $VERSION")
+
+          # Move the upm branch forward to this release's commit.
+          git push --force origin "$COMMIT:refs/heads/upm"
+
+          # Immutable per-version tag for users who pin to a specific release.
+          git tag "$UPM_TAG" "$COMMIT"
+          git push origin "$UPM_TAG"
+
+          echo "Published $UPM_TAG and updated upm branch."
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:

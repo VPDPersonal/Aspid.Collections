@@ -24,16 +24,16 @@
 
 ## Integration
 
-Установите Aspid.Collections через UPM (Unity Package Manager) — добавьте пакет по его Git URL. Содержимое пакета лежит в корне репозитория, поэтому параметр `?path=` указывать не нужно:
+Установите Aspid.Collections через UPM (Unity Package Manager) — добавьте пакет по его Git URL. Релизный workflow публикует ветку `upm`, в корне которой лежит само содержимое пакета, поэтому параметр `?path=` указывать не нужно:
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git
+https://github.com/VPDPersonal/Aspid.Collections.git#upm
 ```
 
-Чтобы установить конкретную версию, укажите неизменяемый per-release тег `vX.Y.Z` (список доступных версий — на странице [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases)):
+Чтобы установить конкретную версию, укажите неизменяемый per-release тег `upm/<version>` (список доступных версий — на странице [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases)):
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git#v1.0.1
+https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.0.1
 ```
 
 ## Основные возможности
