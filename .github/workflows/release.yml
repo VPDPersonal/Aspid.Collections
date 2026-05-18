@@ -137,14 +137,15 @@ jobs:
 
           # Build a tree containing only the Unity package contents — strip
           # repo-only paths so consumers don't pull workflows, CI configs, etc.
-          export GIT_INDEX_FILE
-          GIT_INDEX_FILE=$(mktemp)
-          trap 'rm -f "$GIT_INDEX_FILE"' EXIT
+          UPM_INDEX=$(mktemp)
+          trap 'rm -f "$UPM_INDEX"' EXIT
+          export GIT_INDEX_FILE="$UPM_INDEX"
           git read-tree "$TAG"
           git rm -r --cached --quiet --ignore-unmatch .github
           TREE=$(git write-tree)
           unset GIT_INDEX_FILE
-          COMMIT=$(git commit-tree "$TREE" -p "$TAG" -m "UPM release $VERSION")
+          PARENT=$(git rev-parse "$TAG^{commit}")
+          COMMIT=$(git commit-tree "$TREE" -p "$PARENT" -m "UPM release $VERSION")
 
           # Move the upm branch forward to this release's commit.
           git push --force origin "$COMMIT:refs/heads/upm"
