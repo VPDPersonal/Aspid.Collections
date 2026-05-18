@@ -1,12 +1,12 @@
 # Aspid.Collections
 
 Observable collections library for Unity and .NET. Consumed as a Unity
-package (`com.aspid.collections`). Provides covariant observable
+package (`tech.aspid.collections`). Provides covariant observable
 collections with synchronization, filtering, and sorting.
 
 ## Package Info
 
-- **Package name**: `com.aspid.collections` (`package.json`, v1.0.1)
+- **Package name**: `tech.aspid.collections` (`package.json`, v1.0.1)
 - **Unity**: 2022.3+
 - **Engine dependency**: none — `Aspid.Collections.Observable.asmdef` sets
   `noEngineReferences: true`. Runtime is pure C# and must stay that way
