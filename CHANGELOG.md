@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Batch propagation in `ObservableDictionarySync<TKey, TFrom, TTo>` and `ObservableHashSetSync<TFrom, TTo>` for `Add` / `Remove` (and `Replace` on Dictionary) — previously threw `NotImplementedException`.
 - `CollectionChangedEvent<T>`: re-entrancy-safe via copy-on-write of the subscriber list during `Invoke`; a lazy `HashSet<Handler>` tracks unsubscribes during the invoke chain for O(1) skip of removed handlers.
 - Performance benchmark scaffold under `Tests/Observable/Performance/`, gated by the `ASPID_COLLECTIONS_PERFORMANCE_TESTING` define.
+- Aspid script icon at `Editor/Resources/Icons/aspid_icon_medium_green_1022x1011.png`; runtime and test `.cs.meta` files point to it so scripts surface the project icon in the Unity Project view.
 
 ### Changed
 - `ObservableQueueSync` / `ObservableStackSync` / `ObservableDictionarySync`: unsupported actions now throw `NotSupportedException` with a descriptive message instead of `NotImplementedException`.
+- Release workflow excludes `CLAUDE.md` / `CLAUDE.md.meta` from the published UPM tree (alongside `.github`).
 
 ### Fixed
 - `ObservableStackSync.OnPoppedRange` and `ObservableQueueSync.OnDequeuedRange` overrides recursed into themselves via C# overload resolution, causing `StackOverflowException` on `Dispose` and any batch dequeue/pop.
