@@ -47,8 +47,10 @@ namespace Aspid.Collections.Observable
                     var forked = new List<NotifyCollectionChangedEventHandler<T>>(_handlers);
 
                     if (forked.Remove(v))
+                    {
                         (_removedDuringInvoke ??= new HashSet<NotifyCollectionChangedEventHandler<T>>()).Add(v);
-                    _handlers = forked;
+                        _handlers = forked;
+                    }
                 }
                 else
                 {
