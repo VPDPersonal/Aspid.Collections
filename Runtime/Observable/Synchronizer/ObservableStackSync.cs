@@ -81,8 +81,8 @@ namespace Aspid.Collections.Observable.Synchronizer
 
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
-                    
+                    throw new NotSupportedException("Move/Replace are not supported on ObservableStack<T>.");
+
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -98,15 +98,15 @@ namespace Aspid.Collections.Observable.Synchronizer
         }
 
         protected override void OnPoppedRange(in IReadOnlyList<TTo> dest) =>
-            OnPoppedRange(dest);
-        
-        private void OnPoppedRange(IReadOnlyCollection<TTo> dest)
+            HandlePopped(dest);
+
+        private void HandlePopped(IReadOnlyCollection<TTo> dest)
         {
             if (_isDisposable)
             {
                 foreach (var item in dest)
                 {
-                    if (item is IDisposable disposable) 
+                    if (item is IDisposable disposable)
                         disposable.Dispose();
                 }
             }
@@ -118,7 +118,7 @@ namespace Aspid.Collections.Observable.Synchronizer
         }
 
         protected override void OnClearing() =>
-            OnPoppedRange(this);
+            HandlePopped(this);
 
         public override void Dispose()
         {

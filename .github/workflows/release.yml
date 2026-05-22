@@ -141,7 +141,7 @@ jobs:
           trap 'rm -f "$UPM_INDEX"' EXIT
           export GIT_INDEX_FILE="$UPM_INDEX"
           git read-tree "$TAG"
-          git rm -r --cached --quiet --ignore-unmatch .github
+          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta
           TREE=$(git write-tree)
           unset GIT_INDEX_FILE
           PARENT=$(git rev-parse "$TAG^{commit}")

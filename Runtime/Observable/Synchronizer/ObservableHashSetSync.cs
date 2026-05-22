@@ -26,12 +26,7 @@ namespace Aspid.Collections.Observable.Synchronizer
             _sync = new Dictionary<TFrom, TTo>(fromHashSet.Count);
 
             foreach (var from in fromHashSet)
-            {
-                var to = Convert(from);
-                
-                Add(to);
-                _sync.Add(from,to );
-            }
+                AddOne(from);
 
             Subscribe();
         }
@@ -62,24 +57,27 @@ namespace Aspid.Collections.Observable.Synchronizer
                     {
                         if (args.IsSingleItem)
                         {
-                            var fromItem = args.NewItem!;
-                            var item = Convert(fromItem);
-                            
-                            Add(item);
-                            _sync.Add(fromItem, item);
+                            AddOne(args.NewItem!);
                         }
-                        else throw new NotImplementedException();
+                        else
+                        {
+                            foreach (var fromItem in args.NewItems!)
+                                AddOne(fromItem);
+                        }
                     }
                     break;
-                
+
                 case NotifyCollectionChangedAction.Remove:
                     {
                         if (args.IsSingleItem)
                         {
-                            Remove(_sync[args.OldItem!]);
-                            _sync.Remove(args.OldItem!);
+                            RemoveOne(args.OldItem!);
                         }
-                        else throw new NotImplementedException();
+                        else
+                        {
+                            foreach (var fromItem in args.OldItems!)
+                                RemoveOne(fromItem);
+                        }
                     }
                     break;
 
@@ -92,10 +90,26 @@ namespace Aspid.Collections.Observable.Synchronizer
 
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
-                    
+                    throw new NotSupportedException("Move/Replace are not supported on ObservableHashSet<T>.");
+
                 default: throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void AddOne(TFrom fromItem)
+        {
+            var item = Convert(fromItem);
+            if (!Add(item))
+                throw new InvalidOperationException(
+                    $"Converter must be injective: produced duplicate destination value '{item}' for source item '{fromItem}'.");
+            _sync.Add(fromItem, item);
+        }
+
+        private void RemoveOne(TFrom fromItem)
+        {
+            if (!_sync.TryGetValue(fromItem, out var item)) return;
+            Remove(item);
+            _sync.Remove(fromItem);
         }
         
         protected override void OnRemoved(TTo item)

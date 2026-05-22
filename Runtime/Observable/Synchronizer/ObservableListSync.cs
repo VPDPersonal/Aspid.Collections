@@ -69,21 +69,21 @@ namespace Aspid.Collections.Observable.Synchronizer
                 case NotifyCollectionChangedAction.Move:
                     {
                         if (args.IsSingleItem) Move(args.OldStartingIndex, args.NewStartingIndex);
-                        else throw new NotImplementedException();
+                        else throw new NotSupportedException("Batch Move is not emitted by ObservableList<T>.");
                     }
                     break;
-                
+
                 case NotifyCollectionChangedAction.Remove:
                     {
                         if (args.IsSingleItem) RemoveAt(args.OldStartingIndex);
-                        else throw new NotImplementedException();
+                        else RemoveRange(args.OldStartingIndex, args.OldItems!.Count);
                     }
                     break;
-        
+
                 case NotifyCollectionChangedAction.Replace:
                     {
                         if (args.IsSingleItem) base[args.OldStartingIndex] = Convert(args.NewItem!);
-                        else throw new NotImplementedException();
+                        else throw new NotSupportedException("Batch Replace is not emitted by ObservableList<T>.");
                     }
                     break;
         
@@ -108,6 +108,23 @@ namespace Aspid.Collections.Observable.Synchronizer
                     disposable.Dispose();
             }
             else _remove?.Invoke(value);
+        }
+
+        protected override void OnRemovedRange(in IReadOnlyList<TTo> items)
+        {
+            if (_isDisposable)
+            {
+                foreach (var item in items)
+                {
+                    if (item is IDisposable disposable)
+                        disposable.Dispose();
+                }
+            }
+            else if (_remove is not null)
+            {
+                foreach (var item in items)
+                    _remove.Invoke(item);
+            }
         }
 
         protected override void OnClearing()

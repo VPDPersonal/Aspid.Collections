@@ -1,0 +1,32 @@
+{
+    "name": "Aspid.Collections.Observable.PerformanceTests",
+    "rootNamespace": "",
+    "references": [
+        "UnityEditor.TestRunner",
+        "UnityEngine.TestRunner",
+        "Unity.PerformanceTesting",
+        "Aspid.Collections.Observable"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "ASPID_COLLECTIONS_PERFORMANCE_TESTING"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.test-framework.performance",
+            "expression": "",
+            "define": "ASPID_COLLECTIONS_PERFORMANCE_TESTING"
+        }
+    ],
+    "noEngineReferences": false
+}

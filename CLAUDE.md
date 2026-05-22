@@ -6,8 +6,9 @@ collections with synchronization, filtering, and sorting.
 
 ## Package Info
 
-- **Package name**: `tech.aspid.collections` (`package.json`, v1.0.1)
-- **Unity**: 2022.3+
+- **Package name**: `tech.aspid.collections` (`package.json`, v1.0.2)
+- **Unity**: `package.json` declares `2021.3` as the manifest minimum; the
+  active development target is 2022.3+ (matches the parent MVVM project).
 - **Engine dependency**: none — `Aspid.Collections.Observable.asmdef` sets
   `noEngineReferences: true`. Runtime is pure C# and must stay that way
   so the package works in non-engine assemblies too.
@@ -29,12 +30,16 @@ Collections/
 │   ├── INotifyCollectionChangedEventArgs.cs
 │   ├── NotifyCollectionChangedEventHandler.cs
 │   ├── CollectionChangedEvent.cs
-│   ├── Events/                                 # IObservableEvents + SplitByEvents
+│   ├── Events/                                 # IObservableEvents, ObservableCollectionEvents
+│   │   └── Extensions/                         # SplitEventsExtensions
 │   ├── Extensions/                             # ObservableListExtensions
-│   ├── Filtered/                               # FilteredList + CreateFiltered
-│   └── Synchronizer/                           # Observable*Sync + CreateSync
+│   ├── Filtered/                               # FilteredList, IReadOnlyFilteredList
+│   │   └── Extensions/                         # CreateFilteredExtensions
+│   └── Synchronizer/                           # Observable*Sync, IReadOnly*Sync
+│       └── Extensions/                         # CreateSyncExtensions
 └── Tests/Observable/                           # EditMode tests (UTF)
-    └── Helpers/
+    ├── Helpers/
+    └── Performance/                            # Optional perf benchmarks (gated)
 ```
 
 ## Namespaces
@@ -50,6 +55,7 @@ Collections/
 |--------|---------|
 | `Aspid.Collections.Observable.asmdef` | Runtime (`noEngineReferences: true`) |
 | `Aspid.Collections.Observable.Tests.asmdef` | Unity Test Framework tests |
+| `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled only when both `UNITY_INCLUDE_TESTS` and `ASPID_COLLECTIONS_PERFORMANCE_TESTING` are defined (the latter is auto-set when `com.unity.test-framework.performance` is installed) |
 
 ## Testing
 
@@ -83,11 +89,23 @@ Tests live in `Tests/Observable/` and run via Unity Test Runner
   `CreateFiltered`. Each wrapper holds a subscription on its source; if
   you drop the reference without calling `Dispose()`, the source keeps
   the chain alive.
+- **FilteredList is single-thread.** Source collections are guarded by
+  `SyncRoot`, but `FilteredList` itself is not — its internal index map
+  is mutated in place from `OnCollectionChanged`. Build / read /
+  enumerate it from one thread (the same one that mutates the source).
+- **Performance tests are off by default.** `Tests/Observable/Performance/`
+  only compiles when `com.unity.test-framework.performance` is installed —
+  the asmdef sets `ASPID_COLLECTIONS_PERFORMANCE_TESTING` via
+  `versionDefines`. If you add benchmarks, they will silently be skipped
+  in projects without that package.
 
 ## Pointers
 
 - `README.md` / `README_RU.md` — full public API reference with
   examples (collections, events, sync, filter, sample patterns).
+- `CHANGELOG.md` — release notes; the **Unreleased** block lists in-flight
+  work (incremental FilteredList dispatch, batch propagation in Sync
+  wrappers, re-entrancy safety in `CollectionChangedEvent`).
 - Parent framework CLAUDE.md: `../../../../CLAUDE.md` (relative to this
   file, resolves to `Projects/Aspid.MVVM/CLAUDE.md`) — Aspid.MVVM-wide
   context and conventions.
