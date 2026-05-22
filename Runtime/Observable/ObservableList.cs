@@ -168,6 +168,7 @@ namespace Aspid.Collections.Observable
 
         public void RemoveRange(int startIndex, int count)
         {
+            if (startIndex < 0) throw new ArgumentOutOfRangeException(nameof(startIndex));
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
 
             lock (SyncRoot)
