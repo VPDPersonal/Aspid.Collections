@@ -52,22 +52,43 @@ namespace Aspid.Collections.Observable.Synchronizer
             {
                 case NotifyCollectionChangedAction.Add:
                     {
-                        if (args.IsSingleItem) Add(args.NewItem.Key, Convert(args.NewItem.Value));
-                        else throw new NotImplementedException();
+                        if (args.IsSingleItem)
+                        {
+                            Add(args.NewItem.Key, Convert(args.NewItem.Value));
+                        }
+                        else
+                        {
+                            foreach (var kvp in args.NewItems!)
+                                Add(kvp.Key, Convert(kvp.Value));
+                        }
                     }
                     break;
-                
+
                 case NotifyCollectionChangedAction.Remove:
                     {
-                        if (args.IsSingleItem) Remove(args.OldItem.Key);
-                        else throw new NotImplementedException();
+                        if (args.IsSingleItem)
+                        {
+                            Remove(args.OldItem.Key);
+                        }
+                        else
+                        {
+                            foreach (var kvp in args.OldItems!)
+                                Remove(kvp.Key);
+                        }
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
                     {
-                        if (args.IsSingleItem) base[args.NewItem.Key] = Convert(args.NewItem.Value);
-                        else throw new NotImplementedException();
+                        if (args.IsSingleItem)
+                        {
+                            base[args.NewItem.Key] = Convert(args.NewItem.Value);
+                        }
+                        else
+                        {
+                            foreach (var kvp in args.NewItems!)
+                                base[kvp.Key] = Convert(kvp.Value);
+                        }
                     }
                     break;
 
@@ -77,7 +98,9 @@ namespace Aspid.Collections.Observable.Synchronizer
                     }
                     break;
 
-                case NotifyCollectionChangedAction.Move: throw new NotImplementedException();
+                case NotifyCollectionChangedAction.Move:
+                    throw new NotSupportedException("Move is not supported on ObservableDictionary.");
+
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -93,7 +116,7 @@ namespace Aspid.Collections.Observable.Synchronizer
         }
 
         protected override void OnReplaced(in KeyValuePair<TKey, TTo> oldItem, in KeyValuePair<TKey, TTo> newItem) =>
-            OnRemoved(oldItem.Key, newItem.Value);
+            OnRemoved(oldItem.Key, oldItem.Value);
 
         protected override void OnClearing()
         {

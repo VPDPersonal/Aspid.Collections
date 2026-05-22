@@ -81,8 +81,8 @@ namespace Aspid.Collections.Observable.Synchronizer
 
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
-                    
+                    throw new NotSupportedException("Move/Replace are not supported on ObservableQueue<T>.");
+
                 default: throw new ArgumentOutOfRangeException();
             }
         }
@@ -98,9 +98,9 @@ namespace Aspid.Collections.Observable.Synchronizer
         }
 
         protected override void OnDequeuedRange(in IReadOnlyList<TTo> dest) =>
-            OnDequeuedRange(dest);
-        
-        private void OnDequeuedRange(IReadOnlyCollection<TTo> dest)
+            HandleDequeued(dest);
+
+        private void HandleDequeued(IReadOnlyCollection<TTo> dest)
         {
             if (_isDisposable)
             {
@@ -118,7 +118,7 @@ namespace Aspid.Collections.Observable.Synchronizer
         }
 
         protected override void OnClearing() =>
-            OnDequeuedRange(this);
+            HandleDequeued(this);
 
         public override void Dispose()
         {

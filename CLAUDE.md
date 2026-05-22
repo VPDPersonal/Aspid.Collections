@@ -83,6 +83,10 @@ Tests live in `Tests/Observable/` and run via Unity Test Runner
   `CreateFiltered`. Each wrapper holds a subscription on its source; if
   you drop the reference without calling `Dispose()`, the source keeps
   the chain alive.
+- **FilteredList is single-thread.** Source collections are guarded by
+  `SyncRoot`, but `FilteredList` itself is not — its internal index map
+  is mutated in place from `OnCollectionChanged`. Build / read /
+  enumerate it from one thread (the same one that mutates the source).
 
 ## Pointers
 

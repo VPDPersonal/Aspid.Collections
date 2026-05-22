@@ -158,15 +158,34 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 var item = _list[index];
-                
+
                 _list.RemoveAt(index);
                 OnRemoved(item);
-                
+
                 Invoke(NotifyCollectionChangedEventArgs<T>.Remove(item, index));
             }
         }
-        
+
+        public void RemoveRange(int startIndex, int count)
+        {
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+
+            lock (SyncRoot)
+            {
+                var items = new T[count];
+                for (var i = 0; i < count; i++)
+                    items[i] = _list[startIndex + i];
+
+                _list.RemoveRange(startIndex, count);
+                OnRemovedRange(items);
+
+                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(items, startIndex));
+            }
+        }
+
         protected virtual void OnRemoved(in T item) { }
+
+        protected virtual void OnRemovedRange(in IReadOnlyList<T> items) { }
 
         public void Move(int oldIndex, int newIndex)
         {

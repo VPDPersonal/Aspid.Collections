@@ -88,6 +88,32 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
+        public void SourceRemoveRange_PropagatesAsBatchRemove()
+        {
+            _source.AddRange(1, 2, 3, 4, 5);
+
+            _source.RemoveRange(1, 3);
+
+            Assert.AreEqual(2, _sync.Count);
+            Assert.AreEqual("1", _sync[0]);
+            Assert.AreEqual("5", _sync[1]);
+        }
+
+        [Test]
+        public void SourceRemoveRange_InvokesRemoveCallbackForEachItem()
+        {
+            var removed = new List<string>();
+            using var syncWithCb = _source.CreateSync(i => i.ToString(), removed.Add);
+            _source.AddRange(10, 20, 30, 40);
+
+            _source.RemoveRange(1, 2);
+
+            Assert.AreEqual(2, removed.Count);
+            Assert.AreEqual("20", removed[0]);
+            Assert.AreEqual("30", removed[1]);
+        }
+
+        [Test]
         public void SourceMove_MovesInSync()
         {
             _source.AddRange(1, 2, 3);

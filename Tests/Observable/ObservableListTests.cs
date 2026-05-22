@@ -242,6 +242,50 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(3, e.OldItem);
             Assert.AreEqual(2, e.OldStartingIndex);
         }
+
+        [Test]
+        public void RemoveRange_RemovesContiguousItems()
+        {
+            _list.AddRange(1, 2, 3, 4, 5);
+            _events.Clear();
+
+            _list.RemoveRange(1, 3);
+
+            Assert.AreEqual(2, _list.Count);
+            Assert.AreEqual(1, _list[0]);
+            Assert.AreEqual(5, _list[1]);
+        }
+
+        [Test]
+        public void RemoveRange_RaisesBatchRemoveEventWithCorrectArgs()
+        {
+            _list.AddRange(10, 20, 30, 40);
+            _events.Clear();
+
+            _list.RemoveRange(1, 2);
+
+            Assert.AreEqual(1, _events.Count);
+            var e = _events.Last;
+            Assert.AreEqual(NotifyCollectionChangedAction.Remove, e.Action);
+            Assert.IsFalse(e.IsSingleItem);
+            Assert.AreEqual(2, e.OldItems!.Count);
+            Assert.AreEqual(20, e.OldItems[0]);
+            Assert.AreEqual(30, e.OldItems[1]);
+            Assert.AreEqual(1, e.OldStartingIndex);
+        }
+
+        [Test]
+        public void RemoveRange_ZeroCount_RaisesEmptyBatchRemoveEvent()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            _list.RemoveRange(0, 0);
+
+            Assert.AreEqual(3, _list.Count);
+            Assert.AreEqual(1, _events.Count);
+            Assert.AreEqual(0, _events.Last.OldItems!.Count);
+        }
         #endregion
 
         #region Indexer
@@ -452,6 +496,59 @@ namespace Aspid.Collections.Observable.Tests
             _list.Add(1);
 
             Assert.AreEqual(0, count);
+        }
+
+        [Test]
+        public void CollectionChanged_HandlerSelfUnsubscribesDuringInvoke_DoesNotThrow()
+        {
+            var invoked = 0;
+            NotifyCollectionChangedEventHandler<int> handler = null!;
+            handler = _ =>
+            {
+                invoked++;
+                _list.CollectionChanged -= handler;
+            };
+            _list.CollectionChanged += handler;
+
+            Assert.DoesNotThrow(() => _list.Add(1));
+            Assert.AreEqual(1, invoked);
+
+            _list.Add(2);
+            Assert.AreEqual(1, invoked);
+        }
+
+        [Test]
+        public void CollectionChanged_HandlerSubscribesNewDuringInvoke_NewHandlerSkipsInFlightEvent()
+        {
+            var newInvoked = false;
+            NotifyCollectionChangedEventHandler<int> outer = null!;
+            outer = _ =>
+            {
+                _list.CollectionChanged -= outer;
+                _list.CollectionChanged += __ => newInvoked = true;
+            };
+            _list.CollectionChanged += outer;
+
+            _list.Add(1);
+            Assert.IsFalse(newInvoked);
+
+            _list.Add(2);
+            Assert.IsTrue(newInvoked);
+        }
+
+        [Test]
+        public void CollectionChanged_HandlerUnsubscribesAnotherDuringInvoke_OtherHandlerNotCalled()
+        {
+            var bInvoked = 0;
+            NotifyCollectionChangedEventHandler<int> handlerB = _ => bInvoked++;
+            NotifyCollectionChangedEventHandler<int> handlerA = _ => _list.CollectionChanged -= handlerB;
+
+            _list.CollectionChanged += handlerA;
+            _list.CollectionChanged += handlerB;
+
+            _list.Add(1);
+
+            Assert.AreEqual(0, bInvoked);
         }
         #endregion
     }
