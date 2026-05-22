@@ -92,7 +92,11 @@ namespace Aspid.Collections.Observable.Tests.Performance
                     for (var i = 0; i < size; i++) source.Add(i);
                     filtered = new FilteredList<int>(source);
                 })
-                .CleanUp(() => filtered.Dispose())
+                .CleanUp(() =>
+                {
+                    filtered.Dispose();
+                    source.Dispose();
+                })
                 .SampleGroup(new SampleGroup("Remove_Middle_NoComparer", SampleUnit.Microsecond))
                 .WarmupCount(WarmupCount)
                 .MeasurementCount(MeasurementCount)
@@ -105,7 +109,11 @@ namespace Aspid.Collections.Observable.Tests.Performance
                     for (var i = 0; i < size; i++) source.Add(i);
                     filtered = new FilteredList<int>(source, Comparer<int>.Default);
                 })
-                .CleanUp(() => filtered.Dispose())
+                .CleanUp(() =>
+                {
+                    filtered.Dispose();
+                    source.Dispose();
+                })
                 .SampleGroup(new SampleGroup("Remove_Middle_Comparer", SampleUnit.Microsecond))
                 .WarmupCount(WarmupCount)
                 .MeasurementCount(MeasurementCount)
