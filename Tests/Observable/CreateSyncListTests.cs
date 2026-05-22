@@ -76,6 +76,21 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
+        public void SourceInsertRange_PropagatesAllAtCorrectIndex()
+        {
+            _source.AddRange(1, 5);
+
+            _source.InsertRange(1, 2, 3, 4);
+
+            Assert.AreEqual(5, _sync.Count);
+            Assert.AreEqual("1", _sync[0]);
+            Assert.AreEqual("2", _sync[1]);
+            Assert.AreEqual("3", _sync[2]);
+            Assert.AreEqual("4", _sync[3]);
+            Assert.AreEqual("5", _sync[4]);
+        }
+
+        [Test]
         public void SourceRemove_RemovesFromSync()
         {
             _source.AddRange(10, 20, 30);

@@ -307,6 +307,35 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
+        public void AutoUpdate_InsertRange_FiltersAndInserts()
+        {
+            _source.AddRange(1, 5);
+            using var fl = new FilteredList<int>(_source, i => i % 2 == 0);
+
+            _source.InsertRange(1, 2, 3, 4);
+            // source = [1, 2, 3, 4, 5]; even = [2, 4]
+            Assert.AreEqual(2, fl.Count);
+            Assert.AreEqual(2, fl[0]);
+            Assert.AreEqual(4, fl[1]);
+        }
+
+        [Test]
+        public void AutoUpdate_InsertRange_WithComparer_RespectsSortOrder()
+        {
+            _source.AddRange(1, 5);
+            using var fl = new FilteredList<int>(_source, i => i > 0, Comparer<int>.Default);
+
+            _source.InsertRange(1, 4, 2, 3);
+            // source = [1, 4, 2, 3, 5]; filter keeps all; sorted = [1, 2, 3, 4, 5]
+            Assert.AreEqual(5, fl.Count);
+            Assert.AreEqual(1, fl[0]);
+            Assert.AreEqual(2, fl[1]);
+            Assert.AreEqual(3, fl[2]);
+            Assert.AreEqual(4, fl[3]);
+            Assert.AreEqual(5, fl[4]);
+        }
+
+        [Test]
         public void AutoUpdate_RemoveAt_RemovesFromViewAndShiftsTrailing()
         {
             _source.AddRange(1, 2, 3, 4, 5);

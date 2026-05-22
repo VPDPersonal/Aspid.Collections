@@ -44,7 +44,7 @@ namespace Aspid.Collections.Observable.Tests
         {
             var capturedIndex = -1;
             IReadOnlyList<int> capturedItems = null;
-            
+
             using var events = _source.SplitByEvents(added: (items, index) =>
             {
                 capturedIndex = index;
@@ -55,22 +55,46 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.IsNotNull(capturedItems);
             Assert.AreEqual(0, capturedIndex);
-            
+
             Assert.AreEqual(3, capturedItems.Count);
 
             for (var i = 0; i < capturedItems.Count; i++)
                 Assert.AreEqual(i, capturedItems[i]);
         }
+
+        [Test]
+        public void Added_InvokedOnInsertRange()
+        {
+            _source.AddRange(10, 20, 30);
+
+            var capturedIndex = -1;
+            IReadOnlyList<int> capturedItems = null;
+
+            using var events = _source.SplitByEvents(added: (items, index) =>
+            {
+                capturedIndex = index;
+                capturedItems = items;
+            });
+
+            _source.InsertRange(1, 100, 200);
+
+            Assert.IsNotNull(capturedItems);
+            Assert.AreEqual(1, capturedIndex);
+
+            Assert.AreEqual(2, capturedItems.Count);
+            Assert.AreEqual(100, capturedItems[0]);
+            Assert.AreEqual(200, capturedItems[1]);
+        }
         #endregion
-        
+
         [Test]
         public void Removed_InvokedOnRemove()
         {
             _source.Add(26);
-            
+
             var capturedIndex = -1;
             IReadOnlyList<int> capturedItems = null;
-            
+
             using var events = _source.SplitByEvents(removed: (items, index) =>
             {
                 capturedItems = items;
@@ -82,6 +106,31 @@ namespace Aspid.Collections.Observable.Tests
             Assert.IsNotNull(capturedItems);
             Assert.AreEqual(0, capturedIndex);
             Assert.AreEqual(26, capturedItems[0]);
+        }
+
+        [Test]
+        public void Removed_InvokedOnRemoveRange()
+        {
+            _source.AddRange(10, 20, 30, 40, 50);
+
+            var capturedIndex = -1;
+            IReadOnlyList<int> capturedItems = null;
+
+            using var events = _source.SplitByEvents(removed: (items, index) =>
+            {
+                capturedItems = items;
+                capturedIndex = index;
+            });
+
+            _source.RemoveRange(1, 3);
+
+            Assert.IsNotNull(capturedItems);
+            Assert.AreEqual(1, capturedIndex);
+
+            Assert.AreEqual(3, capturedItems.Count);
+            Assert.AreEqual(20, capturedItems[0]);
+            Assert.AreEqual(30, capturedItems[1]);
+            Assert.AreEqual(40, capturedItems[2]);
         }
         
         [Test]
