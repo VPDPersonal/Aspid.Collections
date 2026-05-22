@@ -1,10 +1,11 @@
 {
     "name": "Aspid.Collections.Observable.PerformanceTests",
+    "rootNamespace": "",
     "references": [
-        "Aspid.Collections.Observable",
-        "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Unity.PerformanceTesting"
+        "UnityEngine.TestRunner",
+        "Unity.PerformanceTesting",
+        "Aspid.Collections.Observable"
     ],
     "includePlatforms": [
         "Editor"
