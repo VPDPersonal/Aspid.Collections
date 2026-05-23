@@ -128,6 +128,7 @@ jobs:
           set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
           TAG="${{ steps.version.outputs.tag }}"
+          PRERELEASE="${{ steps.version.outputs.prerelease }}"
           UPM_TAG="upm/$VERSION"
 
           if git ls-remote --exit-code --tags origin "$UPM_TAG" >/dev/null 2>&1; then
@@ -141,20 +142,26 @@ jobs:
           trap 'rm -f "$UPM_INDEX"' EXIT
           export GIT_INDEX_FILE="$UPM_INDEX"
           git read-tree "$TAG"
-          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta
+          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta .gitignore .gitignore.meta
           TREE=$(git write-tree)
           unset GIT_INDEX_FILE
           PARENT=$(git rev-parse "$TAG^{commit}")
           COMMIT=$(git commit-tree "$TREE" -p "$PARENT" -m "UPM release $VERSION")
 
-          # Move the upm branch forward to this release's commit.
-          git push --force origin "$COMMIT:refs/heads/upm"
+          # Move the appropriate upm branch forward:
+          # pre-releases → upm-preview, stable releases → upm.
+          if [[ "$PRERELEASE" == "true" ]]; then
+            UPM_BRANCH="upm-preview"
+          else
+            UPM_BRANCH="upm"
+          fi
+          git push --force origin "$COMMIT:refs/heads/$UPM_BRANCH"
 
           # Immutable per-version tag for users who pin to a specific release.
           git tag "$UPM_TAG" "$COMMIT"
           git push origin "$UPM_TAG"
 
-          echo "Published $UPM_TAG and updated upm branch."
+          echo "Published $UPM_TAG and updated $UPM_BRANCH branch."
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
