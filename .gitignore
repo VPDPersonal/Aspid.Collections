@@ -1,0 +1,6 @@
+.idea/
+.zed/
+.vscode/
+
+# Override the global "*~" rule that hides Unity's Samples~ folder.
+!Samples~/

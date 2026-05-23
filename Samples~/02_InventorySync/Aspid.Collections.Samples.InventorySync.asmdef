@@ -1,0 +1,16 @@
+{
+    "name": "Aspid.Collections.Samples.InventorySync",
+    "rootNamespace": "Aspid.Collections.Samples.InventorySync",
+    "references": [
+        "Aspid.Collections.Observable"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
