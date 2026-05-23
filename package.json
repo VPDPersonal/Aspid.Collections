@@ -1,12 +1,46 @@
 {
   "name": "tech.aspid.collections",
-  "version": "1.0.2",
   "displayName": "Aspid.Collections",
-  "description": "A set of covariate observation collections with easy synchronization between two collections, filtering and sorting.",
+  "version": "1.1.0",
   "unity": "2021.3",
-  "author":
-  {
+  "unityRelease": "0f1",
+  "description": "A set of covariate observation collections with easy synchronization between two collections, filtering and sorting.",
+  "dependencies": {
+    "com.unity.test-framework": "1.6.0"
+  },
+  "author": {
     "name": "Vladislav Panin",
+    "url": "https://github.com/VPDPersonal",
     "email": "vpd.aspid@gmail.com"
-  }
+  },
+  "changelogUrl": "https://github.com/VPDPersonal/Aspid.Collections/blob/main/CHANGELOG.md",
+  "documentationUrl": "https://github.com/VPDPersonal/Aspid.Collections",
+  "licensesUrl": "https://github.com/VPDPersonal/Aspid.Collections/blob/main/LICENSE",
+  "samples": [
+    {
+      "displayName": "01 Basic Change Notifications",
+      "description": "Hello-world for ObservableList<T>. Walks through single-item vs batch forms of NotifyCollectionChangedEventArgs<T>, the custom struct event args, and the Action switch.",
+      "path": "Samples~/01_BasicChangeNotifications"
+    },
+    {
+      "displayName": "02 Inventory Sync (Model -> View)",
+      "description": "Projects an ObservableList<InventoryItem> POCO model into an Observable*Sync<InventoryItem, InventoryItemView> view via CreateSync, with proper Dispose ownership in OnDestroy.",
+      "path": "Samples~/02_InventorySync"
+    },
+    {
+      "displayName": "03 Filtered Inventory (Search + Categories)",
+      "description": "Chains FilteredList<T> wrappers for search + category filtering, and demonstrates the single-thread mutation rule and the Dispose-in-reverse-order discipline.",
+      "path": "Samples~/03_FilteredInventory"
+    },
+    {
+      "displayName": "04 Dictionary as Keyed Table",
+      "description": "ObservableDictionary<TKey, TValue> driving a keyed UI table (leaderboard by playerId). Shows per-key Add/Replace/Remove events and exposing an IReadOnlyObservableDictionary projection.",
+      "path": "Samples~/04_DictionaryKeyedTable"
+    },
+    {
+      "displayName": "05 SplitByEvents (Analytics Tap)",
+      "description": "Attaches an analytics/logging tap to an ObservableCollection via SplitByEvents. The returned IObservableEvents<T> handle owns the subscription — Dispose it to unsubscribe.",
+      "path": "Samples~/05_SplitByEvents"
+    }
+  ]
 }

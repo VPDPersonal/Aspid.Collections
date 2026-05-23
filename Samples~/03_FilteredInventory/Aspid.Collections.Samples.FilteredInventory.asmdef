@@ -1,0 +1,16 @@
+{
+    "name": "Aspid.Collections.Samples.FilteredInventory",
+    "rootNamespace": "Aspid.Collections.Samples.FilteredInventory",
+    "references": [
+        "Aspid.Collections.Observable"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

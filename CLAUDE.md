@@ -6,7 +6,7 @@ collections with synchronization, filtering, and sorting.
 
 ## Package Info
 
-- **Package name**: `tech.aspid.collections` (`package.json`, v1.0.2)
+- **Package name**: `tech.aspid.collections` (`package.json`, v1.1.0)
 - **Unity**: `package.json` declares `2021.3` as the manifest minimum; the
   active development target is 2022.3+ (matches the parent MVVM project).
 - **Engine dependency**: none — `Aspid.Collections.Observable.asmdef` sets
@@ -37,9 +37,15 @@ Collections/
 │   │   └── Extensions/                         # CreateFilteredExtensions
 │   └── Synchronizer/                           # Observable*Sync, IReadOnly*Sync
 │       └── Extensions/                         # CreateSyncExtensions
-└── Tests/Observable/                           # EditMode tests (UTF)
-    ├── Helpers/
-    └── Performance/                            # Optional perf benchmarks (gated)
+├── Tests/Runtime/Observable/                   # Unity Test Framework tests
+│   ├── Helpers/
+│   └── Performance/                            # Optional perf benchmarks (gated)
+└── Samples~/                                   # UPM-importable samples
+    ├── 01_BasicChangeNotifications/            # (Unity hides the `~` folder from
+    ├── 02_InventorySync/                       #  the AssetDatabase until imported
+    ├── 03_FilteredInventory/                   #  via Package Manager UI)
+    ├── 04_DictionaryKeyedTable/
+    └── 05_SplitByEvents/
 ```
 
 ## Namespaces
@@ -54,15 +60,18 @@ Collections/
 | asmdef | Purpose |
 |--------|---------|
 | `Aspid.Collections.Observable.asmdef` | Runtime (`noEngineReferences: true`) |
-| `Aspid.Collections.Observable.Tests.asmdef` | Unity Test Framework tests |
-| `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled only when both `UNITY_INCLUDE_TESTS` and `ASPID_COLLECTIONS_PERFORMANCE_TESTING` are defined (the latter is auto-set when `com.unity.test-framework.performance` is installed) |
+| `Aspid.Collections.Tests.asmdef` | Unity Test Framework tests (`noEngineReferences: true`, compiled when `UNITY_INCLUDE_TESTS` is defined) |
+| `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled when `UNITY_INCLUDE_TESTS` is defined and references `Unity.PerformanceTesting` directly, so the asmdef also requires `com.unity.test-framework.performance` to be installed. `ASPID_COLLECTIONS_PERFORMANCE_TESTING` is auto-set via `versionDefines` for code-level `#if`-gating. |
+| `Aspid.Collections.Samples.*.asmdef` (5 of them, one per sample folder under `Samples~/`) | Importable samples. Unlike the runtime, samples *do* reference `UnityEngine` (`noEngineReferences: false`) — they use `MonoBehaviour`, `GameObject`, `Debug.Log`. They are not compiled in-place: Unity copies a sample into `Assets/Samples/...` on import (Package Manager UI), and only then the asmdef participates in the consuming project's build. |
 
 ## Testing
 
-Tests live in `Tests/Observable/` and run via Unity Test Runner
-(EditMode). Convention: one `FooTests.cs` per collection/extension (e.g.
-`ObservableListTests.cs`, `CreateSyncDictionaryTests.cs`,
-`FilteredListTests.cs`). Shared helpers in `Tests/Observable/Helpers/`.
+Tests live in `Tests/Runtime/Observable/` and run via Unity Test Runner
+(the asmdef does not pin `includePlatforms`, so tests compile for every
+build target and can run as EditMode or PlayMode). Convention: one
+`FooTests.cs` per collection/extension (e.g. `ObservableListTests.cs`,
+`CreateSyncDictionaryTests.cs`, `FilteredListTests.cs`). Shared helpers
+in `Tests/Runtime/Observable/Helpers/`.
 
 ## Conventions (delta over parent CLAUDE.md)
 
@@ -93,11 +102,25 @@ Tests live in `Tests/Observable/` and run via Unity Test Runner
   `SyncRoot`, but `FilteredList` itself is not — its internal index map
   is mutated in place from `OnCollectionChanged`. Build / read /
   enumerate it from one thread (the same one that mutates the source).
-- **Performance tests are off by default.** `Tests/Observable/Performance/`
-  only compiles when `com.unity.test-framework.performance` is installed —
-  the asmdef sets `ASPID_COLLECTIONS_PERFORMANCE_TESTING` via
-  `versionDefines`. If you add benchmarks, they will silently be skipped
-  in projects without that package.
+- **Samples live in `Samples~/` and are listed in `package.json`.** Each
+  importable sample is declared in the `samples` array of `package.json`
+  with a `displayName`, `description`, and `path`. The `~` suffix tells
+  Unity to skip the folder during asset import in the package itself —
+  the contents only land in `Assets/Samples/<package>/<version>/<sample>/`
+  after the user clicks "Import" in the Package Manager UI. Adding a new
+  sample means **both**: a new subfolder under `Samples~/` *and* a new
+  entry in the `samples` manifest. Sample asmdefs reference
+  `Aspid.Collections.Observable` and freely use `UnityEngine` types —
+  this is the one place in the package where engine references are
+  allowed.
+- **Performance tests need the perf package.**
+  `Tests/Runtime/Observable/Performance/` references
+  `Unity.PerformanceTesting` directly, so the asmdef only resolves when
+  `com.unity.test-framework.performance` is installed in the consuming
+  project. The `versionDefines` block sets
+  `ASPID_COLLECTIONS_PERFORMANCE_TESTING` when that package is present —
+  use it for `#if`-gating inside benchmark code. The compile gate
+  itself is just `UNITY_INCLUDE_TESTS` in `defineConstraints`.
 
 ## Pointers
 

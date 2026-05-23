@@ -2,14 +2,12 @@
     "name": "Aspid.Collections.Observable.PerformanceTests",
     "rootNamespace": "",
     "references": [
+        "Aspid.Collections.Observable",
         "UnityEditor.TestRunner",
         "UnityEngine.TestRunner",
-        "Unity.PerformanceTesting",
-        "Aspid.Collections.Observable"
+        "Unity.PerformanceTesting"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
@@ -18,8 +16,7 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [
-        "UNITY_INCLUDE_TESTS",
-        "ASPID_COLLECTIONS_PERFORMANCE_TESTING"
+        "UNITY_INCLUDE_TESTS"
     ],
     "versionDefines": [
         {

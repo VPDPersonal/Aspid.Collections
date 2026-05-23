@@ -1,0 +1,16 @@
+{
+    "name": "Aspid.Collections.Samples.SplitByEvents",
+    "rootNamespace": "Aspid.Collections.Samples.SplitByEvents",
+    "references": [
+        "Aspid.Collections.Observable"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
