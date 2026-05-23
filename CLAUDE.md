@@ -37,7 +37,7 @@ Collections/
 │   │   └── Extensions/                         # CreateFilteredExtensions
 │   └── Synchronizer/                           # Observable*Sync, IReadOnly*Sync
 │       └── Extensions/                         # CreateSyncExtensions
-└── Tests/Observable/                           # EditMode tests (UTF)
+└── Tests/Runtime/Observable/                   # Unity Test Framework tests
     ├── Helpers/
     └── Performance/                            # Optional perf benchmarks (gated)
 ```
@@ -54,15 +54,17 @@ Collections/
 | asmdef | Purpose |
 |--------|---------|
 | `Aspid.Collections.Observable.asmdef` | Runtime (`noEngineReferences: true`) |
-| `Aspid.Collections.Observable.Tests.asmdef` | Unity Test Framework tests |
-| `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled only when both `UNITY_INCLUDE_TESTS` and `ASPID_COLLECTIONS_PERFORMANCE_TESTING` are defined (the latter is auto-set when `com.unity.test-framework.performance` is installed) |
+| `Aspid.Collections.Tests.asmdef` | Unity Test Framework tests (`noEngineReferences: true`, compiled when `UNITY_INCLUDE_TESTS` is defined) |
+| `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled when `UNITY_INCLUDE_TESTS` is defined and references `Unity.PerformanceTesting` directly, so the asmdef also requires `com.unity.test-framework.performance` to be installed. `ASPID_COLLECTIONS_PERFORMANCE_TESTING` is auto-set via `versionDefines` for code-level `#if`-gating. |
 
 ## Testing
 
-Tests live in `Tests/Observable/` and run via Unity Test Runner
-(EditMode). Convention: one `FooTests.cs` per collection/extension (e.g.
-`ObservableListTests.cs`, `CreateSyncDictionaryTests.cs`,
-`FilteredListTests.cs`). Shared helpers in `Tests/Observable/Helpers/`.
+Tests live in `Tests/Runtime/Observable/` and run via Unity Test Runner
+(the asmdef does not pin `includePlatforms`, so tests compile for every
+build target and can run as EditMode or PlayMode). Convention: one
+`FooTests.cs` per collection/extension (e.g. `ObservableListTests.cs`,
+`CreateSyncDictionaryTests.cs`, `FilteredListTests.cs`). Shared helpers
+in `Tests/Runtime/Observable/Helpers/`.
 
 ## Conventions (delta over parent CLAUDE.md)
 
@@ -93,11 +95,14 @@ Tests live in `Tests/Observable/` and run via Unity Test Runner
   `SyncRoot`, but `FilteredList` itself is not — its internal index map
   is mutated in place from `OnCollectionChanged`. Build / read /
   enumerate it from one thread (the same one that mutates the source).
-- **Performance tests are off by default.** `Tests/Observable/Performance/`
-  only compiles when `com.unity.test-framework.performance` is installed —
-  the asmdef sets `ASPID_COLLECTIONS_PERFORMANCE_TESTING` via
-  `versionDefines`. If you add benchmarks, they will silently be skipped
-  in projects without that package.
+- **Performance tests need the perf package.**
+  `Tests/Runtime/Observable/Performance/` references
+  `Unity.PerformanceTesting` directly, so the asmdef only resolves when
+  `com.unity.test-framework.performance` is installed in the consuming
+  project. The `versionDefines` block sets
+  `ASPID_COLLECTIONS_PERFORMANCE_TESTING` when that package is present —
+  use it for `#if`-gating inside benchmark code. The compile gate
+  itself is just `UNITY_INCLUDE_TESTS` in `defineConstraints`.
 
 ## Pointers
 
