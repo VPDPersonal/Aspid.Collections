@@ -6,7 +6,7 @@ collections with synchronization, filtering, and sorting.
 
 ## Package Info
 
-- **Package name**: `tech.aspid.collections` (`package.json`, v1.0.2)
+- **Package name**: `tech.aspid.collections` (`package.json`, v1.1.0)
 - **Unity**: `package.json` declares `2021.3` as the manifest minimum; the
   active development target is 2022.3+ (matches the parent MVVM project).
 - **Engine dependency**: none — `Aspid.Collections.Observable.asmdef` sets
