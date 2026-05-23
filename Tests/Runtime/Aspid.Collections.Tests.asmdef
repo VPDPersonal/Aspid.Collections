@@ -1,13 +1,12 @@
 {
-    "name": "Aspid.Collections.Observable.Tests",
+    "name": "Aspid.Collections.Tests",
+    "rootNamespace": "",
     "references": [
         "Aspid.Collections.Observable",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
