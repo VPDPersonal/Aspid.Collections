@@ -37,9 +37,15 @@ Collections/
 │   │   └── Extensions/                         # CreateFilteredExtensions
 │   └── Synchronizer/                           # Observable*Sync, IReadOnly*Sync
 │       └── Extensions/                         # CreateSyncExtensions
-└── Tests/Runtime/Observable/                   # Unity Test Framework tests
-    ├── Helpers/
-    └── Performance/                            # Optional perf benchmarks (gated)
+├── Tests/Runtime/Observable/                   # Unity Test Framework tests
+│   ├── Helpers/
+│   └── Performance/                            # Optional perf benchmarks (gated)
+└── Samples~/                                   # UPM-importable samples
+    ├── 01_BasicChangeNotifications/            # (Unity hides the `~` folder from
+    ├── 02_InventorySync/                       #  the AssetDatabase until imported
+    ├── 03_FilteredInventory/                   #  via Package Manager UI)
+    ├── 04_DictionaryKeyedTable/
+    └── 05_SplitByEvents/
 ```
 
 ## Namespaces
@@ -56,6 +62,7 @@ Collections/
 | `Aspid.Collections.Observable.asmdef` | Runtime (`noEngineReferences: true`) |
 | `Aspid.Collections.Tests.asmdef` | Unity Test Framework tests (`noEngineReferences: true`, compiled when `UNITY_INCLUDE_TESTS` is defined) |
 | `Aspid.Collections.Observable.PerformanceTests.asmdef` | Perf benchmarks; compiled when `UNITY_INCLUDE_TESTS` is defined and references `Unity.PerformanceTesting` directly, so the asmdef also requires `com.unity.test-framework.performance` to be installed. `ASPID_COLLECTIONS_PERFORMANCE_TESTING` is auto-set via `versionDefines` for code-level `#if`-gating. |
+| `Aspid.Collections.Samples.*.asmdef` (5 of them, one per sample folder under `Samples~/`) | Importable samples. Unlike the runtime, samples *do* reference `UnityEngine` (`noEngineReferences: false`) — they use `MonoBehaviour`, `GameObject`, `Debug.Log`. They are not compiled in-place: Unity copies a sample into `Assets/Samples/...` on import (Package Manager UI), and only then the asmdef participates in the consuming project's build. |
 
 ## Testing
 
@@ -95,6 +102,17 @@ in `Tests/Runtime/Observable/Helpers/`.
   `SyncRoot`, but `FilteredList` itself is not — its internal index map
   is mutated in place from `OnCollectionChanged`. Build / read /
   enumerate it from one thread (the same one that mutates the source).
+- **Samples live in `Samples~/` and are listed in `package.json`.** Each
+  importable sample is declared in the `samples` array of `package.json`
+  with a `displayName`, `description`, and `path`. The `~` suffix tells
+  Unity to skip the folder during asset import in the package itself —
+  the contents only land in `Assets/Samples/<package>/<version>/<sample>/`
+  after the user clicks "Import" in the Package Manager UI. Adding a new
+  sample means **both**: a new subfolder under `Samples~/` *and* a new
+  entry in the `samples` manifest. Sample asmdefs reference
+  `Aspid.Collections.Observable` and freely use `UnityEngine` types —
+  this is the one place in the package where engine references are
+  allowed.
 - **Performance tests need the perf package.**
   `Tests/Runtime/Observable/Performance/` references
   `Unity.PerformanceTesting` directly, so the asmdef only resolves when

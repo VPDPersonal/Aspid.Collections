@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CollectionChangedEvent<T>`: re-entrancy-safe via copy-on-write of the subscriber list during `Invoke`; a lazy `HashSet<Handler>` tracks unsubscribes during the invoke chain for O(1) skip of removed handlers.
 - Performance benchmark scaffold under `Tests/Observable/Performance/`, gated by the `ASPID_COLLECTIONS_PERFORMANCE_TESTING` define.
 - Aspid script icon at `Editor/Resources/Icons/aspid_icon_medium_green_1022x1011.png`; runtime and test `.cs.meta` files point to it so scripts surface the project icon in the Unity Project view.
+- `Samples~/` directory with five importable samples (`package.json` `samples` manifest): basic change-notification dispatch, model→view sync via `CreateSync`, chained `FilteredList` for search+category, `ObservableDictionary` as a keyed table, and `SplitByEvents` as an analytics tap. Each sample ships its own `Aspid.Collections.Samples.*` asmdef.
 
 ### Changed
 - `ObservableQueueSync` / `ObservableStackSync` / `ObservableDictionarySync`: unsupported actions now throw `NotSupportedException` with a descriptive message instead of `NotImplementedException`.
