@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING** — package renamed from `com.aspid.collections` to `tech.aspid.collections`. Consumers must update the identifier in their project's `Packages/manifest.json` (and any scoped-registry / Git-URL references) when upgrading from 1.0.x.
 - Tests reorganized under `Tests/Runtime/Observable/` to match Unity's standard runtime/editor split. The test assembly is renamed from `Aspid.Collections.Observable.Tests` to `Aspid.Collections.Tests` (now with an empty `rootNamespace`), and the `Editor`-only `includePlatforms` constraint is dropped from both the test and performance asmdefs so suites compile and run on player platforms too.
-- Redundant `ASPID_COLLECTIONS_PERFORMANCE_TESTING` entry removed from the performance asmdef's `defineConstraints` — the define still ships via `versionDefines` when `com.unity.test-framework.performance` is installed.
+- **BREAKING** — `ASPID_COLLECTIONS_PERFORMANCE_TESTING` removed from the performance asmdef's `defineConstraints`. Without `com.unity.test-framework.performance` installed the perf asmdef now **fails to compile** instead of being silently excluded; the define is still auto-set via `versionDefines` when the package is present.
 - `ObservableQueueSync` / `ObservableStackSync` / `ObservableDictionarySync`: unsupported actions now throw `NotSupportedException` with a descriptive message instead of `NotImplementedException`.
 - Release workflow excludes `CLAUDE.md` / `CLAUDE.md.meta` from the published UPM tree (alongside `.github`).
 
