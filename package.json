@@ -4,7 +4,7 @@
   "version": "1.1.0",
   "unity": "2021.3",
   "unityRelease": "0f1",
-  "description": "A set of covariate observation collections with easy synchronization between two collections, filtering and sorting.",
+  "description": "Covariant observable collections for Unity with synchronization, filtering, and sorting. Pure C#, no engine dependency.",
   "dependencies": {
     "com.unity.test-framework": "1.6.0"
   },
