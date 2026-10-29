@@ -220,5 +220,59 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.AreEqual(1, addedCount);
         }
+
+        #region Covariance
+        [Test]
+        public void CovariantView_SubscribeNextToExistingHandler_DoesNotThrow()
+        {
+            var source = new ObservableList<string>();
+            var log = new List<string>();
+            using var events = source.SplitByEvents(added: (items, _) => log.Add("ctor"));
+            IObservableEvents<object> covariant = events;
+
+            Assert.DoesNotThrow(() => covariant.Added += (items, _) => log.Add("covariant"));
+
+            source.Add("a");
+            CollectionAssert.AreEqual(new[] { "ctor", "covariant" }, log);
+            source.Dispose();
+        }
+
+        [Test]
+        public void CovariantView_AllEvents_AcceptMixedHandlers()
+        {
+            var source = new ObservableList<string>();
+            using var events = source.SplitByEvents();
+            IObservableEvents<object> covariant = events;
+
+            events.Removed += (items, _) => { };
+            events.Moved += (items, _, _) => { };
+            events.Replaced += (oldItems, newItems, _) => { };
+
+            Assert.DoesNotThrow(() => covariant.Removed += (items, _) => { });
+            Assert.DoesNotThrow(() => covariant.Moved += (items, _, _) => { });
+            Assert.DoesNotThrow(() => covariant.Replaced += (oldItems, newItems, _) => { });
+            source.Dispose();
+        }
+
+        [Test]
+        public void CovariantView_UnsubscribeMethodGroup_StopsCalls()
+        {
+            var source = new ObservableList<string>();
+            using var events = source.SplitByEvents();
+            IObservableEvents<object> covariant = events;
+            _covariantCalls = 0;
+
+            events.Added += OnAddedObjects;
+            covariant.Added -= OnAddedObjects;
+            source.Add("a");
+
+            Assert.AreEqual(0, _covariantCalls);
+            source.Dispose();
+        }
+
+        private int _covariantCalls;
+
+        private void OnAddedObjects(IReadOnlyList<object> items, int index) => _covariantCalls++;
+        #endregion
     }
 }
