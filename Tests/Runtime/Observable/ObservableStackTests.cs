@@ -2,6 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Aspid.Collections.Observable.Synchronizer;
 
 // ReSharper disable once CheckNamespace
 namespace Aspid.Collections.Observable.Tests
@@ -177,6 +178,29 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(NotifyCollectionChangedAction.Remove, e.Action);
             Assert.IsFalse(e.IsSingleItem);
             Assert.AreEqual(0, e.OldStartingIndex);
+        }
+
+        [Test]
+        public void PopRange_DestLargerThanCount_ThrowsWithoutRemovingItems()
+        {
+            _stack.PushRange(new[] { 1, 2 });
+            _events.Clear();
+
+            Assert.Throws<System.InvalidOperationException>(() => _stack.PopRange(new int[3]));
+
+            Assert.AreEqual(2, _stack.Count);
+            Assert.AreEqual(0, _events.Count);
+        }
+
+        [Test]
+        public void PopRange_DestLargerThanCount_KeepsSyncInStep()
+        {
+            using var sync = _stack.CreateSync(i => i);
+            _stack.PushRange(new[] { 1, 2 });
+
+            Assert.Throws<System.InvalidOperationException>(() => _stack.PopRange(new int[3]));
+
+            CollectionAssert.AreEqual(_stack.ToArray(), sync);
         }
         #endregion
         

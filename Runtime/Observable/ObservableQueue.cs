@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -123,6 +124,10 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                // Check up front: failing mid-loop would drop items without an event.
+                if (dest.Length > _queue.Count)
+                    throw new InvalidOperationException($"Cannot dequeue {dest.Length} items: the queue contains only {_queue.Count}.");
+
                 for (var i = 0; i < dest.Length; i++)
                     dest[i] = _queue.Dequeue();
 
