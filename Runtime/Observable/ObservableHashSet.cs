@@ -69,10 +69,12 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                if (!_set.Remove(item)) return false;
+                // Report the stored instance, not the caller's equal probe.
+                if (!_set.TryGetValue(item, out var stored)) return false;
+                _set.Remove(stored);
                 
-                OnRemoved(item);
-                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(item, -1));
+                OnRemoved(stored);
+                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(stored, -1));
                 
                 return true;
             }

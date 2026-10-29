@@ -144,11 +144,13 @@ namespace Aspid.Collections.Observable
             {
                 var index = _list.IndexOf(item);
                 if (index < 0) return false;
-                
+
+                // Report the stored instance, not the caller's equal probe.
+                var stored = _list[index];
                 _list.RemoveAt(index);
-                OnRemoved(item);
+                OnRemoved(stored);
                 
-                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(item, index));
+                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(stored, index));
                 return true;
             }
         }
