@@ -154,5 +154,34 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        #region Custom Comparer
+        [Test]
+        public void CustomComparer_SourceReplaceByEquivalentKey_DoesNotDuplicate()
+        {
+            var source = new ObservableDictionary<string, int>(System.StringComparer.OrdinalIgnoreCase) { ["Key"] = 1 };
+            using var sync = source.CreateSync(v => v.ToString());
+
+            source["KEY"] = 2;
+
+            Assert.AreEqual(1, sync.Count);
+            Assert.AreEqual("2", sync["Key"]);
+            source.Dispose();
+        }
+
+        [Test]
+        public void CustomComparer_SourceRemoveByEquivalentKey_RemovesEntry()
+        {
+            var source = new ObservableDictionary<string, int>(System.StringComparer.OrdinalIgnoreCase) { ["Key"] = 1 };
+            var removed = new List<string>();
+            using var sync = source.CreateSync(v => v.ToString(), remove: removed.Add);
+
+            source.Remove("KEY");
+
+            Assert.AreEqual(0, sync.Count);
+            CollectionAssert.AreEqual(new[] { "1" }, removed);
+            source.Dispose();
+        }
+        #endregion
     }
 }
