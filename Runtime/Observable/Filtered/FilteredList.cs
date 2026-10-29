@@ -36,7 +36,8 @@ namespace Aspid.Collections.Observable.Filtered
             }
         }
 
-        public int Count { get; private set; }
+        // Computed, not cached: without a filter or comparer the view reads the source directly.
+        public int Count => _indexes?.Count ?? _list.Count;
 
         public T this[int index] => _indexes is null
             ? _list[index]
@@ -45,7 +46,6 @@ namespace Aspid.Collections.Observable.Filtered
         public FilteredList(IReadOnlyList<T> list)
         {
             _list = list;
-            Count = _list.Count;
             SubscribeToSource();
         }
 
@@ -97,7 +97,6 @@ namespace Aspid.Collections.Observable.Filtered
                 _indexes = null;
             }
 
-            Count = _indexes?.Count ?? _list.Count;
             CollectionChanged?.Invoke();
         }
 
@@ -160,7 +159,6 @@ namespace Aspid.Collections.Observable.Filtered
                 default: Update(); return;
             }
 
-            Count = _indexes?.Count ?? _list.Count;
             CollectionChanged?.Invoke();
         }
 
