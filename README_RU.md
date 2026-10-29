@@ -35,7 +35,13 @@ https://github.com/VPDPersonal/Aspid.Collections.git#upm
 Чтобы установить конкретную версию, укажите неизменяемый per-release тег `upm/<version>` (список доступных версий — на странице [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases)):
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.0.1
+https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.1.0
+```
+
+Теги версий начинаются с `upm/1.0.2`. Пре-релизы публикуются в отдельную ветку `upm-preview`:
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git#upm-preview
 ```
 
 ## Основные возможности
@@ -80,6 +86,23 @@ list.InsertRange(0, new[] { "x", "y" });
 
 // Перемещение
 list.Move(0, 2); // Переместить элемент с индекса 0 на индекс 2
+
+// Запросы
+int index = list.IndexOf("item");
+bool contains = list.Contains("item");
+list.ForEach(item => Console.WriteLine(item));
+
+// Копирование в массив
+var buffer = new string[list.Count];
+list.CopyTo(buffer, 0);
+```
+
+Расширения (`Aspid.Collections.Observable.Extensions`):
+
+```csharp
+using Aspid.Collections.Observable.Extensions;
+
+list.Swap(0, 3); // Поменять местами два элемента по индексу
 ```
 
 ### ObservableDictionary
@@ -88,7 +111,9 @@ using Aspid.Collections.Observable;
 
 // Создание
 var dict = new ObservableDictionary<string, int>();
+var dictWithCapacity = new ObservableDictionary<string, int>(capacity: 16);
 var dictWithComparer = new ObservableDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+var dictWithBoth = new ObservableDictionary<string, int>(capacity: 16, StringComparer.OrdinalIgnoreCase);
 var dictFromCollection = new ObservableDictionary<string, int>(
     new[] { KeyValuePair.Create("a", 1), KeyValuePair.Create("b", 2) }
 );
@@ -112,6 +137,12 @@ dict.Dispose();
 // Доступ к данным
 bool exists = dict.TryGetValue("key", out var value);
 bool contains = dict.ContainsKey("key");
+bool containsPair = dict.Contains(KeyValuePair.Create("key", 100));
+
+// Перечисление / интроспекция
+IEnumerable<string> keys = dict.Keys;
+IEnumerable<int> values = dict.Values;
+IEqualityComparer<string> comparer = dict.Comparer;
 ```
 
 ### ObservableHashSet
@@ -136,7 +167,25 @@ set.Clear();
 
 // Очистка множества и события
 set.Dispose();
+
+// Запросы
+bool contains = set.Contains("item");
+IEqualityComparer<string> comparer = set.Comparer;
+
+// Операции над множествами (только чтение, источник не меняется)
+var other = new[] { "a", "b", "c" };
+bool isSub       = set.IsSubsetOf(other);
+bool isSuper     = set.IsSupersetOf(other);
+bool isProperSub = set.IsProperSubsetOf(other);
+bool isProperSup = set.IsProperSupersetOf(other);
+bool overlaps    = set.Overlaps(other);
+bool equals      = set.SetEquals(other);
 ```
+
+> `ObservableHashSet<T>` намеренно **не** реализует `ISet<T>`:
+> изменяющие операции (`UnionWith`, `IntersectWith`, …) не могут
+> отправить точные уведомления о добавленных и удалённых элементах,
+> поэтому доступны только предикаты множеств выше.
 
 ### ObservableQueue
 ```csharp
@@ -146,6 +195,7 @@ using Aspid.Collections.Observable;
 var queue = new ObservableQueue<string>();
 var queueWithCapacity = new ObservableQueue<string>(10);
 var queueFromCollection = new ObservableQueue<string>(new[] { "a", "b", "c" });
+var queueWrappingExisting = new ObservableQueue<string>(new Queue<string>()); // оборачивает, не копирует
 
 // Подписка на изменения
 queue.CollectionChanged += args =>
@@ -154,23 +204,27 @@ queue.CollectionChanged += args =>
 };
 
 // Операции
-string peek = queue.Peek();
-bool hasPeek = queue.TryPeek(out var peekResult);
-
 queue.Enqueue("item");
 queue.EnqueueRange(new[] { "a", "b", "c" });
 
+string peek = queue.Peek();                       // "item"; на пустой очереди бросает исключение
+bool hasPeek = queue.TryPeek(out var peekResult);
+
 string item = queue.Dequeue();
 bool success = queue.TryDequeue(out var result);
+
+// Пакетное извлечение: длина буфера не больше Count
+var buffer = new string[2];
+queue.DequeueRange(buffer);
+
+// Снимок / ёмкость
+string[] snapshot = queue.ToArray();
+queue.TrimExcess();
 
 queue.Clear();
 
 // Очистка очереди и события
 queue.Dispose();
-
-// Пакетное извлечение
-var buffer = new string[3];
-queue.DequeueRange(buffer);
 ```
 
 ### ObservableStack
@@ -198,39 +252,91 @@ bool hasPeek = stack.TryPeek(out var peekResult);
 string item = stack.Pop();
 bool success = stack.TryPop(out var result);
 
+// Пакетное извлечение: длина буфера не больше Count
+var buffer = new string[2];
+stack.PopRange(buffer);
+
+// Снимок / ёмкость
+string[] snapshot = stack.ToArray();
+stack.TrimExcess();
+
 stack.Clear();
 
 // Очистка стэка и события
 stack.Dispose();
-
-// Пакетное извлечение
-var buffer = new string[3];
-stack.PopRange(buffer);
 ```
 
 ## Интерфейсы
+
+Интерфейсы списков, коллекций, синков, фильтров и событий объявляют тип
+элемента **ковариантным** (`out T`), поэтому, например,
+`IReadOnlyObservableList<Cat>` можно присвоить
+`IReadOnlyObservableList<Animal>`. Словарные интерфейсы
+(`IReadOnlyObservableDictionary<TKey, TValue>`,
+`IReadOnlyObservableDictionarySync<TKey, T>`) инвариантны, как и
+`IReadOnlyDictionary<TKey, TValue>`.
+
 ### Основные интерфейсы
 
 | Интерфейс | Описание |
 |-----------|----------|
-| `IObservableCollection<T>` | Базовый интерфейс для всех наблюдаемых коллекций |
-| `IReadOnlyObservableList<T>` | Только для чтения список с уведомлениями |
+| `IObservableCollection<out T>` | Базовый интерфейс для всех наблюдаемых коллекций |
+| `IReadOnlyObservableList<out T>` | Только для чтения список с уведомлениями |
 | `IReadOnlyObservableDictionary<TKey, TValue>` | Только для чтения словарь с уведомлениями |
+
+### Интерфейсы синхронизации (`Aspid.Collections.Observable.Synchronizer`)
+
+Возвращаются расширениями `CreateSync(...)`. Каждая обёртка-синк
+реализует `IDisposable` и владеет своей подпиской на исходную коллекцию.
+
+| Интерфейс | Описание |
+|-----------|----------|
+| `IReadOnlyObservableCollectionSync<out T>` | База для синхронизированных коллекций кроме списка (Queue/Stack/HashSet) |
+| `IReadOnlyObservableListSync<out T>` | Синхронизированная проекция списка (расширяет `IReadOnlyObservableList<T>`) |
+| `IReadOnlyObservableDictionarySync<TKey, T>` | Синхронизированная проекция словаря |
+
+### Интерфейсы фильтрации (`Aspid.Collections.Observable.Filtered`)
+
+| Интерфейс | Описание |
+|-----------|----------|
+| `IReadOnlyFilteredList<out T>` | Только для чтения отфильтрованное/отсортированное представление `IReadOnlyList<T>` (событие `CollectionChanged` без параметров) |
+
+### Интерфейсы событий
+
+| Интерфейс | Описание |
+|-----------|----------|
+| `IObservableEvents<out T>` | Освобождаемая обёртка, которую возвращает `SplitByEvents(...)`, с отдельными событиями `Added` / `Removed` / `Moved` / `Replaced` / `Reset` |
 
 ### Иерархия интерфейсов
 ```
-IObservableCollection<T>
+IObservableCollection<out T>
 ├── IReadOnlyCollection<T>
 ├── CollectionChanged event
 └── SyncRoot property
 
-IReadOnlyObservableList<T>
+IReadOnlyObservableList<out T>
 ├── IObservableCollection<T>
 └── IReadOnlyList<T>
 
 IReadOnlyObservableDictionary<TKey, TValue>
 ├── IObservableCollection<KeyValuePair<TKey, TValue>>
 └── IReadOnlyDictionary<TKey, TValue>
+
+IReadOnlyObservableCollectionSync<out T>
+├── IObservableCollection<T>
+└── IDisposable
+
+IReadOnlyObservableListSync<out T>
+├── IReadOnlyObservableList<T>
+└── IReadOnlyObservableCollectionSync<T>
+
+IReadOnlyFilteredList<out T>
+├── IReadOnlyList<T>
+└── CollectionChanged event (Action)
+
+IObservableEvents<out T>
+├── IDisposable
+└── Added / Removed / Moved / Replaced / Reset events
 ```
 
 ## События
@@ -313,6 +419,9 @@ var viewModels2 = models.CreateSync(
     model => new UserViewModel(model),
     removed: vm => vm.Cleanup()
 );
+// Примечание: для ObservableQueue / ObservableStack / ObservableHashSet /
+// IReadOnlyObservableDictionary параметр колбэка удаления называется
+// `remove:` (а не `removed:`). Позиционный аргумент снимает это различие.
 
 // Все изменения в models автоматически отражаются в viewModels
 models.Add(new UserModel { Name = "John" });
@@ -436,7 +545,8 @@ public class TodoListViewModel : IDisposable
     public void Dispose() => _items.Dispose();
 }
 
-public class TodoItemViewModel
+// isDisposable: true вызывает Dispose у элементов, реализующих IDisposable
+public class TodoItemViewModel : IDisposable
 {
     private Todo _model;
 
@@ -446,6 +556,11 @@ public class TodoItemViewModel
     }
 
     // Some code.
+
+    public void Dispose()
+    {
+        // Отписка от модели, освобождение ресурсов.
+    }
 }
 ```
 

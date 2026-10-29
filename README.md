@@ -35,7 +35,13 @@ https://github.com/VPDPersonal/Aspid.Collections.git#upm
 To install a specific version, target the immutable per-release tag `upm/<version>` (see [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases) for the list of available versions):
 
 ```
-https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.0.1
+https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.1.0
+```
+
+Per-version tags start at `upm/1.0.2`. Pre-releases are published to a separate `upm-preview` branch:
+
+```
+https://github.com/VPDPersonal/Aspid.Collections.git#upm-preview
 ```
 
 ## Key Features
@@ -198,27 +204,27 @@ queue.CollectionChanged += args =>
 };
 
 // Operations
-string peek = queue.Peek();
-bool hasPeek = queue.TryPeek(out var peekResult);
-
 queue.Enqueue("item");
 queue.EnqueueRange(new[] { "a", "b", "c" });
+
+string peek = queue.Peek();                       // "item"; throws on an empty queue
+bool hasPeek = queue.TryPeek(out var peekResult);
 
 string item = queue.Dequeue();
 bool success = queue.TryDequeue(out var result);
 
-queue.Clear();
-
-// Clear queue and events
-queue.Dispose();
-
-// Batch dequeue
-var buffer = new string[3];
+// Batch dequeue: the buffer length must not exceed Count
+var buffer = new string[2];
 queue.DequeueRange(buffer);
 
 // Snapshot / capacity
 string[] snapshot = queue.ToArray();
 queue.TrimExcess();
+
+queue.Clear();
+
+// Clear queue and events
+queue.Dispose();
 ```
 
 ### ObservableStack
@@ -246,25 +252,28 @@ bool hasPeek = stack.TryPeek(out var peekResult);
 string item = stack.Pop();
 bool success = stack.TryPop(out var result);
 
-stack.Clear();
-
-// Clear stack and events
-stack.Dispose();
-
-// Batch pop
-var buffer = new string[3];
+// Batch pop: the buffer length must not exceed Count
+var buffer = new string[2];
 stack.PopRange(buffer);
 
 // Snapshot / capacity
 string[] snapshot = stack.ToArray();
 stack.TrimExcess();
+
+stack.Clear();
+
+// Clear stack and events
+stack.Dispose();
 ```
 
 ## Interfaces
 
-All interfaces expose their element type as **covariant** (`out T`), so
-you can assign e.g. `IReadOnlyObservableList<Cat>` to
-`IReadOnlyObservableList<Animal>`.
+List, collection, sync, filter and event interfaces expose their element
+type as **covariant** (`out T`), so you can assign e.g.
+`IReadOnlyObservableList<Cat>` to `IReadOnlyObservableList<Animal>`.
+Dictionary interfaces (`IReadOnlyObservableDictionary<TKey, TValue>`,
+`IReadOnlyObservableDictionarySync<TKey, T>`) are invariant, like
+`IReadOnlyDictionary<TKey, TValue>`.
 
 ### Core Interfaces
 
@@ -536,7 +545,8 @@ public class TodoListViewModel : IDisposable
     public void Dispose() => _items.Dispose();
 }
 
-public class TodoItemViewModel
+// isDisposable: true calls Dispose on items that implement IDisposable
+public class TodoItemViewModel : IDisposable
 {
     private Todo _model;
 
@@ -546,6 +556,11 @@ public class TodoItemViewModel
     }
 
     // Some code.
+
+    public void Dispose()
+    {
+        // Unsubscribe from the model, release resources.
+    }
 }
 ```
 
