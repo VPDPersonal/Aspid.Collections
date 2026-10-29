@@ -133,5 +133,49 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        #region Dispose
+        [Test]
+        public void DisposeTwice_InvokesRemoveOncePerItem()
+        {
+            var source = new ObservableHashSet<int> { 1, 2 };
+            var removed = new List<string>();
+            var sync = source.CreateSync(i => i.ToString(), remove: removed.Add);
+
+            sync.Dispose();
+            sync.Dispose();
+
+            CollectionAssert.AreEquivalent(new[] { "1", "2" }, removed);
+            source.Dispose();
+        }
+
+        [Test]
+        public void DisposeTwice_IsDisposable_DisposesItemsOnce()
+        {
+            var source = new ObservableHashSet<int> { 1 };
+            DisposableItem created = null;
+            var sync = source.CreateSync(_ => created = new DisposableItem(), isDisposable: true);
+
+            sync.Dispose();
+            sync.Dispose();
+
+            Assert.AreEqual(1, created.DisposeCount);
+            source.Dispose();
+        }
+
+        [Test]
+        public void Clear_ThenDispose_ReleasesItemsOnce()
+        {
+            var source = new ObservableHashSet<int> { 1, 2 };
+            var removed = new List<string>();
+            var sync = source.CreateSync(i => i.ToString(), remove: removed.Add);
+
+            source.Clear();
+            sync.Dispose();
+
+            Assert.AreEqual(2, removed.Count);
+            source.Dispose();
+        }
+        #endregion
     }
 }

@@ -84,7 +84,6 @@ namespace Aspid.Collections.Observable.Synchronizer
                 case NotifyCollectionChangedAction.Reset:
                     {
                         Clear();
-                        _sync.Clear();
                     }
                     break;
 
@@ -137,6 +136,9 @@ namespace Aspid.Collections.Observable.Synchronizer
                 foreach (var item in _sync.Values)
                     _remove.Invoke(item);
             }
+
+            // Forget released items, so a second Clear or Dispose does not release them again.
+            _sync.Clear();
         }
 
         public override void Dispose()
