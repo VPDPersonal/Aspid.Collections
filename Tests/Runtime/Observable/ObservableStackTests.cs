@@ -178,6 +178,20 @@ namespace Aspid.Collections.Observable.Tests
             Assert.IsFalse(e.IsSingleItem);
             Assert.AreEqual(0, e.OldStartingIndex);
         }
+
+        [Test]
+        public void EmptyRanges_DoNotRaiseEvents()
+        {
+            _stack.PushRange(new[] { 1, 2 });
+            _events.Clear();
+
+            _stack.PushRange(System.Array.Empty<int>());
+            _stack.PushRange(new List<int>());
+            _stack.PopRange(System.Array.Empty<int>());
+
+            Assert.AreEqual(2, _stack.Count);
+            Assert.AreEqual(0, _events.Count);
+        }
         #endregion
         
         #region Peek

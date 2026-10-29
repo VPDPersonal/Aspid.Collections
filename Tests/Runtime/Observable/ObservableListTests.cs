@@ -275,7 +275,7 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
-        public void RemoveRange_ZeroCount_RaisesEmptyBatchRemoveEvent()
+        public void RemoveRange_ZeroCount_DoesNotRaiseEvent()
         {
             _list.AddRange(1, 2, 3);
             _events.Clear();
@@ -283,8 +283,29 @@ namespace Aspid.Collections.Observable.Tests
             _list.RemoveRange(0, 0);
 
             Assert.AreEqual(3, _list.Count);
-            Assert.AreEqual(1, _events.Count);
-            Assert.AreEqual(0, _events.Last.OldItems!.Count);
+            Assert.AreEqual(0, _events.Count);
+        }
+
+        [Test]
+        public void RemoveRange_ZeroCount_StillValidatesStartIndex()
+        {
+            _list.AddRange(1, 2, 3);
+
+            Assert.Throws<System.ArgumentException>(() => _list.RemoveRange(4, 0));
+        }
+
+        [Test]
+        public void EmptyAddAndInsertRange_DoNotRaiseEvents()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            _list.AddRange(System.Array.Empty<int>());
+            _list.AddRange(new List<int>());
+            _list.InsertRange(1, System.Array.Empty<int>());
+            _list.InsertRange(1, new List<int>());
+
+            Assert.AreEqual(0, _events.Count);
         }
         #endregion
 
@@ -361,6 +382,18 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(1, e.OldItem);
             Assert.AreEqual(0, e.OldStartingIndex);
             Assert.AreEqual(2, e.NewStartingIndex);
+        }
+
+        [Test]
+        public void Move_SameIndex_DoesNotRaiseEvent()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            _list.Move(1, 1);
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.AreEqual(0, _events.Count);
         }
         #endregion
 
