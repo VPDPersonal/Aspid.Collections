@@ -177,7 +177,7 @@ namespace Aspid.Collections.Observable
                 if (!EqualityComparer<TValue>.Default.Equals(value, item.Value)) return false;
                 if (!_dictionary.Remove(item.Key, out var value2)) return false;
 
-                OnRemoved(item.Key, item.Value);
+                OnRemoved(item.Key, value2);
                 Invoke(NotifyCollectionChangedEventArgs<KeyValuePair<TKey, TValue>>.Remove(new KeyValuePair<TKey, TValue>(item.Key, value2), -1));
                 return true;
             }
