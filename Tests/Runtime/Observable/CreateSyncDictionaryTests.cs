@@ -154,5 +154,22 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        #region Replace Same Instance
+        [Test]
+        public void SourceReplace_ConverterReturnsSameInstance_DoesNotDisposeLiveItem()
+        {
+            var cached = new DisposableItem();
+            var source = new ObservableDictionary<string, int> { ["k"] = 1 };
+            var sync = source.CreateSync(_ => cached, isDisposable: true);
+
+            source["k"] = 2;
+
+            Assert.AreSame(cached, sync["k"]);
+            Assert.IsFalse(cached.IsDisposed);
+            sync.Dispose();
+            source.Dispose();
+        }
+        #endregion
     }
 }
