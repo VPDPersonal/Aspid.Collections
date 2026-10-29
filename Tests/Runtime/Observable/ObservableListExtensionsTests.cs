@@ -48,6 +48,18 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(NotifyCollectionChangedAction.Move, capture.Events[1].Action);
         }
 
+        [TestCase(0, 1)]
+        [TestCase(1, 0)]
+        public void Swap_AdjacentElements_FiresSingleMoveEvent(int index1, int index2)
+        {
+            using var capture = new EventCapture<int>(_list);
+
+            _list.Swap(index1, index2);
+
+            CollectionAssert.AreEqual(new[] { 2, 1, 3, 4, 5 }, _list);
+            Assert.AreEqual(1, capture.Count);
+        }
+
         [Test]
         public void Swap_SameIndex_IsNoop()
         {

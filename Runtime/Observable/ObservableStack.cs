@@ -54,6 +54,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (items.Length is 0) return;
+
                 foreach (var item in items)
                     _stack.Push(item);
                 
@@ -66,6 +68,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (items.Count is 0) return;
+
                 foreach (var item in items)
                     _stack.Push(item);
 
@@ -112,6 +116,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (dest.Length is 0) return;
+
                 for (var i = 0; i < dest.Length; i++)
                     dest[i] = _stack.Pop();
 
