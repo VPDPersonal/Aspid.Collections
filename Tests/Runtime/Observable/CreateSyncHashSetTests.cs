@@ -133,5 +133,21 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        #region Custom Comparer
+        [Test]
+        public void CustomComparer_SourceRemoveByEquivalentItem_RemovesProjection()
+        {
+            var source = new ObservableHashSet<string>(System.StringComparer.OrdinalIgnoreCase) { "A" };
+            var removed = new List<string>();
+            using var sync = source.CreateSync(s => s + "!", remove: removed.Add);
+
+            source.Remove("a");
+
+            Assert.AreEqual(0, sync.Count);
+            CollectionAssert.AreEqual(new[] { "A!" }, removed);
+            source.Dispose();
+        }
+        #endregion
     }
 }
