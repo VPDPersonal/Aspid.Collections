@@ -25,10 +25,15 @@ jobs:
     steps:
       - name: Determine version
         id: version
+        # Expressions go through env, never straight into the script: Actions substitutes them
+        # before bash parses it, so a quote in the dispatch input would run as shell code.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            VERSION="${{ inputs.version }}"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            VERSION="$INPUT_VERSION"
           else
             VERSION="${GITHUB_REF_NAME}"
           fi
@@ -59,9 +64,10 @@ jobs:
 
       - name: Check tag does not already exist
         if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
-          TAG="${{ steps.version.outputs.tag }}"
           if git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
             echo "::error::Tag $TAG already exists locally. Delete it or pick another version."
             exit 1
@@ -72,9 +78,10 @@ jobs:
           fi
 
       - name: Validate package.json version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          VERSION="${{ steps.version.outputs.version }}"
           PKG_VERSION=$(jq -r .version "$PACKAGE_PATH/package.json")
           if [[ "$PKG_VERSION" != "$VERSION" ]]; then
             echo "::error file=$PACKAGE_PATH/package.json::package.json version ($PKG_VERSION) does not match release version ($VERSION). Bump it before tagging."
@@ -84,9 +91,10 @@ jobs:
 
       - name: Extract CHANGELOG section
         id: changelog
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          VERSION="${{ steps.version.outputs.version }}"
           NOTES=$(awk -v ver="$VERSION" '
             BEGIN { capture = 0 }
             /^## \[/ {
@@ -111,24 +119,28 @@ jobs:
 
       - name: Create and push release tag
         if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
-          TAG="${{ steps.version.outputs.tag }}"
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
       - name: Checkout release tag
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
-          git fetch origin "refs/tags/${{ steps.version.outputs.tag }}:refs/tags/${{ steps.version.outputs.tag }}" || true
-          git checkout "${{ steps.version.outputs.tag }}"
+          git fetch origin "refs/tags/$TAG:refs/tags/$TAG" || true
+          git checkout "$TAG"
 
       - name: Publish UPM tag and branch
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
         run: |
           set -euo pipefail
-          VERSION="${{ steps.version.outputs.version }}"
-          TAG="${{ steps.version.outputs.tag }}"
-          PRERELEASE="${{ steps.version.outputs.prerelease }}"
           UPM_TAG="upm/$VERSION"
 
           if git ls-remote --exit-code --tags origin "$UPM_TAG" >/dev/null 2>&1; then
