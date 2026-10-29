@@ -551,5 +551,46 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, bInvoked);
         }
         #endregion
+
+        #region Covariant Unsubscribe
+        [Test]
+        public void Unsubscribe_MethodGroupThroughCovariantView_StopsCalls()
+        {
+            var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+
+            cats.CollectionChanged += OnAnimalsChanged;
+            animals.CollectionChanged -= OnAnimalsChanged;
+            cats.Add(new Cat());
+
+            Assert.AreEqual(0, _animalCalls);
+            cats.Dispose();
+        }
+
+        [Test]
+        public void Unsubscribe_MethodGroupThroughCovariantView_DuringInvoke_SkipsHandler()
+        {
+            var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+
+            cats.CollectionChanged += _ => animals.CollectionChanged -= OnAnimalsChanged;
+            cats.CollectionChanged += OnAnimalsChanged;
+            cats.Add(new Cat());
+            cats.Add(new Cat());
+
+            Assert.AreEqual(0, _animalCalls);
+            cats.Dispose();
+        }
+
+        private int _animalCalls;
+
+        private void OnAnimalsChanged(INotifyCollectionChangedEventArgs<Animal> e) => _animalCalls++;
+
+        private class Animal { }
+
+        private sealed class Cat : Animal { }
+        #endregion
     }
 }

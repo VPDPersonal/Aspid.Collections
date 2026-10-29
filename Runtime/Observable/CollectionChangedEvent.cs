@@ -42,21 +42,39 @@ namespace Aspid.Collections.Observable
                 var v = value ?? throw ThrowValueNullReferenceException();
                 if (_handlers is null) return;
 
+                var index = IndexOf(_handlers, v);
+                if (index < 0) return;
+
                 if (_invokeDepth > 0)
                 {
                     var forked = new List<NotifyCollectionChangedEventHandler<T>>(_handlers);
+                    var removed = forked[index];
+                    forked.RemoveAt(index);
 
-                    if (forked.Remove(v))
-                    {
-                        (_removedDuringInvoke ??= new HashSet<NotifyCollectionChangedEventHandler<T>>()).Add(v);
-                        _handlers = forked;
-                    }
+                    // Track the stored instance: the caller's delegate may differ in runtime type.
+                    (_removedDuringInvoke ??= new HashSet<NotifyCollectionChangedEventHandler<T>>()).Add(removed);
+                    _handlers = forked;
                 }
                 else
                 {
-                    _handlers.Remove(v);
+                    _handlers.RemoveAt(index);
                 }
             }
+        }
+
+        // Delegate.Equals also compares runtime types, so a handler subscribed as Handler<Cat> never
+        // equals the same method group unsubscribed through a covariant view as Handler<Animal>.
+        // Match by method and target instead; search from the end, like Delegate.Remove.
+        private static int IndexOf(List<NotifyCollectionChangedEventHandler<T>> handlers, NotifyCollectionChangedEventHandler<T> value)
+        {
+            for (var i = handlers.Count - 1; i >= 0; i--)
+            {
+                var handler = handlers[i];
+                if (handler.Method == value.Method && ReferenceEquals(handler.Target, value.Target))
+                    return i;
+            }
+
+            return -1;
         }
 
         protected void Invoke(INotifyCollectionChangedEventArgs<T> e)
