@@ -69,7 +69,6 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                // Report the stored instance, not the caller's equal probe.
                 if (!_set.TryGetValue(item, out var stored)) return false;
                 _set.Remove(stored);
                 
