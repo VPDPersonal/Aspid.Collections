@@ -84,6 +84,8 @@ namespace Aspid.Collections.Observable
                 var index = _list.Count;
                 
                 _list.AddRange(items);
+                if (items.Length is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -97,6 +99,8 @@ namespace Aspid.Collections.Observable
                 var index = _list.Count;
 
                 _list.AddRange(items);
+                if (items.Count is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -121,6 +125,8 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 _list.InsertRange(index, items);
+                if (items.Length is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -132,6 +138,8 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 _list.InsertRange(index, items);
+                if (items.Count is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -179,6 +187,8 @@ namespace Aspid.Collections.Observable
                     items[i] = _list[startIndex + i];
 
                 _list.RemoveRange(startIndex, count);
+                if (count is 0) return;
+
                 OnRemovedRange(items);
 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Remove(items, startIndex));
@@ -198,6 +208,7 @@ namespace Aspid.Collections.Observable
                 if ((uint)newIndex >= (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(newIndex));
 
                 var removedItem = _list[oldIndex];
+                if (oldIndex == newIndex) return;
                 
                 _list.RemoveAt(oldIndex);
                 _list.Insert(newIndex, removedItem);
