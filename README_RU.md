@@ -22,6 +22,8 @@ https://github.com/VPDPersonal/Aspid.Collections.git#upm
 
 Ветка `upm` указывает на последний стабильный релиз. Чтобы закрепить версию, укажите её тег `upm/<версия>`, например `#upm/1.1.0`. См. [список релизов](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
+Для предварительных релизов используется ветка `upm-preview`.
+
 <details>
 <summary>Совместимость с Unity и проблемы установки</summary>
 

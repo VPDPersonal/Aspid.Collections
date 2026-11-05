@@ -22,6 +22,8 @@ https://github.com/VPDPersonal/Aspid.Collections.git#upm
 
 The `upm` branch tracks the latest stable release. To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.0`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
+Preview releases use the `upm-preview` branch.
+
 <details>
 <summary>Unity compatibility and troubleshooting</summary>
 
