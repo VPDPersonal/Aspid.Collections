@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
@@ -221,6 +222,20 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(1, addedCount);
         }
 
+        [Test]
+        public void Reset_UnsubscribeOneHandlerFromCombinedDelegate_LeavesTheOther()
+        {
+            var log = new List<string>();
+            Action first = () => log.Add("first");
+            Action second = () => log.Add("second");
+            using var events = _source.SplitByEvents(reset: first + second);
+
+            events.Reset -= second;
+            _source.Clear();
+
+            CollectionAssert.AreEqual(new[] { "first" }, log);
+        }
+
         #region Covariance
         [Test]
         public void CovariantView_SubscribeNextToExistingHandler_DoesNotThrow()
@@ -269,6 +284,31 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, _covariantCalls);
             source.Dispose();
         }
+
+#nullable enable annotations
+        [Test]
+        public void CovariantView_UnsubscribeCombinedDelegate_RemovesLastMatchingSequence()
+        {
+            using var source = new ObservableList<string>();
+            using var events = source.SplitByEvents();
+            IObservableEvents<object> covariant = events;
+            var log = new List<string>();
+            void First(IReadOnlyList<object?> items, int index) => log.Add("first");
+            void Second(IReadOnlyList<object?> items, int index) => log.Add("second");
+            Action<IReadOnlyList<object?>, int> combined = First;
+            combined += Second;
+
+            covariant.Added += combined;
+            events.Added += (_, _) => log.Add("marker");
+            events.Added += First;
+            covariant.Added += Second;
+
+            covariant.Added -= combined;
+            source.Add("a");
+
+            CollectionAssert.AreEqual(new[] { "first", "second", "marker" }, log);
+        }
+#nullable restore annotations
 
         private int _covariantCalls;
 

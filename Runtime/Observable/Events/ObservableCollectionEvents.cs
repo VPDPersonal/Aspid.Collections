@@ -131,15 +131,14 @@ namespace Aspid.Collections.Observable
         {
             if (value is null) return;
 
-            if (handlers is null)
-            {
-                handlers = new[] { value };
-                return;
-            }
+            var invocationList = value.GetInvocationList();
+            var count = handlers?.Length ?? 0;
+            var copy = new TDelegate[count + invocationList.Length];
+            if (handlers is not null) Array.Copy(handlers, copy, count);
 
-            var copy = new TDelegate[handlers.Length + 1];
-            Array.Copy(handlers, copy, handlers.Length);
-            copy[handlers.Length] = value;
+            for (var i = 0; i < invocationList.Length; i++)
+                copy[count + i] = (TDelegate)invocationList[i];
+
             handlers = copy;
         }
 
@@ -148,28 +147,40 @@ namespace Aspid.Collections.Observable
         {
             if (value is null || handlers is null) return;
 
-            var index = -1;
-            for (var i = handlers.Length - 1; i >= 0; i--)
+            var invocationList = value.GetInvocationList();
+            var remainingCount = handlers.Length - invocationList.Length;
+            for (var index = remainingCount; index >= 0; index--)
             {
-                if (handlers[i].Method == value.Method && ReferenceEquals(handlers[i].Target, value.Target))
+                if (!MatchesAt(handlers, index, invocationList)) continue;
+
+                if (remainingCount == 0)
                 {
-                    index = i;
-                    break;
+                    handlers = null;
+                    return;
                 }
-            }
 
-            if (index < 0) return;
-
-            if (handlers.Length is 1)
-            {
-                handlers = null;
+                var copy = new TDelegate[remainingCount];
+                Array.Copy(handlers, 0, copy, 0, index);
+                Array.Copy(handlers, index + invocationList.Length, copy, index, remainingCount - index);
+                handlers = copy;
                 return;
             }
+        }
 
-            var copy = new TDelegate[handlers.Length - 1];
-            Array.Copy(handlers, 0, copy, 0, index);
-            Array.Copy(handlers, index + 1, copy, index, handlers.Length - index - 1);
-            handlers = copy;
+        private static bool MatchesAt(Delegate[] handlers, int index, Delegate[] invocationList)
+        {
+            for (var i = 0; i < invocationList.Length; i++)
+            {
+                var existing = handlers[index + i];
+                var requested = invocationList[i];
+                var matches = existing.GetType() == requested.GetType()
+                    ? existing.Equals(requested)
+                    : existing.Method == requested.Method && ReferenceEquals(existing.Target, requested.Target);
+
+                if (!matches) return false;
+            }
+
+            return true;
         }
 
         public void Dispose()
