@@ -384,6 +384,21 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(2, e.NewStartingIndex);
         }
 
+        [TestCase(0, 3)]
+        [TestCase(0, -1)]
+        [TestCase(3, 0)]
+        [TestCase(-1, 0)]
+        public void Move_IndexOutOfRange_ThrowsWithoutLosingItem(int oldIndex, int newIndex)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.Move(oldIndex, newIndex));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.AreEqual(0, _events.Count);
+        }
+
         [Test]
         public void Move_SameIndex_DoesNotRaiseEvent()
         {
@@ -582,6 +597,30 @@ namespace Aspid.Collections.Observable.Tests
             _list.Add(1);
 
             Assert.AreEqual(0, bInvoked);
+        }
+        #endregion
+
+        #region Stored Instance
+        [Test]
+        public void Remove_EqualProbe_EventAndHookCarryStoredInstance()
+        {
+            var stored = new Keyed { Id = 1 };
+            var list = new ObservableList<Keyed> { stored };
+            Keyed reported = null;
+            list.CollectionChanged += e => reported = e.OldItem;
+
+            Assert.IsTrue(list.Remove(new Keyed { Id = 1 }));
+
+            Assert.AreSame(stored, reported);
+            list.Dispose();
+        }
+
+        private sealed class Keyed : System.IEquatable<Keyed>
+        {
+            public int Id;
+            public bool Equals(Keyed other) => other is not null && other.Id == Id;
+            public override bool Equals(object obj) => Equals(obj as Keyed);
+            public override int GetHashCode() => Id;
         }
         #endregion
     }

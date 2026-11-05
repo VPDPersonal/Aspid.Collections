@@ -152,11 +152,12 @@ namespace Aspid.Collections.Observable
             {
                 var index = _list.IndexOf(item);
                 if (index < 0) return false;
-                
+
+                var stored = _list[index];
                 _list.RemoveAt(index);
-                OnRemoved(item);
+                OnRemoved(stored);
                 
-                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(item, index));
+                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(stored, index));
                 return true;
             }
         }
@@ -202,6 +203,10 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                // Validate both indexes up front: a failed Insert after RemoveAt would drop the item without an event.
+                if ((uint)oldIndex >= (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(oldIndex));
+                if ((uint)newIndex >= (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(newIndex));
+
                 var removedItem = _list[oldIndex];
                 if (oldIndex == newIndex) return;
                 

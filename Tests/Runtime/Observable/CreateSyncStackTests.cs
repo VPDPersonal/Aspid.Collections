@@ -42,6 +42,34 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(3, _sync.Count);
             source.Dispose();
         }
+
+        [Test]
+        public void CreateSync_NonEmptySource_KeepsSourceOrder()
+        {
+            _sync.Dispose();
+            var source = new ObservableStack<int>(new[] { 1, 2, 3 });
+            _sync = source.CreateSync(i => i.ToString());
+
+            CollectionAssert.AreEqual(new[] { "3", "2", "1" }, _sync);
+
+            source.Pop();
+            CollectionAssert.AreEqual(new[] { "2", "1" }, _sync);
+            source.Dispose();
+        }
+
+        [Test]
+        public void CreateSync_NonEmptySource_SourcePop_RemovesMatchingItem()
+        {
+            _sync.Dispose();
+            var source = new ObservableStack<int>(new[] { 1, 2, 3 });
+            var removed = new List<string>();
+            _sync = source.CreateSync(i => i.ToString(), remove: removed.Add);
+
+            source.Pop();
+
+            CollectionAssert.AreEqual(new[] { "3" }, removed);
+            source.Dispose();
+        }
         #endregion
         
         [Test]
