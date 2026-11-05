@@ -244,5 +244,50 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        #region Replace Converted Values
+        [Test]
+        public void SourceReplace_ConverterReturnsSameInstance_DoesNotDisposeLiveItem()
+        {
+            var cached = new DisposableItem();
+            var source = new ObservableList<int> { 7 };
+            var sync = source.CreateSync(_ => cached, isDisposable: true);
+
+            source[0] = 7;
+
+            Assert.AreSame(cached, sync[0]);
+            Assert.IsFalse(cached.IsDisposed);
+            sync.Dispose();
+            source.Dispose();
+        }
+
+        [Test]
+        public void SourceReplace_ConverterReturnsSameInstance_DoesNotInvokeRemoved()
+        {
+            var cached = new object();
+            var removed = new List<object>();
+            var source = new ObservableList<int> { 7 };
+            var sync = source.CreateSync(_ => cached, removed: removed.Add);
+
+            source[0] = 7;
+
+            Assert.AreEqual(0, removed.Count);
+            sync.Dispose();
+            source.Dispose();
+        }
+
+        [Test]
+        public void SourceReplace_ConverterReturnsNullAgain_InvokesRemoved()
+        {
+            using var source = new ObservableList<int> { 1 };
+            var removed = new List<string>();
+            using var sync = source.CreateSync<int, string>(_ => null!, removed: removed.Add);
+
+            source[0] = 2;
+
+            Assert.AreEqual(1, removed.Count);
+            Assert.IsNull(removed[0]);
+        }
+        #endregion
     }
 }

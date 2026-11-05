@@ -84,6 +84,8 @@ namespace Aspid.Collections.Observable
                 var index = _list.Count;
                 
                 _list.AddRange(items);
+                if (items.Length is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -97,6 +99,8 @@ namespace Aspid.Collections.Observable
                 var index = _list.Count;
 
                 _list.AddRange(items);
+                if (items.Count is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -121,6 +125,8 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 _list.InsertRange(index, items);
+                if (items.Length is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -132,6 +138,8 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 _list.InsertRange(index, items);
+                if (items.Count is 0) return;
+
                 OnAddedRange(items);
                 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
@@ -144,11 +152,12 @@ namespace Aspid.Collections.Observable
             {
                 var index = _list.IndexOf(item);
                 if (index < 0) return false;
-                
+
+                var stored = _list[index];
                 _list.RemoveAt(index);
-                OnRemoved(item);
+                OnRemoved(stored);
                 
-                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(item, index));
+                Invoke(NotifyCollectionChangedEventArgs<T>.Remove(stored, index));
                 return true;
             }
         }
@@ -178,6 +187,8 @@ namespace Aspid.Collections.Observable
                     items[i] = _list[startIndex + i];
 
                 _list.RemoveRange(startIndex, count);
+                if (count is 0) return;
+
                 OnRemovedRange(items);
 
                 Invoke(NotifyCollectionChangedEventArgs<T>.Remove(items, startIndex));
@@ -192,7 +203,12 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                // Validate both indexes up front: a failed Insert after RemoveAt would drop the item without an event.
+                if ((uint)oldIndex >= (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(oldIndex));
+                if ((uint)newIndex >= (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(newIndex));
+
                 var removedItem = _list[oldIndex];
+                if (oldIndex == newIndex) return;
                 
                 _list.RemoveAt(oldIndex);
                 _list.Insert(newIndex, removedItem);

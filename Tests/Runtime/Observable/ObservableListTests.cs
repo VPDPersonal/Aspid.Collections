@@ -275,7 +275,7 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
-        public void RemoveRange_ZeroCount_RaisesEmptyBatchRemoveEvent()
+        public void RemoveRange_ZeroCount_DoesNotRaiseEvent()
         {
             _list.AddRange(1, 2, 3);
             _events.Clear();
@@ -283,8 +283,29 @@ namespace Aspid.Collections.Observable.Tests
             _list.RemoveRange(0, 0);
 
             Assert.AreEqual(3, _list.Count);
-            Assert.AreEqual(1, _events.Count);
-            Assert.AreEqual(0, _events.Last.OldItems!.Count);
+            Assert.AreEqual(0, _events.Count);
+        }
+
+        [Test]
+        public void RemoveRange_ZeroCount_StillValidatesStartIndex()
+        {
+            _list.AddRange(1, 2, 3);
+
+            Assert.Throws<System.ArgumentException>(() => _list.RemoveRange(4, 0));
+        }
+
+        [Test]
+        public void EmptyAddAndInsertRange_DoNotRaiseEvents()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            _list.AddRange(System.Array.Empty<int>());
+            _list.AddRange(new List<int>());
+            _list.InsertRange(1, System.Array.Empty<int>());
+            _list.InsertRange(1, new List<int>());
+
+            Assert.AreEqual(0, _events.Count);
         }
         #endregion
 
@@ -361,6 +382,33 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(1, e.OldItem);
             Assert.AreEqual(0, e.OldStartingIndex);
             Assert.AreEqual(2, e.NewStartingIndex);
+        }
+
+        [TestCase(0, 3)]
+        [TestCase(0, -1)]
+        [TestCase(3, 0)]
+        [TestCase(-1, 0)]
+        public void Move_IndexOutOfRange_ThrowsWithoutLosingItem(int oldIndex, int newIndex)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.Move(oldIndex, newIndex));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.AreEqual(0, _events.Count);
+        }
+
+        [Test]
+        public void Move_SameIndex_DoesNotRaiseEvent()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            _list.Move(1, 1);
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.AreEqual(0, _events.Count);
         }
         #endregion
 
@@ -552,6 +600,30 @@ namespace Aspid.Collections.Observable.Tests
         }
         #endregion
 
+        #region Stored Instance
+        [Test]
+        public void Remove_EqualProbe_EventAndHookCarryStoredInstance()
+        {
+            var stored = new Keyed { Id = 1 };
+            var list = new ObservableList<Keyed> { stored };
+            Keyed reported = null;
+            list.CollectionChanged += e => reported = e.OldItem;
+
+            Assert.IsTrue(list.Remove(new Keyed { Id = 1 }));
+
+            Assert.AreSame(stored, reported);
+            list.Dispose();
+        }
+
+        private sealed class Keyed : System.IEquatable<Keyed>
+        {
+            public int Id;
+            public bool Equals(Keyed other) => other is not null && other.Id == Id;
+            public override bool Equals(object obj) => Equals(obj as Keyed);
+            public override int GetHashCode() => Id;
+        }
+        #endregion
+
         #region Covariant Unsubscribe
         [Test]
         public void Unsubscribe_MethodGroupThroughCovariantView_StopsCalls()
@@ -582,6 +654,49 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.AreEqual(0, _animalCalls);
             cats.Dispose();
+        }
+
+        [Test]
+        public void Unsubscribe_CombinedDelegateThroughCovariantView_MatchesAllHandlers()
+        {
+            using var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            var calls = new List<string>();
+            void First(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("first");
+            void Other(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("other");
+            void Last(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("last");
+            NotifyCollectionChangedEventHandler<Cat> registered = First;
+            registered += Last;
+            NotifyCollectionChangedEventHandler<Animal> unrelated = Other;
+            unrelated += Last;
+            NotifyCollectionChangedEventHandler<Animal> matching = First;
+            matching += Last;
+
+            cats.CollectionChanged += registered;
+            animals.CollectionChanged -= unrelated;
+            cats.Add(new Cat());
+            animals.CollectionChanged -= matching;
+            cats.Add(new Cat());
+
+            CollectionAssert.AreEqual(new[] { "first", "last" }, calls);
+        }
+
+        [Test]
+        public void Unsubscribe_DuplicateThroughCovariantView_DuringInvoke_SkipsOnlyLastSubscription()
+        {
+            using var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+            NotifyCollectionChangedEventHandler<Cat> handler = OnAnimalsChanged;
+
+            cats.CollectionChanged += _ => animals.CollectionChanged -= OnAnimalsChanged;
+            cats.CollectionChanged += handler;
+            cats.CollectionChanged += handler;
+            cats.Add(new Cat());
+
+            Assert.AreEqual(1, _animalCalls);
+            cats.Add(new Cat());
+            Assert.AreEqual(1, _animalCalls);
         }
 
         private int _animalCalls;

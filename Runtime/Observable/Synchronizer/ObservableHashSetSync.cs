@@ -23,7 +23,7 @@ namespace Aspid.Collections.Observable.Synchronizer
             _remove = remove;
             _converter = converter;
             _fromHasSet = fromHashSet;
-            _sync = new Dictionary<TFrom, TTo>(fromHashSet.Count);
+            _sync = new Dictionary<TFrom, TTo>(fromHashSet.Count, fromHashSet.Comparer);
 
             foreach (var from in fromHashSet)
                 AddOne(from);
@@ -84,7 +84,6 @@ namespace Aspid.Collections.Observable.Synchronizer
                 case NotifyCollectionChangedAction.Reset:
                     {
                         Clear();
-                        _sync.Clear();
                     }
                     break;
 
@@ -137,6 +136,8 @@ namespace Aspid.Collections.Observable.Synchronizer
                 foreach (var item in _sync.Values)
                     _remove.Invoke(item);
             }
+
+            _sync.Clear();
         }
 
         public override void Dispose()
