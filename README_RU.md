@@ -5,7 +5,7 @@
   <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Пакет Unity](Documentation~/Images/status-badge-unity.svg)](#установка)
+[![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#установка)
 [![Релиз 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
 [![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
@@ -32,14 +32,18 @@ Aspid.Collections — наблюдаемые коллекции для Unity и 
 https://github.com/VPDPersonal/Aspid.Collections.git#upm
 ```
 
-Ветка `upm` указывает на последний стабильный релиз. Чтобы закрепить версию, укажите её тег `upm/<версия>`, например `#upm/1.1.0`. См. [список релизов](https://github.com/VPDPersonal/Aspid.Collections/releases).
+URL указывает на последнюю версию. Кнопка **Update** в Package Manager установит следующую. Чтобы закрепить версию или сменить канал, см. [варианты установки](#варианты-установки).
 
-Для предварительных релизов используется ветка `upm-preview`.
+Нужна Unity 2021.3.0f1 или новее.
 
 <details>
-<summary>Совместимость с Unity и проблемы установки</summary>
+<summary>Решение проблем</summary>
 
-В манифесте указана минимальная версия Unity 2021.3. Пакет версии 1.1.0 также объявляет зависимость от `com.unity.test-framework@1.6.0`. Если Package Manager не может разрешить её в вашей версии Unity, см. [обсуждение зависимости](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
+**Сразу после установки появляются ошибки компиляции.** Проверьте версию Unity в **Help → About Unity** (**Unity → About Unity** на macOS).
+
+**В Console появляется `Assembly with name 'Aspid.Collections.Observable' already exists`.** В проекте есть вторая копия пакета, например его папка в `Assets`. Удалите копию.
+
+**Package Manager не может разрешить `com.unity.test-framework@1.6.0`.** Эта зависимость указана в версии 1.1.0. См. [исправление зависимости](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
 
 </details>
 
@@ -188,8 +192,13 @@ items.AddRange("Potion", "Elixir"); // Added 2
 | --- | --- | --- |
 | В Package Manager выберите **Aspid.Collections → Samples → Import**. Откройте импортированную сцену и запустите Play Mode. | Типы коллекций, аргументы событий и методы расширения. | Изменения и исправления по релизам. |
 
-## Помощь и обратная связь
+### Варианты установки
 
-В сообщении о проблеме укажите версии Unity и пакета, а также шаги воспроизведения. [Сообщить о проблеме](https://github.com/VPDPersonal/Aspid.Collections/issues)
+Чтобы закрепить версию, укажите её тег `upm/<версия>`, например `#upm/1.1.0`. См. [список релизов](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
-Aspid.Collections распространяется под [лицензией MIT](LICENSE).
+Предварительные релизы публикуются в ветку `upm-preview`.
+
+## Помощь и поддержка
+
+<p>Нашли ошибку или хотите задать вопрос? Укажите версию Unity, версию пакета и шаги воспроизведения.</p>
+<p><a href="https://github.com/VPDPersonal/Aspid.Collections/issues"><b>Открыть задачу</b></a> · <a href="https://github.com/VPDPersonal/Aspid.Collections">Поставить звезду на GitHub</a></p>

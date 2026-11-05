@@ -5,7 +5,7 @@
   <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity Package](Documentation~/Images/status-badge-unity.svg)](#installation)
+[![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#installation)
 [![Release 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
 [![MIT License](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
@@ -32,14 +32,18 @@ Aspid.Collections provides observable collections for Unity and .NET. React to c
 https://github.com/VPDPersonal/Aspid.Collections.git#upm
 ```
 
-The `upm` branch tracks the latest stable release. To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.0`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
+The URL installs the latest release. **Update** in the Package Manager installs the next one. To pin a version or switch channels, see [Installation options](#installation-options).
 
-Preview releases use the `upm-preview` branch.
+Requires Unity 2021.3.0f1 or newer.
 
 <details>
-<summary>Unity compatibility and troubleshooting</summary>
+<summary>Troubleshooting</summary>
 
-The package manifest declares Unity 2021.3 as the minimum. Version 1.1.0 also declares a dependency on `com.unity.test-framework@1.6.0`. If Package Manager cannot resolve that dependency in your Unity version, see [the dependency issue](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
+**Compile errors right after the install.** Check your Unity version in **Help → About Unity** (**Unity → About Unity** on macOS).
+
+**The Console shows `Assembly with name 'Aspid.Collections.Observable' already exists`.** The project has a second copy of the package, for example its folder under `Assets`. Delete the copy.
+
+**Package Manager cannot resolve `com.unity.test-framework@1.6.0`.** Version 1.1.0 declares this dependency. See [the dependency fix](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
 
 </details>
 
@@ -188,8 +192,13 @@ Dispose synchronized views, filtered views and `SplitByEvents` handles to detach
 | --- | --- | --- |
 | In Package Manager, select **Aspid.Collections → Samples → Import**. Open the imported scene and enter Play mode. | Browse collection types, event arguments and extension methods. | See changes and fixes by release. |
 
+### Installation options
+
+To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.0`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
+
+Preview releases use the `upm-preview` branch when available.
+
 ## Help and support
 
-Include your Unity version, package version and steps to reproduce when reporting a problem. [Open an issue](https://github.com/VPDPersonal/Aspid.Collections/issues)
-
-Aspid.Collections is distributed under the [MIT License](LICENSE).
+<p>Found a bug or have a question? Include your Unity version, package version and steps to reproduce.</p>
+<p><a href="https://github.com/VPDPersonal/Aspid.Collections/issues"><b>Open an issue</b></a> · <a href="https://github.com/VPDPersonal/Aspid.Collections">Star on GitHub</a></p>
