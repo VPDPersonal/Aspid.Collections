@@ -5,9 +5,6 @@
   "unity": "2021.3",
   "unityRelease": "0f1",
   "description": "Covariant observable collections for Unity with synchronization, filtering, and sorting. Pure C#, no engine dependency.",
-  "dependencies": {
-    "com.unity.test-framework": "1.6.0"
-  },
   "author": {
     "name": "Vladislav Panin",
     "url": "https://github.com/VPDPersonal",

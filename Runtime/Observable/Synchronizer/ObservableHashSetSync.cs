@@ -23,7 +23,7 @@ namespace Aspid.Collections.Observable.Synchronizer
             _remove = remove;
             _converter = converter;
             _fromHasSet = fromHashSet;
-            _sync = new Dictionary<TFrom, TTo>(fromHashSet.Count);
+            _sync = new Dictionary<TFrom, TTo>(fromHashSet.Count, fromHashSet.Comparer);
 
             foreach (var from in fromHashSet)
                 AddOne(from);
@@ -137,7 +137,6 @@ namespace Aspid.Collections.Observable.Synchronizer
                     _remove.Invoke(item);
             }
 
-            // Forget released items, so a second Clear or Dispose does not release them again.
             _sync.Clear();
         }
 
