@@ -113,7 +113,6 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                // Check up front: failing mid-loop would drop items without an event.
                 if (dest.Length > _stack.Count)
                     throw new InvalidOperationException($"Cannot pop {dest.Length} items: the stack contains only {_stack.Count}.");
 

@@ -124,7 +124,6 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                // Check up front: failing mid-loop would drop items without an event.
                 if (dest.Length > _queue.Count)
                     throw new InvalidOperationException($"Cannot dequeue {dest.Length} items: the queue contains only {_queue.Count}.");
 
