@@ -623,5 +623,89 @@ namespace Aspid.Collections.Observable.Tests
             public override int GetHashCode() => Id;
         }
         #endregion
+
+        #region Covariant Unsubscribe
+        [Test]
+        public void Unsubscribe_MethodGroupThroughCovariantView_StopsCalls()
+        {
+            var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+
+            cats.CollectionChanged += OnAnimalsChanged;
+            animals.CollectionChanged -= OnAnimalsChanged;
+            cats.Add(new Cat());
+
+            Assert.AreEqual(0, _animalCalls);
+            cats.Dispose();
+        }
+
+        [Test]
+        public void Unsubscribe_MethodGroupThroughCovariantView_DuringInvoke_SkipsHandler()
+        {
+            var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+
+            cats.CollectionChanged += _ => animals.CollectionChanged -= OnAnimalsChanged;
+            cats.CollectionChanged += OnAnimalsChanged;
+            cats.Add(new Cat());
+            cats.Add(new Cat());
+
+            Assert.AreEqual(0, _animalCalls);
+            cats.Dispose();
+        }
+
+        [Test]
+        public void Unsubscribe_CombinedDelegateThroughCovariantView_MatchesAllHandlers()
+        {
+            using var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            var calls = new List<string>();
+            void First(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("first");
+            void Other(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("other");
+            void Last(INotifyCollectionChangedEventArgs<Animal> e) => calls.Add("last");
+            NotifyCollectionChangedEventHandler<Cat> registered = First;
+            registered += Last;
+            NotifyCollectionChangedEventHandler<Animal> unrelated = Other;
+            unrelated += Last;
+            NotifyCollectionChangedEventHandler<Animal> matching = First;
+            matching += Last;
+
+            cats.CollectionChanged += registered;
+            animals.CollectionChanged -= unrelated;
+            cats.Add(new Cat());
+            animals.CollectionChanged -= matching;
+            cats.Add(new Cat());
+
+            CollectionAssert.AreEqual(new[] { "first", "last" }, calls);
+        }
+
+        [Test]
+        public void Unsubscribe_DuplicateThroughCovariantView_DuringInvoke_SkipsOnlyLastSubscription()
+        {
+            using var cats = new ObservableList<Cat>();
+            IReadOnlyObservableList<Animal> animals = cats;
+            _animalCalls = 0;
+            NotifyCollectionChangedEventHandler<Cat> handler = OnAnimalsChanged;
+
+            cats.CollectionChanged += _ => animals.CollectionChanged -= OnAnimalsChanged;
+            cats.CollectionChanged += handler;
+            cats.CollectionChanged += handler;
+            cats.Add(new Cat());
+
+            Assert.AreEqual(1, _animalCalls);
+            cats.Add(new Cat());
+            Assert.AreEqual(1, _animalCalls);
+        }
+
+        private int _animalCalls;
+
+        private void OnAnimalsChanged(INotifyCollectionChangedEventArgs<Animal> e) => _animalCalls++;
+
+        private class Animal { }
+
+        private sealed class Cat : Animal { }
+        #endregion
     }
 }
