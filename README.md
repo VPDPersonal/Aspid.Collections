@@ -49,14 +49,15 @@ Requires Unity 2021.3.0f1 or newer.
 
 ## Features
 
-### Change notifications
-
 <table>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Change notifications</h3></th></tr>
 <tr>
-<td width="60%">
+<td width="60%" valign="top">
 
 ```csharp
-using var items = new ObservableList<string>();
+using var items =
+    new ObservableList<string>();
 items.CollectionChanged += change =>
     Console.WriteLine(change.Action);
 
@@ -66,25 +67,24 @@ items.RemoveAt(0);         // Remove
 ```
 
 </td>
-<td width="40%">
+<td width="40%" valign="top">
 
-Subscribe to `CollectionChanged` to react to edits. Read `IsSingleItem` before choosing between `NewItem` / `OldItem` and `NewItems` / `OldItems`. Disposing the list clears it and emits `Reset`.
+`CollectionChanged` reports each edit. Use `IsSingleItem` to choose between the single-item and batch fields. Disposing the list emits `Reset`.
 
 [Basic Change Notifications →](Samples~/01_BasicChangeNotifications)
 
 </td>
 </tr>
-</table>
-
-### Synchronized views
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Synchronized views</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
 using var scores = new ObservableList<int>();
-using var labels = scores.CreateSync(n => $"Score {n}");
+using var labels = scores.CreateSync(
+    n => $"Score {n}");
 
 scores.Add(10);
 scores[0] = 20;
@@ -92,67 +92,67 @@ Console.WriteLine(labels[0]); // Score 20
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`CreateSync` projects each source item into a read-only collection that follows source changes. All five collection types support this one-way synchronization. [Overloads](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
+`CreateSync` builds a read-only projection that follows the source. All five collection types support it. [Overloads](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
 [Inventory Sync →](Samples~/02_InventorySync)
 
 </td>
 </tr>
-</table>
-
-### Filtering and sorting
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Filtering and sorting</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
-using var scores = new ObservableList<int> { 25, 5, 15 };
+using var scores =
+    new ObservableList<int> { 25, 5, 15 };
 using var visible = scores.CreateFiltered(
     n => n >= 10, Comparer<int>.Default);
 
 scores.Add(12);
-// 12, 15, 25
-Console.WriteLine(string.Join(", ", visible));
+Console.WriteLine(
+    string.Join(", ", visible)); // 12, 15, 25
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`CreateFiltered` presents matching items in the requested order while leaving the source intact. Change `Filter` or `Comparer` at runtime, or chain views for multiple filters. For a source without change notifications, call `Update()` after editing it.
+`CreateFiltered` filters and sorts a view of the source. Change `Filter` or `Comparer` at runtime. Call `Update()` after editing a source without notifications.
 
 [Filtered Inventory →](Samples~/03_FilteredInventory)
 
 </td>
 </tr>
-</table>
-
-### Separate callbacks for each change
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Separate callbacks for each change</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
-using var items = new ObservableList<string>();
+using var items =
+    new ObservableList<string>();
 using var events = items.SplitByEvents(
     added: (batch, _) =>
-        Console.WriteLine($"Added {batch.Count}"));
+        Console.WriteLine(
+            $"Added {batch.Count}"));
 
 items.AddRange("Potion", "Elixir"); // Added 2
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`SplitByEvents` routes adds, removes, moves, replacements and resets to separate handlers. Each item callback receives a list, including for single-item changes.
+`SplitByEvents` gives each change type its own handler. Item handlers always receive a list.
 
 [Analytics Tap →](Samples~/05_SplitByEvents)
 
 </td>
 </tr>
+</tbody>
 </table>
 
 ## Collections
