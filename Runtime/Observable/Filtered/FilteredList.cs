@@ -36,7 +36,6 @@ namespace Aspid.Collections.Observable.Filtered
             }
         }
 
-        // Computed, not cached: without a filter or comparer the view reads the source directly.
         public int Count => _indexes?.Count ?? _list.Count;
 
         public T this[int index] => _indexes is null
