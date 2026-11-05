@@ -1,622 +1,181 @@
 # Aspid.Collections
 
-![Aspid.Collections](Documentation/Images/aspid_collections_readme_banner.gif)
+![Aspid.Collections](https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/fb3ca77b792a6a9fd30f6a1b42f3867b65c81694/Documentation/Images/aspid_collections_readme_banner.gif)
 
-[![Unity 2021.3+](https://img.shields.io/badge/2021.3%2B-000000?style=flat&logo=unity&logoColor=white&color=4fa35d)](https://unity.com/)
-[![Releases](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
-[![License](https://img.shields.io/github/license/VPDPersonal/Aspid.Collections?label=License&labelColor=254d2c&color=4fa35d)](LICENSE)
+[![Unity Package](https://img.shields.io/badge/Unity-Package-4fa35d?logo=unity&logoColor=white)](#installation)
+[![Release](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
+[![MIT License](https://img.shields.io/github/license/VPDPersonal/Aspid.Collections?label=License&labelColor=254d2c&color=4fa35d)](LICENSE)
 
-Observable collections library with support for covariance, collection synchronization, filtering, and sorting.
+**English** · [Русский](README_RU.md)
 
-## Table of Contents
+Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
 
-- [Integration](#integration)
-- [Key Features](#key-features)
-- [Collections](#collections)
-  - [ObservableList](#observablelist)
-  - [ObservableDictionary](#observabledictionary)
-  - [ObservableHashSet](#observablehashset)
-  - [ObservableQueue](#observablequeue)
-  - [ObservableStack](#observablestack)
-- [Interfaces](#interfaces)
-- [Events](#events)
-- [Collection Synchronization](#collection-synchronization)
-- [Filtering and Sorting](#filtering-and-sorting)
-- [Usage Examples](#usage-examples)
+## Installation
 
-## Integration
+1. Open **Window → Package Manager**.
+2. Choose **+ → Install package from git URL…**.
+3. Paste the URL and click **Install**.
 
-Install Aspid.Collections via UPM (Unity Package Manager) — add the package using its Git URL. The release workflow publishes a `upm` branch containing only the package contents at its root, so no `?path=` query is needed:
-
-```
+```text
 https://github.com/VPDPersonal/Aspid.Collections.git#upm
 ```
 
-To install a specific version, target the immutable per-release tag `upm/<version>` (see [Releases](https://github.com/VPDPersonal/Aspid.Collections/releases) for the list of available versions):
+The `upm` branch tracks the latest stable release. To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.0`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
-```
-https://github.com/VPDPersonal/Aspid.Collections.git#upm/1.0.1
-```
+<details>
+<summary>Unity compatibility and troubleshooting</summary>
 
-## Key Features
+The package manifest declares Unity 2021.3 as the minimum. Version 1.1.0 also declares a dependency on `com.unity.test-framework@1.6.0`. If Package Manager cannot resolve that dependency in your Unity version, see [the dependency issue](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
 
-- 🔔 **Observable Collections** — automatic change notifications
-- 🔄 **Synchronization** — automatic synchronization between collections with type conversion
-- 🔍 **Filtering** — dynamic filtering with automatic updates
-- 📊 **Sorting** — dynamic sorting without modifying the source collection
-- ✨ **Covariance** — support for covariant interfaces
+</details>
 
-## Collections
+## Features
 
-### ObservableList
+Each example is a standalone C# snippet with top-level statements.
+
+### Change notifications
+
+<table>
+<tr>
+<td width="60%">
+
 ```csharp
+using System;
 using Aspid.Collections.Observable;
 
-// Creation
-var list = new ObservableList<string>();
-var listWithCapacity = new ObservableList<string>(10);
-var listFromCollection = new ObservableList<string>(new[] { "a", "b", "c" });
+using var items = new ObservableList<string>();
+items.CollectionChanged += change =>
+    Console.WriteLine(change.Action);
 
-// Subscribe to changes
-list.CollectionChanged += args =>
-{
-    Console.WriteLine($"Action: {args.Action}");
-};
-
-// Basic operations
-list.Add("item");
-list.Insert(0, "first");
-list[0] = "updated";
-bool removed = list.Remove("item");
-list.RemoveAt(0);
-list.Clear();
-
-// Clear list and events
-list.Dispose();
-
-// Batch operations
-list.AddRange(new[] { "a", "b", "c" });
-list.InsertRange(0, new[] { "x", "y" });
-
-// Move
-list.Move(0, 2); // Move element from index 0 to index 2
-
-// Queries / inspection
-int index = list.IndexOf("item");
-bool contains = list.Contains("item");
-list.ForEach(item => Console.WriteLine(item));
-
-// Copy to array
-var buffer = new string[list.Count];
-list.CopyTo(buffer, 0);
+items.Add("Potion");       // Add
+items[0] = "Elixir";       // Replace
+items.RemoveAt(0);         // Remove
 ```
 
-Extensions (`Aspid.Collections.Observable.Extensions`):
+</td>
+<td width="40%">
+
+Subscribe to `CollectionChanged` to react to edits. Read `IsSingleItem` before choosing between `NewItem` / `OldItem` and `NewItems` / `OldItems`. Disposing the list clears it and emits `Reset`.
+
+[Basic Change Notifications →](Samples~/01_BasicChangeNotifications)
+
+</td>
+</tr>
+</table>
+
+### Synchronized views
+
+<table>
+<tr>
+<td width="60%">
 
 ```csharp
-using Aspid.Collections.Observable.Extensions;
-
-list.Swap(0, 3); // Swap two elements by index
-```
-
-### ObservableDictionary
-```csharp
-using Aspid.Collections.Observable;
-
-// Creation
-var dict = new ObservableDictionary<string, int>();
-var dictWithCapacity = new ObservableDictionary<string, int>(capacity: 16);
-var dictWithComparer = new ObservableDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-var dictWithBoth = new ObservableDictionary<string, int>(capacity: 16, StringComparer.OrdinalIgnoreCase);
-var dictFromCollection = new ObservableDictionary<string, int>(
-    new[] { KeyValuePair.Create("a", 1), KeyValuePair.Create("b", 2) }
-);
-
-// Subscribe to changes
-dict.CollectionChanged += args =>
-{
-    Console.WriteLine($"Action: {args.Action}");
-};
-
-// Operations
-dict.Add("key", 42);
-dict["key"] = 100;        // Replace if key exists
-dict["newKey"] = 200;     // Add if key doesn't exist
-bool removed = dict.Remove("key");
-dict.Clear();
-
-// Clear dictionary and events
-dict.Dispose();
-
-// Data access
-bool exists = dict.TryGetValue("key", out var value);
-bool contains = dict.ContainsKey("key");
-bool containsPair = dict.Contains(KeyValuePair.Create("key", 100));
-
-// Enumerations / introspection
-IEnumerable<string> keys = dict.Keys;
-IEnumerable<int> values = dict.Values;
-IEqualityComparer<string> comparer = dict.Comparer;
-```
-
-### ObservableHashSet
-```csharp
-using Aspid.Collections.Observable;
-
-// Creation
-var set = new ObservableHashSet<string>();
-var setWithComparer = new ObservableHashSet<string>(StringComparer.OrdinalIgnoreCase);
-var setFromCollection = new ObservableHashSet<string>(new[] { "a", "b", "c" });
-
-// Subscribe to changes
-set.CollectionChanged += args =>
-{
-    Console.WriteLine($"Action: {args.Action}");
-};
-
-// Operations
-bool added = set.Add("item");
-bool removed = set.Remove("item");
-set.Clear();
-
-// Clear set and events
-set.Dispose();
-
-// Queries
-bool contains = set.Contains("item");
-IEqualityComparer<string> comparer = set.Comparer;
-
-// Set operations (read-only; do not mutate the source)
-var other = new[] { "a", "b", "c" };
-bool isSub       = set.IsSubsetOf(other);
-bool isSuper     = set.IsSupersetOf(other);
-bool isProperSub = set.IsProperSubsetOf(other);
-bool isProperSup = set.IsProperSupersetOf(other);
-bool overlaps    = set.Overlaps(other);
-bool equals      = set.SetEquals(other);
-```
-
-> `ObservableHashSet<T>` intentionally does **not** implement `ISet<T>`:
-> mutating set operations (`UnionWith`, `IntersectWith`, …) can't emit
-> accurate added/removed notifications, so only the read-only set
-> predicates above are exposed.
-
-### ObservableQueue
-```csharp
-using Aspid.Collections.Observable;
-
-// Creation
-var queue = new ObservableQueue<string>();
-var queueWithCapacity = new ObservableQueue<string>(10);
-var queueFromCollection = new ObservableQueue<string>(new[] { "a", "b", "c" });
-var queueWrappingExisting = new ObservableQueue<string>(new Queue<string>()); // wraps, does not copy
-
-// Subscribe to changes
-queue.CollectionChanged += args =>
-{
-    Console.WriteLine($"Action: {args.Action}");
-};
-
-// Operations
-string peek = queue.Peek();
-bool hasPeek = queue.TryPeek(out var peekResult);
-
-queue.Enqueue("item");
-queue.EnqueueRange(new[] { "a", "b", "c" });
-
-string item = queue.Dequeue();
-bool success = queue.TryDequeue(out var result);
-
-queue.Clear();
-
-// Clear queue and events
-queue.Dispose();
-
-// Batch dequeue
-var buffer = new string[3];
-queue.DequeueRange(buffer);
-
-// Snapshot / capacity
-string[] snapshot = queue.ToArray();
-queue.TrimExcess();
-```
-
-### ObservableStack
-```csharp
-using Aspid.Collections.Observable;
-
-// Creation
-var stack = new ObservableStack<string>();
-var stackWithCapacity = new ObservableStack<string>(10);
-var stackFromCollection = new ObservableStack<string>(new[] { "a", "b", "c" });
-
-// Subscribe to changes
-stack.CollectionChanged += args =>
-{
-    Console.WriteLine($"Action: {args.Action}");
-};
-
-// Operations
-stack.Push("item");
-stack.PushRange(new[] { "a", "b", "c" });
-
-string peek = stack.Peek();
-bool hasPeek = stack.TryPeek(out var peekResult);
-
-string item = stack.Pop();
-bool success = stack.TryPop(out var result);
-
-stack.Clear();
-
-// Clear stack and events
-stack.Dispose();
-
-// Batch pop
-var buffer = new string[3];
-stack.PopRange(buffer);
-
-// Snapshot / capacity
-string[] snapshot = stack.ToArray();
-stack.TrimExcess();
-```
-
-## Interfaces
-
-All interfaces expose their element type as **covariant** (`out T`), so
-you can assign e.g. `IReadOnlyObservableList<Cat>` to
-`IReadOnlyObservableList<Animal>`.
-
-### Core Interfaces
-
-| Interface | Description |
-|-----------|-------------|
-| `IObservableCollection<out T>` | Base interface for all observable collections |
-| `IReadOnlyObservableList<out T>` | Read-only list with notifications |
-| `IReadOnlyObservableDictionary<TKey, TValue>` | Read-only dictionary with notifications |
-
-### Synchronization Interfaces (`Aspid.Collections.Observable.Synchronizer`)
-
-Returned by `CreateSync(...)` extensions. Every sync wrapper implements
-`IDisposable` and owns its subscription to the source collection.
-
-| Interface | Description |
-|-----------|-------------|
-| `IReadOnlyObservableCollectionSync<out T>` | Base for synced non-list collections (Queue/Stack/HashSet) |
-| `IReadOnlyObservableListSync<out T>` | Synced list projection (extends `IReadOnlyObservableList<T>`) |
-| `IReadOnlyObservableDictionarySync<TKey, T>` | Synced dictionary projection |
-
-### Filtering Interfaces (`Aspid.Collections.Observable.Filtered`)
-
-| Interface | Description |
-|-----------|-------------|
-| `IReadOnlyFilteredList<out T>` | Read-only filtered/sorted view over an `IReadOnlyList<T>` (raises a parameterless `CollectionChanged`) |
-
-### Event Handling Interfaces
-
-| Interface | Description |
-|-----------|-------------|
-| `IObservableEvents<out T>` | Disposable wrapper returned by `SplitByEvents(...)` exposing individual `Added` / `Removed` / `Moved` / `Replaced` / `Reset` events |
-
-### Interface Hierarchy
-```
-IObservableCollection<out T>
-├── IReadOnlyCollection<T>
-├── CollectionChanged event
-└── SyncRoot property
-
-IReadOnlyObservableList<out T>
-├── IObservableCollection<T>
-└── IReadOnlyList<T>
-
-IReadOnlyObservableDictionary<TKey, TValue>
-├── IObservableCollection<KeyValuePair<TKey, TValue>>
-└── IReadOnlyDictionary<TKey, TValue>
-
-IReadOnlyObservableCollectionSync<out T>
-├── IObservableCollection<T>
-└── IDisposable
-
-IReadOnlyObservableListSync<out T>
-├── IReadOnlyObservableList<T>
-└── IReadOnlyObservableCollectionSync<T>
-
-IReadOnlyFilteredList<out T>
-├── IReadOnlyList<T>
-└── CollectionChanged event (Action)
-
-IObservableEvents<out T>
-├── IDisposable
-└── Added / Removed / Moved / Replaced / Reset events
-```
-
-## Events
-### NotifyCollectionChangedEventArgs
-
-Collection change event arguments structure:
-
-```csharp
-public readonly struct NotifyCollectionChangedEventArgs<T>
-{
-    // Add, Remove, Replace, Move, Reset
-    public NotifyCollectionChangedAction Action { get; }
-    
-    // true for single-item operations
-    public bool IsSingleItem { get; }                    
-    
-    // For single-item operations
-    public T? NewItem { get; }
-    public T? OldItem { get; }
-    
-    // For batch operations
-    public IReadOnlyList<T>? NewItems { get; }
-    public IReadOnlyList<T>? OldItems { get; }
-    
-    // Indices
-    public int NewStartingIndex { get; }
-    public int OldStartingIndex { get; }
-}
-```
-
-### Action Types
-| Action | Description |
-|--------|-------------|
-| `Add` | New items added |
-| `Remove` | Items removed |
-| `Replace` | Item replaced with another |
-| `Move` | Item moved to new position |
-| `Reset` | Collection cleared |
-
-### Split Events (SplitByEvents)
-For convenient handling of different change types, use the `SplitByEvents` extension:
-
-```csharp
-using Aspid.Collections.Observable;
-
-var list = new ObservableList<string>();
-
-// Subscribe to individual events
-var events = list.SplitByEvents(
-    added: (items, index) => Console.WriteLine($"Added {items.Count} items at {index}"),
-    removed: (items, index) => Console.WriteLine($"Removed {items.Count} items from {index}"),
-    moved: (items, oldIndex, newIndex) => Console.WriteLine($"Moved from {oldIndex} to {newIndex}"),
-    replaced: (oldItems, newItems, index) => Console.WriteLine($"Replaced at {index}"),
-    reset: () => Console.WriteLine("Collection cleared")
-);
-
-// Don't forget to dispose
-events.Dispose();
-```
-
-## Collection Synchronization
-Automatic synchronization allows creating a "mirror" collection with type conversion.
-
-### Creating a Synchronized Collection
-```csharp
+using System;
 using Aspid.Collections.Observable;
 using Aspid.Collections.Observable.Synchronizer;
 
-// Source collection of models
-var models = new ObservableList<UserModel>();
+using var scores = new ObservableList<int>();
+using var labels = scores.CreateSync(n => $"Score {n}");
 
-// Create synchronized collection of view models
-var viewModels = models.CreateSync(
-    model => new UserViewModel(model),  // Converter
-    isDisposable: true                  // Auto-call Dispose on removal
-);
-
-// Or with custom removal handler
-var viewModels2 = models.CreateSync(
-    model => new UserViewModel(model),
-    removed: vm => vm.Cleanup()
-);
-// Note: for ObservableQueue / ObservableStack / ObservableHashSet /
-// IReadOnlyObservableDictionary the removal callback parameter is named
-// `remove:` (not `removed:`). Using a positional argument avoids the
-// mismatch.
-
-// All changes in models are automatically reflected in viewModels
-models.Add(new UserModel { Name = "John" });
-// viewModels now contains UserViewModel for John
-
-// Don't forget to dispose
-viewModels.Dispose();
+scores.Add(10);
+scores[0] = 20;
+Console.WriteLine(labels[0]); // Score 20
 ```
 
-### Supported Collections for Synchronization
-| Source Collection | Extension Method | Result |
-|-------------------|------------------|--------|
-| `IReadOnlyObservableList<T>` | `CreateSync()` | `IReadOnlyObservableListSync<T>` |
-| `ObservableQueue<T>` | `CreateSync()` | `IReadOnlyObservableCollectionSync<T>` |
-| `ObservableStack<T>` | `CreateSync()` | `IReadOnlyObservableCollectionSync<T>` |
-| `ObservableHashSet<T>` | `CreateSync()` | `IReadOnlyObservableCollectionSync<T>` |
-| `IReadOnlyObservableDictionary<K,V>` | `CreateSync()` | `IReadOnlyObservableDictionarySync<K,T>` |
+</td>
+<td width="40%">
 
-## Filtering and Sorting
-`FilteredList<T>` provides dynamic filtering and sorting without modifying the source collection.
+`CreateSync` projects each source item into a read-only collection that follows source changes. All five collection types support this one-way synchronization. [Overloads](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
-### Creating a Filtered List
+[Inventory Sync →](Samples~/02_InventorySync)
+
+</td>
+</tr>
+</table>
+
+### Filtering and sorting
+
+<table>
+<tr>
+<td width="60%">
 
 ```csharp
+using System;
+using System.Collections.Generic;
 using Aspid.Collections.Observable;
 using Aspid.Collections.Observable.Filtered;
 
-var list = new ObservableList<int> { 5, 2, 8, 1, 9, 3 };
+using var scores = new ObservableList<int> { 25, 5, 15 };
+using var visible = scores.CreateFiltered(
+    n => n >= 10, Comparer<int>.Default);
 
-// Filter only
-var filtered = list.CreateFiltered(x => x > 3);
-// filtered contains: 5, 8, 9
-
-// Sort only
-var sorted = list.CreateFiltered(Comparer<int>.Default);
-// sorted contains: 1, 2, 3, 5, 8, 9
-
-// Filter and sort
-var filteredAndSorted = list.CreateFiltered(
-    filter: x => x > 2,
-    comparer: Comparer<int>.Default
-);
-// filteredAndSorted contains: 3, 5, 8, 9
+scores.Add(12);
+// 12, 15, 25
+Console.WriteLine(string.Join(", ", visible));
 ```
 
-### Dynamic Filter Changes
+</td>
+<td width="40%">
+
+`CreateFiltered` presents matching items in the requested order while leaving the source intact. Change `Filter` or `Comparer` at runtime, or chain views for multiple filters. For a source without change notifications, call `Update()` after editing it.
+
+[Filtered Inventory →](Samples~/03_FilteredInventory)
+
+</td>
+</tr>
+</table>
+
+### Separate callbacks for each change
+
+<table>
+<tr>
+<td width="60%">
 
 ```csharp
-var filtered = list.CreateFiltered();
+using System;
+using Aspid.Collections.Observable;
 
-// Subscribe to changes
-filtered.CollectionChanged += () =>
-{
-    Console.WriteLine("Filtered collection updated");
-};
+using var items = new ObservableList<string>();
+using var events = items.SplitByEvents(
+    added: (batch, _) =>
+        Console.WriteLine($"Added {batch.Count}"));
 
-// Dynamic filter change
-filtered.Filter = x => x > 5;
-
-// Dynamic sort change
-filtered.Comparer = Comparer<int>.Create((a, b) => b.CompareTo(a)); // Reverse order
-
-// Force update
-filtered.Update();
+items.AddRange("Potion", "Elixir"); // Added 2
 ```
 
-### Filter Chaining
+</td>
+<td width="40%">
 
-`FilteredList` can be used as a source for another `FilteredList`:
+`SplitByEvents` routes adds, removes, moves, replacements and resets to separate handlers. Each item callback receives a list, including for single-item changes.
 
-```csharp
-var list = new ObservableList<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+[Analytics Tap →](Samples~/05_SplitByEvents)
 
-var evenNumbers = list.CreateFiltered(x => x % 2 == 0);
-// evenNumbers: 2, 4, 6, 8, 10
+</td>
+</tr>
+</table>
 
-var largeEvenNumbers = evenNumbers.CreateFiltered(x => x > 5);
-// largeEvenNumbers: 6, 8, 10
-```
+## Collections
 
-## Usage Examples
-### MVVM Pattern with Synchronization
+| Type | Use it for |
+| --- | --- |
+| [`ObservableList<T>`](Runtime/Observable/ObservableList.cs) | Ordered items with indexes, moves and range operations |
+| [`ObservableDictionary<TKey, TValue>`](Runtime/Observable/ObservableDictionary.cs) | Items addressed by key, as in the [keyed leaderboard sample](Samples~/04_DictionaryKeyedTable) |
+| [`ObservableHashSet<T>`](Runtime/Observable/ObservableHashSet.cs) | Unique items and membership checks |
+| [`ObservableQueue<T>`](Runtime/Observable/ObservableQueue.cs) | First-in, first-out processing with range operations |
+| [`ObservableStack<T>`](Runtime/Observable/ObservableStack.cs) | Last-in, first-out processing with range operations |
 
-```csharp
-public class Todo
-{
-    // Some code.
-}
+Expose `IReadOnlyObservableList<T>` or `IObservableCollection<T>` when consumers only need to read and subscribe. These interfaces are covariant for reference types. The dictionary interfaces keep both type parameters invariant.
 
-public class TodoService
-{
-    private readonly ObservableList<Todo> _todos = new();
+Dispose synchronized views, filtered views and `SplitByEvents` handles to detach their subscriptions. Dispose dependent views before their sources and use a filtered view and its source on the same thread.
 
-    public IReadOnlyObservableList<Todo> Todos => _todos;
+## Resources
 
-    public void Add(Todo todo) =>
-        _todos.Add(todo);
+| [Unity samples](Samples~) | [Runtime API](Runtime/Observable) | [Changelog](CHANGELOG.md) |
+| --- | --- | --- |
+| In Package Manager, select **Aspid.Collections → Samples → Import**. Open the imported scene and enter Play mode. | Browse collection types, event arguments and extension methods. | See changes and fixes by release. |
 
-    public void Remove(Todo todo) =>
-        _todos.Remove(todo);
-}
+## Help and support
 
-public class TodoListViewModel : IDisposable
-{
-    private readonly TodoService _service;
-    private readonly IReadOnlyObservableListSync<TodoItemViewModel> _items;
-    
-    public IReadOnlyObservableList<TodoItemViewModel> Items => _items;
-    
-    public TodoListViewModel(TodoService service)
-    {
-        _service = service;
-        
-        // Automatic Model -> ViewModel synchronization
-        _items = _service.Todos.CreateSync(
-            model => new TodoItemViewModel(model),
-            isDisposable: true
-        );
-    }
-    
-    public void Dispose() => _items.Dispose();
-}
+Include your Unity version, package version and steps to reproduce when reporting a problem. [Open an issue](https://github.com/VPDPersonal/Aspid.Collections/issues)
 
-public class TodoItemViewModel
-{
-    private Todo _model;
-
-    public TodoItemViewModel(Todo model)
-    {
-        _model = model;
-    }
-
-    // Some code.
-}
-```
-
-### Observable List with Filtering
-```csharp
-public class SearchableListView : IDisposable
-{
-    private readonly ObservableList<ItemModel> _allItems;
-    private readonly FilteredList<ItemModel> _visibleItems;
-    
-    public IReadOnlyFilteredList<ItemModel> VisibleItems => _visibleItems;
-    
-    public SearchableListView()
-    {
-        _allItems = new ObservableList<ItemModel>();
-        _visibleItems = _allItems.CreateFiltered();
-        
-        _visibleItems.CollectionChanged += RefreshView;
-    }
-    
-    public void SetSearchQuery(string query)
-    {
-        _visibleItems.Filter = string.IsNullOrEmpty(query) 
-            ? null 
-            : item => item.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
-    }
-    
-    public void SetSortOrder(bool ascending)
-    {
-        _visibleItems.Comparer = ascending
-            ? Comparer<ItemModel>.Create((a, b) => string.Compare(a.Name, b.Name))
-            : Comparer<ItemModel>.Create((a, b) => string.Compare(b.Name, a.Name));
-    }
-    
-    private void RefreshView() { /* Update UI */ }
-    
-    public void Dispose() => _visibleItems.Dispose();
-}
-```
-
-### Reactive Event Handling
-
-```csharp
-public class InventoryManager : IDisposable
-{
-    private readonly ObservableList<Item> _inventory = new();
-    private readonly IObservableEvents<Item> _events;
-    
-    public InventoryManager()
-    {
-        _events = _inventory.SplitByEvents(
-            added: (items, _) =>
-            {
-                foreach (var item in items)
-                    Debug.Log($"Item added: {item.Name}");
-            },
-            removed: (items, _) =>
-            {
-                foreach (var item in items)
-                    Debug.Log($"Item removed: {item.Name}");
-            }
-        );
-    }
-    
-    public void AddItem(Item item) => _inventory.Add(item);
-    public void RemoveItem(Item item) => _inventory.Remove(item);
-    
-    public void Dispose() => _events.Dispose();
-}
-```
-
-## License
-MIT License - see [LICENSE](LICENSE) file for details.
-
+Aspid.Collections is distributed under the [MIT License](LICENSE).
