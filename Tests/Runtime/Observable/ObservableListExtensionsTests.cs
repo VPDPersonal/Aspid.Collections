@@ -49,6 +49,17 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
+        public void Swap_IndexOutOfRange_ThrowsWithoutLosingItem()
+        {
+            using var capture = new EventCapture<int>(_list);
+
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.Swap(index1: 0, index2: 5));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3, 4, 5 }, _list);
+            Assert.AreEqual(0, capture.Count);
+        }
+
+        [Test]
         public void Swap_SameIndex_IsNoop()
         {
             using var capture = new EventCapture<int>(_list);

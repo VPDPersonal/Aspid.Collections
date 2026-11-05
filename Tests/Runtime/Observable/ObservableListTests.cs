@@ -362,6 +362,21 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, e.OldStartingIndex);
             Assert.AreEqual(2, e.NewStartingIndex);
         }
+
+        [TestCase(0, 3)]
+        [TestCase(0, -1)]
+        [TestCase(3, 0)]
+        [TestCase(-1, 0)]
+        public void Move_IndexOutOfRange_ThrowsWithoutLosingItem(int oldIndex, int newIndex)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.Move(oldIndex, newIndex));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.AreEqual(0, _events.Count);
+        }
         #endregion
 
         #region Enumeration
