@@ -1,6 +1,9 @@
 # Aspid.Collections
 
-![Aspid.Collections](https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/fb3ca77b792a6a9fd30f6a1b42f3867b65c81694/Documentation/Images/aspid_collections_readme_banner.gif)
+<picture>
+  <source srcset="Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
+  <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+</picture>
 
 [![Пакет Unity](https://img.shields.io/badge/Unity-Package-4fa35d?logo=unity&logoColor=white)](#установка)
 [![Релиз](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
