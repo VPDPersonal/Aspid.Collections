@@ -193,5 +193,48 @@ namespace Aspid.Collections.Observable.Tests
             source.Dispose();
         }
         #endregion
+
+        [Test]
+        public void CreateSync_ConverterCollision_Throws()
+        {
+            _source.Add(1);
+            _source.Add(2);
+
+            Assert.Throws<System.InvalidOperationException>(() => _source.CreateSync(_ => "duplicate"));
+        }
+
+        [Test]
+        public void SourceAdd_ConverterCollision_RemovingRejectedItemKeepsOriginalProjection()
+        {
+            using var sync = _source.CreateSync(_ => "same");
+            using var capture = new EventCapture<string>(sync);
+            _source.Add(1);
+            capture.Clear();
+
+            Assert.Throws<System.InvalidOperationException>(() => _source.Add(2));
+            Assert.That(_source.Remove(2), Is.True);
+            CollectionAssert.AreEqual(new[] { "same" }, sync);
+            Assert.That(capture.Count, Is.Zero);
+
+            Assert.That(_source.Remove(1), Is.True);
+            _source.Add(3);
+            CollectionAssert.AreEqual(new[] { "same" }, sync);
+        }
+
+        [Test]
+        public void SourceRemove_DisposesOnlyTheRemovedProjection()
+        {
+            _source.Add(1);
+            _source.Add(2);
+            var items = new[] { new DisposableItem(), new DisposableItem() };
+            using var sync = _source.CreateSync(value => items[value - 1], isDisposable: true);
+
+            _source.Remove(2);
+
+            CollectionAssert.AreEqual(new[] { items[0] }, sync);
+            Assert.That(items[0].DisposeCount, Is.Zero);
+            Assert.That(items[1].DisposeCount, Is.EqualTo(1));
+        }
+
     }
 }

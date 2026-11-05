@@ -707,5 +707,32 @@ namespace Aspid.Collections.Observable.Tests
 
         private sealed class Cat : Animal { }
         #endregion
+
+        [TestCase(-1, 1, "startIndex")]
+        [TestCase(0, -1, "count")]
+        public void RemoveRange_NegativeArgument_LeavesContentsAndEventsUnchanged(int start, int count, string parameter)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            var error = Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.RemoveRange(start, count));
+
+            Assert.That(error!.ParamName, Is.EqualTo(parameter));
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
+        [Test]
+        public void RemoveRange_ExtendsPastEnd_LeavesContentsAndEventsUnchanged()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Catch<System.ArgumentException>(() => _list.RemoveRange(2, 2));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
     }
 }

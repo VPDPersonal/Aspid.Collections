@@ -10,7 +10,7 @@ namespace Aspid.Collections.Observable.Tests
     /// </summary>
     internal sealed class EventCapture<T> : IDisposable
     {
-        private readonly CollectionChangedEvent<T> _source;
+        private readonly IObservableCollection<T> _source;
         private readonly NotifyCollectionChangedEventHandler<T> _handler;
 
         public int Count => Events.Count;
@@ -19,7 +19,7 @@ namespace Aspid.Collections.Observable.Tests
         
         public List<INotifyCollectionChangedEventArgs<T>> Events { get; } = new();
 
-        public EventCapture(CollectionChangedEvent<T> source)
+        public EventCapture(IObservableCollection<T> source)
         {
             _source = source;
             _handler = e => Events.Add(e);

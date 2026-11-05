@@ -213,5 +213,83 @@ namespace Aspid.Collections.Observable.Tests
             Assert.IsNull(removed[0]);
         }
         #endregion
+
+        [Test]
+        public void CustomSource_BatchChanges_KeepKeysValuesAndRemovalCallbacksInSync()
+        {
+            using var source = new DictionarySource();
+            var released = new List<string>();
+            using var sync = source.CreateSync(value => $"value-{value}", released.Add);
+            var first = new KeyValuePair<string, int>("a", 1);
+            var second = new KeyValuePair<string, int>("b", 2);
+            var added = new[] { first, second };
+
+            source.Items.Add(first.Key, first.Value);
+            source.Items.Add(second.Key, second.Value);
+            source.Publish(NotifyCollectionChangedEventArgs<KeyValuePair<string, int>>.Add(added, -1));
+
+            CollectionAssert.AreEquivalent(new[] { "a", "b" }, sync.Keys);
+            Assert.That(sync["a"], Is.EqualTo("value-1"));
+            Assert.That(sync["b"], Is.EqualTo("value-2"));
+            Assert.That(released, Is.Empty);
+
+            var replaced = new[] { new KeyValuePair<string, int>("b", 20), new KeyValuePair<string, int>("a", 10) };
+            source.Items["a"] = 10;
+            source.Items["b"] = 20;
+            source.Publish(NotifyCollectionChangedEventArgs<KeyValuePair<string, int>>.Replace(new[] { second, first }, replaced, -1));
+
+            Assert.That(sync["a"], Is.EqualTo("value-10"));
+            Assert.That(sync["b"], Is.EqualTo("value-20"));
+            CollectionAssert.AreEqual(new[] { "value-2", "value-1" }, released);
+
+            source.Items.Clear();
+            source.Publish(NotifyCollectionChangedEventArgs<KeyValuePair<string, int>>.Remove(replaced, -1));
+
+            Assert.That(sync, Is.Empty);
+            CollectionAssert.AreEqual(new[] { "value-2", "value-1", "value-20", "value-10" }, released);
+        }
+
+        [Test]
+        public void SourceReplaceAndRemove_DisposePreviousValuesExactlyOnce()
+        {
+            _source.Add("key", 1);
+            var oldValue = new DisposableItem();
+            var newValue = new DisposableItem();
+            using var sync = _source.CreateSync(value => value == 1 ? oldValue : newValue, isDisposable: true);
+
+            _source["key"] = 2;
+
+            Assert.That(oldValue.DisposeCount, Is.EqualTo(1));
+            Assert.That(newValue.DisposeCount, Is.Zero);
+            Assert.That(sync["key"], Is.SameAs(newValue));
+
+            _source.Remove("key");
+            sync.Dispose();
+
+            Assert.That(sync, Is.Empty);
+            Assert.That(oldValue.DisposeCount, Is.EqualTo(1));
+            Assert.That(newValue.DisposeCount, Is.EqualTo(1));
+        }
+
+        private sealed class DictionarySource : CollectionChangedEvent<KeyValuePair<string, int>>, IReadOnlyObservableDictionary<string, int>
+        {
+            public Dictionary<string, int> Items { get; } = new();
+            public int Count => Items.Count;
+            public object SyncRoot { get; } = new();
+            public IEnumerable<string> Keys => Items.Keys;
+            public IEnumerable<int> Values => Items.Values;
+            public int this[string key] => Items[key];
+
+            public bool ContainsKey(string key) => Items.ContainsKey(key);
+
+            public bool TryGetValue(string key, out int value) => Items.TryGetValue(key, out value);
+
+            public void Publish(INotifyCollectionChangedEventArgs<KeyValuePair<string, int>> args) => Invoke(args);
+
+            public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => Items.GetEnumerator();
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
     }
 }

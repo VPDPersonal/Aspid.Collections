@@ -331,5 +331,15 @@ namespace Aspid.Collections.Observable.Tests
             public override int GetHashCode() => Id;
         }
         #endregion
+
+        [Test]
+        public void NonGenericEnumeration_UsesSetEqualityAndContainsEachStoredItem()
+        {
+            using var source = new ObservableHashSet<string>(new[] { "a", "A", "b" }, System.StringComparer.OrdinalIgnoreCase);
+
+            Assert.That(source.IsReadOnly, Is.False);
+            CollectionAssert.AreEquivalent(new[] { "a", "b" }, (System.Collections.IEnumerable)source);
+        }
+
     }
 }

@@ -350,5 +350,44 @@ namespace Aspid.Collections.Observable.Tests
             public override int GetHashCode() => Id;
         }
         #endregion
+
+        [Test]
+        public void DictionaryInterface_WithComparer_ExposesLiveKeysValuesAndCopiesAtOffset()
+        {
+            using var source = new ObservableDictionary<string, int>(4, StringComparer.OrdinalIgnoreCase);
+            IDictionary<string, int> dictionary = source;
+            var keys = dictionary.Keys;
+            var values = dictionary.Values;
+
+            dictionary.Add("a", 1);
+            dictionary["B"] = 2;
+
+            Assert.That(dictionary.IsReadOnly, Is.False);
+            Assert.That(source.Comparer, Is.SameAs(StringComparer.OrdinalIgnoreCase));
+            Assert.That(dictionary["A"], Is.EqualTo(1));
+            CollectionAssert.AreEquivalent(new[] { "a", "B" }, keys);
+            CollectionAssert.AreEquivalent(new[] { 1, 2 }, values);
+
+            var sentinel = new KeyValuePair<string, int>("sentinel", -1);
+            var copied = new[] { sentinel, sentinel, sentinel, sentinel };
+            dictionary.CopyTo(copied, 1);
+
+            Assert.That(copied[0], Is.EqualTo(sentinel));
+            Assert.That(copied[3], Is.EqualTo(sentinel));
+            CollectionAssert.AreEquivalent(dictionary, new[] { copied[1], copied[2] });
+            CollectionAssert.AreEquivalent(dictionary, (System.Collections.IEnumerable)source);
+        }
+
+        [Test]
+        public void RemovePair_MissingKey_DoesNotPublish()
+        {
+            _dict.Add("present", 1);
+            _events.Clear();
+
+            Assert.That(_dict.Remove(new KeyValuePair<string, int>("missing", 1)), Is.False);
+            Assert.That(_dict["present"], Is.EqualTo(1));
+            Assert.That(_events.Count, Is.Zero);
+        }
+
     }
 }

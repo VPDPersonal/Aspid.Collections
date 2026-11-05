@@ -57,8 +57,8 @@ namespace Aspid.Collections.Observable.Filtered
             _filter = filter;
             _comparer = comparer;
 
-            SubscribeToSource();
             Update();
+            SubscribeToSource();
         }
 
         private void SubscribeToSource()
@@ -166,9 +166,8 @@ namespace Aspid.Collections.Observable.Filtered
         {
             if (_indexes is null) return;
 
-            ShiftIndexesGreaterOrEqual(
-                threshold: sourceIndex,
-                delta: 1);
+            if (sourceIndex < _list.Count - 1)
+                ShiftIndexesGreaterOrEqual(threshold: sourceIndex, delta: 1);
 
             if (_filter is not null && !_filter(item)) return;
 
@@ -184,9 +183,8 @@ namespace Aspid.Collections.Observable.Filtered
             if (_indexes is null) return;
 
             var delta = items.Count;
-            ShiftIndexesGreaterOrEqual(
-                threshold: startIndex,
-                delta: delta);
+            if (startIndex < _list.Count - delta)
+                ShiftIndexesGreaterOrEqual(threshold: startIndex, delta: delta);
 
             for (var offset = 0; offset < delta; offset++)
             {

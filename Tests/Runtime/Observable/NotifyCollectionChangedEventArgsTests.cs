@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using NUnit.Framework;
 using System.Collections.Specialized;
 
@@ -158,5 +160,19 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(default(int), args.NewItem);
         }
         #endregion
+
+        [Test]
+        public void Add_NullReference_IsSingleItemWithValidIndex()
+        {
+            var args = NotifyCollectionChangedEventArgs<string?>.Add((string?)null, 2);
+
+            Assert.That(args.Action, Is.EqualTo(NotifyCollectionChangedAction.Add));
+            Assert.That(args.IsSingleItem, Is.True);
+            Assert.That(args.NewItem, Is.Null);
+            Assert.That(args.NewItems, Is.Null);
+            Assert.That(args.NewStartingIndex, Is.EqualTo(2));
+            Assert.That(args.OldStartingIndex, Is.EqualTo(-1));
+        }
+
     }
 }

@@ -96,14 +96,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                var index = _list.Count;
-
-                _list.AddRange(items);
-                if (items.Count is 0) return;
-
-                OnAddedRange(items);
-                
-                Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
+                // The input may be this list or a live projection over it.
+                AddRange(items as T[] ?? items.ToArray());
             }
         }
         
@@ -137,12 +131,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
-                _list.InsertRange(index, items);
-                if (items.Count is 0) return;
-
-                OnAddedRange(items);
-                
-                Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
+                if ((uint)index > (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(index));
+                InsertRange(index, items as T[] ?? items.ToArray());
             }
         }
 

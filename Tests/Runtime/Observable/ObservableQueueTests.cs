@@ -303,5 +303,26 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.AreEqual(0, _queue.Count);
         }
+
+        [Test]
+        public void Ctor_ExistingQueue_ExposesInitialFifoOrder()
+        {
+            using var queue = new ObservableQueue<int>(new Queue<int>(new[] { 3, 1, 2 }));
+
+            CollectionAssert.AreEqual(new[] { 3, 1, 2 }, (System.Collections.IEnumerable)queue);
+            Assert.That(queue.Dequeue(), Is.EqualTo(3));
+            Assert.That(queue.Peek(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void EmptyQueue_PeekAndDequeueThrowWithoutPublishing()
+        {
+            Assert.Throws<System.InvalidOperationException>(() => _queue.Peek());
+            Assert.Throws<System.InvalidOperationException>(() => _queue.Dequeue());
+
+            Assert.That(_queue.Count, Is.Zero);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
     }
 }

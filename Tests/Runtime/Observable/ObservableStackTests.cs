@@ -321,5 +321,16 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.AreEqual(0, _stack.Count);
         }
+
+        [Test]
+        public void EmptyStack_PeekAndPopThrowWithoutPublishing()
+        {
+            Assert.Throws<System.InvalidOperationException>(() => _stack.Peek());
+            Assert.Throws<System.InvalidOperationException>(() => _stack.Pop());
+
+            Assert.That(_stack.Count, Is.Zero);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
     }
 }

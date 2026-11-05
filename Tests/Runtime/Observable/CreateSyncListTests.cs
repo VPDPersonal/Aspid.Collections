@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using Aspid.Collections.Observable.Synchronizer;
+using Aspid.Collections.Observable.Filtered;
 
 // ReSharper disable once CheckNamespace
 namespace Aspid.Collections.Observable.Tests
@@ -26,6 +27,30 @@ namespace Aspid.Collections.Observable.Tests
         }
         
         #region Initial State
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(true, true)]
+        public void SourceCopiesLiveRange_SyncAppliesExactlyTheInsertedItems(bool insert, bool useView)
+        {
+            _source.AddRange(1, 2, 3);
+            using var capture = new EventCapture<int>(_source);
+            using var view = _source.CreateFiltered(Comparer<int>.Default);
+            IReadOnlyList<int> items = useView ? view : _source;
+
+            if (insert) _source.InsertRange(1, items);
+            else _source.AddRange(items);
+
+            var expected = insert ? new[] { 1, 1, 2, 3, 2, 3 } : new[] { 1, 2, 3, 1, 2, 3 };
+            CollectionAssert.AreEqual(expected, _source);
+            CollectionAssert.AreEqual(new[] { 1, 1, 2, 2, 3, 3 }, view);
+            CollectionAssert.AreEqual(System.Array.ConvertAll(expected, value => value.ToString()), _sync);
+            Assert.That(capture.Count, Is.EqualTo(1));
+            Assert.That(capture.Last.IsSingleItem, Is.False);
+            Assert.That(capture.Last.NewStartingIndex, Is.EqualTo(insert ? 1 : 3));
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, capture.Last.NewItems);
+        }
+
         [Test]
         public void CreateSync_EmptySource_CreatesEmptySync()
         {
@@ -289,5 +314,27 @@ namespace Aspid.Collections.Observable.Tests
             Assert.IsNull(removed[0]);
         }
         #endregion
+
+        [Test]
+        public void SourceRemoveRange_DisposesOnlyRemovedValuesExactlyOnce()
+        {
+            _source.AddRange(1, 2, 3, 4);
+            using var sync = _source.CreateSync(_ => new DisposableItem(), isDisposable: true);
+            var items = new List<DisposableItem>(sync);
+            using var capture = new EventCapture<DisposableItem>(sync);
+
+            _source.RemoveRange(1, 2);
+
+            Assert.That(capture.Count, Is.EqualTo(1));
+            Assert.That(capture.Last.IsSingleItem, Is.False);
+            CollectionAssert.AreEqual(new[] { items[1], items[2] }, capture.Last.OldItems);
+            CollectionAssert.AreEqual(new[] { items[0], items[3] }, sync);
+            Assert.That(items.ConvertAll(item => item.DisposeCount), Is.EqualTo(new[] { 0, 1, 1, 0 }));
+
+            _source.RemoveAt(0);
+            sync.Dispose();
+            Assert.That(items.ConvertAll(item => item.DisposeCount), Is.EqualTo(new[] { 1, 1, 1, 1 }));
+        }
+
     }
 }
