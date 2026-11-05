@@ -1,5 +1,3 @@
-# Aspid.Collections
-
 <picture>
   <source srcset="Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
   <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
