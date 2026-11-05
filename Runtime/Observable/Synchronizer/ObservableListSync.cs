@@ -99,7 +99,7 @@ namespace Aspid.Collections.Observable.Synchronizer
 
         protected override void OnReplaced(int index, in TTo oldItem, in TTo newItem)
         {
-            if (ReferenceEquals(oldItem, newItem)) return;
+            if (!typeof(TTo).IsValueType && oldItem is not null && ReferenceEquals(oldItem, newItem)) return;
             OnRemoved(oldItem);
         }
 

@@ -17,6 +17,7 @@ namespace Aspid.Collections.Observable.Synchronizer
             IReadOnlyObservableDictionary<TKey, TFrom> fromDictionary, 
             Func<TFrom, TTo> converter,
             Action<TTo>? remove)
+            : base(GetComparer(fromDictionary))
         {
             _remove = remove;
             _converter = converter;
@@ -36,6 +37,10 @@ namespace Aspid.Collections.Observable.Synchronizer
         {
             _isDisposable = isDisposable;
         }
+
+        private static IEqualityComparer<TKey> GetComparer(IReadOnlyObservableDictionary<TKey, TFrom> fromDictionary) => fromDictionary is ObservableDictionary<TKey, TFrom> dictionary
+            ? dictionary.Comparer
+            : EqualityComparer<TKey>.Default;
 
         private void Subscribe() => 
             _fromDictionary.CollectionChanged += OnFromListChanged;
@@ -117,7 +122,7 @@ namespace Aspid.Collections.Observable.Synchronizer
 
         protected override void OnReplaced(in KeyValuePair<TKey, TTo> oldItem, in KeyValuePair<TKey, TTo> newItem)
         {
-            if (ReferenceEquals(oldItem.Value, newItem.Value)) return;
+            if (!typeof(TTo).IsValueType && oldItem.Value is not null && ReferenceEquals(oldItem.Value, newItem.Value)) return;
             OnRemoved(oldItem.Key, oldItem.Value);
         }
 

@@ -245,7 +245,7 @@ namespace Aspid.Collections.Observable.Tests
         }
         #endregion
 
-        #region Replace Same Instance
+        #region Replace Converted Values
         [Test]
         public void SourceReplace_ConverterReturnsSameInstance_DoesNotDisposeLiveItem()
         {
@@ -274,6 +274,19 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, removed.Count);
             sync.Dispose();
             source.Dispose();
+        }
+
+        [Test]
+        public void SourceReplace_ConverterReturnsNullAgain_InvokesRemoved()
+        {
+            using var source = new ObservableList<int> { 1 };
+            var removed = new List<string>();
+            using var sync = source.CreateSync<int, string>(_ => null!, removed: removed.Add);
+
+            source[0] = 2;
+
+            Assert.AreEqual(1, removed.Count);
+            Assert.IsNull(removed[0]);
         }
         #endregion
     }

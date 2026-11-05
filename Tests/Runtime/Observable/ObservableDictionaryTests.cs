@@ -323,5 +323,32 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, _dict.Count);
         }
         #endregion
+
+        #region Stored Instance
+        [Test]
+        public void RemovePair_EqualProbe_HookReceivesStoredValue()
+        {
+            var stored = new Keyed { Id = 1 };
+            var dictionary = new RecordingDictionary { ["a"] = stored };
+
+            Assert.IsTrue(dictionary.Remove(new KeyValuePair<string, Keyed>("a", new Keyed { Id = 1 })));
+
+            Assert.AreSame(stored, dictionary.LastRemoved);
+            dictionary.Dispose();
+        }
+
+        private sealed class RecordingDictionary : ObservableDictionary<string, Keyed>
+        {
+            public Keyed LastRemoved;
+            protected override void OnRemoved(in string key, in Keyed value) => LastRemoved = value;
+        }
+        private sealed class Keyed : System.IEquatable<Keyed>
+        {
+            public int Id;
+            public bool Equals(Keyed other) => other is not null && other.Id == Id;
+            public override bool Equals(object obj) => Equals(obj as Keyed);
+            public override int GetHashCode() => Id;
+        }
+        #endregion
     }
 }

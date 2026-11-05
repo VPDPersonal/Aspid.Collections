@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -54,6 +55,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (items.Length is 0) return;
+
                 foreach (var item in items)
                     _stack.Push(item);
                 
@@ -66,6 +69,8 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (items.Count is 0) return;
+
                 foreach (var item in items)
                     _stack.Push(item);
 
@@ -112,6 +117,10 @@ namespace Aspid.Collections.Observable
         {
             lock (SyncRoot)
             {
+                if (dest.Length is 0) return;
+                if (dest.Length > _stack.Count)
+                    throw new InvalidOperationException($"Cannot pop {dest.Length} items: the stack contains only {_stack.Count}.");
+
                 for (var i = 0; i < dest.Length; i++)
                     dest[i] = _stack.Pop();
 

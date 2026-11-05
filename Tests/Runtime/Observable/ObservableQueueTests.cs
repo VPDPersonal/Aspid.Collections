@@ -2,6 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Aspid.Collections.Observable.Synchronizer;
 
 // ReSharper disable once CheckNamespace
 namespace Aspid.Collections.Observable.Tests
@@ -185,6 +186,43 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(NotifyCollectionChangedAction.Remove, e.Action);
             Assert.IsFalse(e.IsSingleItem);
             Assert.AreEqual(0, e.OldStartingIndex);
+        }
+
+        [Test]
+        public void DequeueRange_DestLargerThanCount_ThrowsWithoutRemovingItems()
+        {
+            _queue.EnqueueRange(new[] { 1, 2 });
+            _events.Clear();
+
+            Assert.Throws<System.InvalidOperationException>(() => _queue.DequeueRange(new int[3]));
+
+            Assert.AreEqual(2, _queue.Count);
+            Assert.AreEqual(0, _events.Count);
+        }
+
+        [Test]
+        public void DequeueRange_DestLargerThanCount_KeepsSyncInStep()
+        {
+            using var sync = _queue.CreateSync(i => i);
+            _queue.EnqueueRange(new[] { 1, 2 });
+
+            Assert.Throws<System.InvalidOperationException>(() => _queue.DequeueRange(new int[3]));
+
+            CollectionAssert.AreEqual(_queue.ToArray(), sync);
+        }
+
+        [Test]
+        public void EmptyRanges_DoNotRaiseEvents()
+        {
+            _queue.EnqueueRange(new[] { 1, 2 });
+            _events.Clear();
+
+            _queue.EnqueueRange(System.Array.Empty<int>());
+            _queue.EnqueueRange(new List<int>());
+            _queue.DequeueRange(System.Array.Empty<int>());
+
+            Assert.AreEqual(2, _queue.Count);
+            Assert.AreEqual(0, _events.Count);
         }
         #endregion
 
