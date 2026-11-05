@@ -117,7 +117,6 @@ namespace Aspid.Collections.Observable.Synchronizer
 
         protected override void OnReplaced(in KeyValuePair<TKey, TTo> oldItem, in KeyValuePair<TKey, TTo> newItem)
         {
-            // A caching or pooling converter can return the instance that is already here: it stays live.
             if (ReferenceEquals(oldItem.Value, newItem.Value)) return;
             OnRemoved(oldItem.Key, oldItem.Value);
         }
