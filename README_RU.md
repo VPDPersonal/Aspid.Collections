@@ -49,14 +49,15 @@ URL указывает на последнюю версию. Кнопка **Upda
 
 ## Возможности
 
-### Уведомления об изменениях
-
 <table>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Уведомления об изменениях</h3></th></tr>
 <tr>
-<td width="60%">
+<td width="60%" valign="top">
 
 ```csharp
-using var items = new ObservableList<string>();
+using var items =
+    new ObservableList<string>();
 items.CollectionChanged += change =>
     Console.WriteLine(change.Action);
 
@@ -66,25 +67,24 @@ items.RemoveAt(0);         // Remove
 ```
 
 </td>
-<td width="40%">
+<td width="40%" valign="top">
 
-Подпишитесь на `CollectionChanged`, чтобы реагировать на изменения. Для одиночных операций `IsSingleItem` указывает на поля `NewItem` / `OldItem`, для пакетных используйте `NewItems` / `OldItems`. При освобождении список очищается и отправляет `Reset`.
+`CollectionChanged` сообщает об изменениях. `IsSingleItem` помогает выбрать поля для одиночной или пакетной операции. При освобождении список отправляет `Reset`.
 
 [Пример с уведомлениями →](Samples~/01_BasicChangeNotifications)
 
 </td>
 </tr>
-</table>
-
-### Синхронизированные представления
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Синхронизированные представления</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
 using var scores = new ObservableList<int>();
-using var labels = scores.CreateSync(n => $"Score {n}");
+using var labels = scores.CreateSync(
+    n => $"Score {n}");
 
 scores.Add(10);
 scores[0] = 20;
@@ -92,67 +92,67 @@ Console.WriteLine(labels[0]); // Score 20
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`CreateSync` преобразует элементы источника и собирает их в коллекцию для чтения, которая обновляется вслед за ним. Односторонняя синхронизация работает для всех пяти типов коллекций. [Перегрузки](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
+`CreateSync` создаёт представление для чтения, которое обновляется вслед за источником. Поддерживаются все пять типов коллекций. [Перегрузки](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
 [Пример синхронизации инвентаря →](Samples~/02_InventorySync)
 
 </td>
 </tr>
-</table>
-
-### Фильтрация и сортировка
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Фильтрация и сортировка</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
-using var scores = new ObservableList<int> { 25, 5, 15 };
+using var scores =
+    new ObservableList<int> { 25, 5, 15 };
 using var visible = scores.CreateFiltered(
     n => n >= 10, Comparer<int>.Default);
 
 scores.Add(12);
-// 12, 15, 25
-Console.WriteLine(string.Join(", ", visible));
+Console.WriteLine(
+    string.Join(", ", visible)); // 12, 15, 25
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`CreateFiltered` показывает подходящие элементы в заданном порядке, сохраняя исходную коллекцию. Меняйте `Filter` и `Comparer` во время работы или соединяйте представления в цепочку для нескольких фильтров. Если источник не отправляет уведомления, после его изменения вызовите `Update()`.
+`CreateFiltered` фильтрует и сортирует представление источника. Меняйте `Filter` или `Comparer` во время работы. Если источник не отправляет уведомления, после изменения вызовите `Update()`.
 
 [Пример фильтрации инвентаря →](Samples~/03_FilteredInventory)
 
 </td>
 </tr>
-</table>
-
-### Отдельные обработчики изменений
-
-<table>
+</tbody>
+<tbody>
+<tr><th colspan="2" align="left"><h3>Отдельные обработчики изменений</h3></th></tr>
 <tr>
-<td width="60%">
+<td valign="top">
 
 ```csharp
-using var items = new ObservableList<string>();
+using var items =
+    new ObservableList<string>();
 using var events = items.SplitByEvents(
     added: (batch, _) =>
-        Console.WriteLine($"Added {batch.Count}"));
+        Console.WriteLine(
+            $"Added {batch.Count}"));
 
 items.AddRange("Potion", "Elixir"); // Added 2
 ```
 
 </td>
-<td width="40%">
+<td valign="top">
 
-`SplitByEvents` вызывает отдельные обработчики добавления, удаления, перемещения, замены и сброса. Обработчики изменений элементов получают список даже при изменении одного элемента.
+`SplitByEvents` вызывает отдельный обработчик для каждого типа изменения. Обработчики изменений элементов всегда получают список.
 
 [Пример подписки для аналитики →](Samples~/05_SplitByEvents)
 
 </td>
 </tr>
+</tbody>
 </table>
 
 ## Коллекции
