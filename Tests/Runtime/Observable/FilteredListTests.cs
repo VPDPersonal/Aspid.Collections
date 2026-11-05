@@ -706,5 +706,19 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(countBefore, fl2.Count);
         }
         #endregion
+
+        #region Plain Source
+        [Test]
+        public void PlainListSource_NoFilter_CountFollowsSource()
+        {
+            var source = new List<int> { 1, 2, 3 };
+            using var filtered = new FilteredList<int>(source);
+
+            source.Add(4);
+
+            Assert.AreEqual(4, filtered.Count);
+            CollectionAssert.AreEqual(source, filtered);
+        }
+        #endregion
     }
 }
