@@ -120,8 +120,11 @@ namespace Aspid.Collections.Observable.Synchronizer
             else _remove?.Invoke(value);
         }
 
-        protected override void OnReplaced(in KeyValuePair<TKey, TTo> oldItem, in KeyValuePair<TKey, TTo> newItem) =>
+        protected override void OnReplaced(in KeyValuePair<TKey, TTo> oldItem, in KeyValuePair<TKey, TTo> newItem)
+        {
+            if (!typeof(TTo).IsValueType && oldItem.Value is not null && ReferenceEquals(oldItem.Value, newItem.Value)) return;
             OnRemoved(oldItem.Key, oldItem.Value);
+        }
 
         protected override void OnClearing()
         {

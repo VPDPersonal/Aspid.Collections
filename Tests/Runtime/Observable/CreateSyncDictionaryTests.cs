@@ -183,5 +183,35 @@ namespace Aspid.Collections.Observable.Tests
             source.Dispose();
         }
         #endregion
+
+        #region Replace Converted Values
+        [Test]
+        public void SourceReplace_ConverterReturnsSameInstance_DoesNotDisposeLiveItem()
+        {
+            var cached = new DisposableItem();
+            var source = new ObservableDictionary<string, int> { ["k"] = 1 };
+            var sync = source.CreateSync(_ => cached, isDisposable: true);
+
+            source["k"] = 2;
+
+            Assert.AreSame(cached, sync["k"]);
+            Assert.IsFalse(cached.IsDisposed);
+            sync.Dispose();
+            source.Dispose();
+        }
+
+        [Test]
+        public void SourceReplace_ConverterReturnsNullAgain_InvokesRemoved()
+        {
+            using var source = new ObservableDictionary<string, int> { ["k"] = 1 };
+            var removed = new List<int?>();
+            using var sync = source.CreateSync(_ => (int?)null, remove: removed.Add);
+
+            source["k"] = 2;
+
+            Assert.AreEqual(1, removed.Count);
+            Assert.IsNull(removed[0]);
+        }
+        #endregion
     }
 }
