@@ -9,9 +9,9 @@
 [![Release 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
 [![MIT License](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
-**English** · [Русский](README_RU.md)
-
 Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
+
+**English** · [Русский](README_RU.md)
 
 ## Installation
 
@@ -157,9 +157,9 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ## Collections
 
-<table width="100%">
+<table>
 <thead>
-<tr><th>Type</th><th width="100%">Use it for</th></tr>
+<tr><th width="420">Type</th><th width="700">Use it for</th></tr>
 </thead>
 <tbody>
 <tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Ordered items with indexes, moves and range operations</td></tr>
@@ -169,10 +169,6 @@ items.AddRange("Potion", "Elixir"); // Added 2
 <tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Last-in, first-out processing with range operations</td></tr>
 </tbody>
 </table>
-
-Expose `IReadOnlyObservableList<T>` or `IObservableCollection<T>` when consumers only need to read and subscribe. These interfaces are covariant for reference types. The dictionary interfaces keep both type parameters invariant.
-
-Dispose synchronized views, filtered views and `SplitByEvents` handles to detach their subscriptions. Dispose dependent views before their sources and use a filtered view and its source on the same thread.
 
 ## Resources
 

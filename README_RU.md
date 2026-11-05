@@ -9,9 +9,9 @@
 [![Релиз 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
 [![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
-[English](README.md) · **Русский**
-
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
+
+[English](README.md) · **Русский**
 
 ## Установка
 
@@ -157,9 +157,9 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ## Коллекции
 
-<table width="100%">
+<table>
 <thead>
-<tr><th>Тип</th><th width="100%">Для чего подходит</th></tr>
+<tr><th width="420">Тип</th><th width="700">Для чего подходит</th></tr>
 </thead>
 <tbody>
 <tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Упорядоченный список с индексами, перемещением и пакетными операциями</td></tr>
@@ -169,10 +169,6 @@ items.AddRange("Potion", "Elixir"); // Added 2
 <tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке добавления с пакетными операциями</td></tr>
 </tbody>
 </table>
-
-Предоставляйте `IReadOnlyObservableList<T>` или `IObservableCollection<T>`, если вызывающему коду нужны чтение и подписка на изменения. Эти интерфейсы ковариантны для ссылочных типов. У интерфейсов словаря оба параметра типа инвариантны.
-
-Вызывайте `Dispose()` у синхронизированных и отфильтрованных представлений и у результата `SplitByEvents`, чтобы снять подписки. Освобождайте зависимые представления раньше их источников. Работайте с отфильтрованным представлением и его источником в одном потоке.
 
 ## Ресурсы
 
