@@ -290,5 +290,46 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(0, _set.Count);
         }
         #endregion
+
+        #region Stored Instance
+        [Test]
+        public void Remove_EqualProbe_EventCarriesStoredInstance()
+        {
+            var stored = new Keyed { Id = 1 };
+            var set = new ObservableHashSet<Keyed> { stored };
+            Keyed reported = null;
+            set.CollectionChanged += e => reported = e.OldItem;
+
+            Assert.IsTrue(set.Remove(new Keyed { Id = 1 }));
+
+            Assert.AreSame(stored, reported);
+            set.Dispose();
+        }
+
+        [Test]
+        public void Remove_EqualProbe_HookReceivesStoredInstance()
+        {
+            var stored = new Keyed { Id = 1 };
+            var set = new RecordingSet { stored };
+
+            set.Remove(new Keyed { Id = 1 });
+
+            Assert.AreSame(stored, set.LastRemoved);
+            set.Dispose();
+        }
+
+        private sealed class RecordingSet : ObservableHashSet<Keyed>
+        {
+            public Keyed LastRemoved;
+            protected override void OnRemoved(Keyed item) => LastRemoved = item;
+        }
+        private sealed class Keyed : System.IEquatable<Keyed>
+        {
+            public int Id;
+            public bool Equals(Keyed other) => other is not null && other.Id == Id;
+            public override bool Equals(object obj) => Equals(obj as Keyed);
+            public override int GetHashCode() => Id;
+        }
+        #endregion
     }
 }
