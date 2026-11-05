@@ -5,9 +5,9 @@
   <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity Package](https://img.shields.io/badge/Unity-Package-4fa35d?logo=unity&logoColor=white)](#installation)
-[![Release](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
-[![MIT License](https://img.shields.io/github/license/VPDPersonal/Aspid.Collections?label=License&labelColor=254d2c&color=4fa35d)](LICENSE)
+[![Unity Package](Documentation~/Images/status-badge-unity.svg)](#installation)
+[![Release 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
+[![MIT License](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
 **English** · [Русский](README_RU.md)
 
@@ -15,9 +15,18 @@ Aspid.Collections provides observable collections for Unity and .NET. React to c
 
 ## Installation
 
-1. Open **Window → Package Manager**.
-2. Choose **+ → Install package from git URL…**.
-3. Paste the URL and click **Install**.
+<table>
+<tr>
+<td width="56%"><img src="Documentation~/Images/install.webp" alt="Package Manager installs Aspid.Collections from its Git URL" width="100%"></td>
+<td width="44%">
+<ol>
+<li>Open <b>Window → Package Manager</b></li>
+<li>Choose <b>+ → Install package from git URL…</b></li>
+<li>Paste the URL and press <b>Install</b></li>
+</ol>
+</td>
+</tr>
+</table>
 
 ```text
 https://github.com/VPDPersonal/Aspid.Collections.git#upm

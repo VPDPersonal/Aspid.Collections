@@ -159,7 +159,7 @@ jobs:
           README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation~/Images/"
           for README_FILE in README.md README_RU.md; do
             README_BLOB=$(git show "$TAG:$README_FILE" \
-              | sed "s|\"Documentation~/Images/|\"${README_IMAGE_URL}|g" \
+              | sed -E "s|([\"(])Documentation~/Images/|\1${README_IMAGE_URL}|g" \
               | git hash-object -w --stdin)
             git update-index --cacheinfo "100644,$README_BLOB,$README_FILE"
           done

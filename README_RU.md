@@ -5,9 +5,9 @@
   <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Пакет Unity](https://img.shields.io/badge/Unity-Package-4fa35d?logo=unity&logoColor=white)](#установка)
-[![Релиз](https://img.shields.io/github/v/release/VPDPersonal/Aspid.Collections?label=Release&labelColor=254d2c&color=4fa35d)](https://github.com/VPDPersonal/Aspid.Collections/releases)
-[![Лицензия MIT](https://img.shields.io/github/license/VPDPersonal/Aspid.Collections?label=License&labelColor=254d2c&color=4fa35d)](LICENSE)
+[![Пакет Unity](Documentation~/Images/status-badge-unity.svg)](#установка)
+[![Релиз 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
+[![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
 [English](README.md) · **Русский**
 
@@ -15,9 +15,18 @@ Aspid.Collections — наблюдаемые коллекции для Unity и 
 
 ## Установка
 
-1. Откройте **Window → Package Manager**.
-2. Выберите **+ → Install package from git URL…**.
-3. Вставьте URL и нажмите **Install**.
+<table>
+<tr>
+<td width="56%"><img src="Documentation~/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
+<td width="44%">
+<ol>
+<li>Откройте <b>Window → Package Manager</b></li>
+<li>Выберите <b>+ → Install package from git URL…</b></li>
+<li>Вставьте URL и нажмите <b>Install</b></li>
+</ol>
+</td>
+</tr>
+</table>
 
 ```text
 https://github.com/VPDPersonal/Aspid.Collections.git#upm
