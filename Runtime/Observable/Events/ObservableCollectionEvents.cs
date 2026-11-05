@@ -9,39 +9,39 @@ namespace Aspid.Collections.Observable
     {
         public event Action? Reset
         {
-            add => _reset += value;
-            remove => _reset -= value;
+            add => AddHandler(ref _reset, value);
+            remove => RemoveHandler(ref _reset, value);
         }
         
         public event Action<IReadOnlyList<T>, int>? Added
         {
-            add => _added += value;
-            remove => _added -= value;
+            add => AddHandler(ref _added, value);
+            remove => RemoveHandler(ref _added, value);
         }
         
         public event Action<IReadOnlyList<T>, int>? Removed
         {
-            add => _removed += value;
-            remove => _removed -= value;
+            add => AddHandler(ref _removed, value);
+            remove => RemoveHandler(ref _removed, value);
         }
         
         public event Action<IReadOnlyList<T>, int, int>? Moved
         {
-            add => _moved += value;
-            remove => _moved -= value;
+            add => AddHandler(ref _moved, value);
+            remove => RemoveHandler(ref _moved, value);
         }
         
         public event Action<IReadOnlyList<T>, IReadOnlyList<T?>, int>? Replaced
         {
-            add => _replaced += value;
-            remove => _replaced -= value;
+            add => AddHandler(ref _replaced, value);
+            remove => RemoveHandler(ref _replaced, value);
         }
         
-        private Action? _reset;
-        private Action<IReadOnlyList<T>, int>? _added;
-        private Action<IReadOnlyList<T>, int>? _removed;
-        private Action<IReadOnlyList<T>, int, int>? _moved;
-        private Action<IReadOnlyList<T>, IReadOnlyList<T?>, int>? _replaced;
+        private Action[]? _reset;
+        private Action<IReadOnlyList<T>, int>[]? _added;
+        private Action<IReadOnlyList<T>, int>[]? _removed;
+        private Action<IReadOnlyList<T>, int, int>[]? _moved;
+        private Action<IReadOnlyList<T>, IReadOnlyList<T?>, int>[]? _replaced;
         
         private readonly IObservableCollection<T> _list;
         
@@ -54,11 +54,11 @@ namespace Aspid.Collections.Observable
             Action? reset = null)
         {
             _list = list;
-            _reset = reset;
-            _added = added;
-            _moved = moved;
-            _removed = removed;
-            _replaced = replaced;
+            AddHandler(ref _reset, reset);
+            AddHandler(ref _added, added);
+            AddHandler(ref _moved, moved);
+            AddHandler(ref _removed, removed);
+            AddHandler(ref _replaced, replaced);
             
             _list.CollectionChanged += OnCollectionChanged;
         }
@@ -68,37 +68,119 @@ namespace Aspid.Collections.Observable
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    _added?.Invoke(
-                        e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!,
-                        e.NewStartingIndex);
+                    {
+                        var handlers = _added;
+                        if (handlers is null) break;
+
+                        var items = e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!;
+                        foreach (var handler in handlers)
+                            handler(items, e.NewStartingIndex);
+                    }
                     break;
                 
                 case NotifyCollectionChangedAction.Move:
-                    _moved?.Invoke(
-                        e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!,
-                        e.OldStartingIndex,
-                        e.NewStartingIndex);
+                    {
+                        var handlers = _moved;
+                        if (handlers is null) break;
+
+                        var items = e.IsSingleItem ? new[] { e.NewItem! } : e.NewItems!;
+                        foreach (var handler in handlers)
+                            handler(items, e.OldStartingIndex, e.NewStartingIndex);
+                    }
                     break;
                 
                 case NotifyCollectionChangedAction.Remove:
-                    _removed?.Invoke(
-                        e.IsSingleItem ? new[] { e.OldItem }! : e.OldItems!, 
-                        e.OldStartingIndex);
+                    {
+                        var handlers = _removed;
+                        if (handlers is null) break;
+
+                        var items = e.IsSingleItem ? new[] { e.OldItem }! : e.OldItems!;
+                        foreach (var handler in handlers)
+                            handler(items, e.OldStartingIndex);
+                    }
                     break;
                 
-                case NotifyCollectionChangedAction.Replace: 
-                    _replaced?.Invoke(
-                        e.IsSingleItem ? new[] { e.OldItem }! : e.OldItems!,
-                        e.IsSingleItem ? new[] { e.NewItem }! : e.NewItems!, 
-                        e.NewStartingIndex);
+                case NotifyCollectionChangedAction.Replace:
+                    {
+                        var handlers = _replaced;
+                        if (handlers is null) break;
+
+                        var oldItems = e.IsSingleItem ? new[] { e.OldItem }! : e.OldItems!;
+                        var newItems = e.IsSingleItem ? new[] { e.NewItem }! : e.NewItems!;
+                        foreach (var handler in handlers)
+                            handler(oldItems, newItems, e.NewStartingIndex);
+                    }
                     break;
                 
                 case NotifyCollectionChangedAction.Reset:
-                    _reset?.Invoke();
+                    {
+                        var handlers = _reset;
+                        if (handlers is null) break;
+
+                        foreach (var handler in handlers)
+                            handler();
+                    }
                     break;
                 
                 default: throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private static void AddHandler<TDelegate>(ref TDelegate[]? handlers, TDelegate? value)
+            where TDelegate : Delegate
+        {
+            if (value is null) return;
+
+            var invocationList = value.GetInvocationList();
+            var count = handlers?.Length ?? 0;
+            var copy = new TDelegate[count + invocationList.Length];
+            if (handlers is not null) Array.Copy(handlers, copy, count);
+
+            for (var i = 0; i < invocationList.Length; i++)
+                copy[count + i] = (TDelegate)invocationList[i];
+
+            handlers = copy;
+        }
+
+        private static void RemoveHandler<TDelegate>(ref TDelegate[]? handlers, TDelegate? value)
+            where TDelegate : Delegate
+        {
+            if (value is null || handlers is null) return;
+
+            var invocationList = value.GetInvocationList();
+            var remainingCount = handlers.Length - invocationList.Length;
+            for (var index = remainingCount; index >= 0; index--)
+            {
+                if (!MatchesAt(handlers, index, invocationList)) continue;
+
+                if (remainingCount == 0)
+                {
+                    handlers = null;
+                    return;
+                }
+
+                var copy = new TDelegate[remainingCount];
+                Array.Copy(handlers, 0, copy, 0, index);
+                Array.Copy(handlers, index + invocationList.Length, copy, index, remainingCount - index);
+                handlers = copy;
+                return;
+            }
+        }
+
+        private static bool MatchesAt(Delegate[] handlers, int index, Delegate[] invocationList)
+        {
+            for (var i = 0; i < invocationList.Length; i++)
+            {
+                var existing = handlers[index + i];
+                var requested = invocationList[i];
+                var matches = existing.GetType() == requested.GetType()
+                    ? existing.Equals(requested)
+                    : existing.Method == requested.Method && ReferenceEquals(existing.Target, requested.Target);
+
+                if (!matches) return false;
+            }
+
+            return true;
         }
 
         public void Dispose()
