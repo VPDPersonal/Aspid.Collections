@@ -37,10 +37,6 @@ namespace Aspid.Collections.Observable
             remove => RemoveHandler(ref _replaced, value);
         }
         
-        // Handlers are kept in arrays instead of being combined via Delegate.Combine: a handler
-        // subscribed through a covariant IObservableEvents<TBase> has a different runtime type,
-        // and Combine throws for mixed delegate types. Arrays are replaced on every change
-        // (copy-on-write), so a dispatch in progress keeps iterating its own snapshot.
         private Action[]? _reset;
         private Action<IReadOnlyList<T>, int>[]? _added;
         private Action<IReadOnlyList<T>, int>[]? _removed;
@@ -152,9 +148,6 @@ namespace Aspid.Collections.Observable
         {
             if (value is null || handlers is null) return;
 
-            // Delegate.Equals also compares runtime types, so a handler added through a covariant
-            // view would never match. Compare method and target instead; remove the last match,
-            // like Delegate.Remove.
             var index = -1;
             for (var i = handlers.Length - 1; i >= 0; i--)
             {
