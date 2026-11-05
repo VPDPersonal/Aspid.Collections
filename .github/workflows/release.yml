@@ -154,7 +154,15 @@ jobs:
           trap 'rm -f "$UPM_INDEX"' EXIT
           export GIT_INDEX_FILE="$UPM_INDEX"
           git read-tree "$TAG"
-          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta .gitignore .gitignore.meta
+          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta .gitignore .gitignore.meta "Documentation~"
+          # Keep README images working after their source directory is removed.
+          README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation~/Images/"
+          for README_FILE in README.md README_RU.md; do
+            README_BLOB=$(git show "$TAG:$README_FILE" \
+              | sed -E "s|([\"(])Documentation~/Images/|\1${README_IMAGE_URL}|g" \
+              | git hash-object -w --stdin)
+            git update-index --cacheinfo "100644,$README_BLOB,$README_FILE"
+          done
           TREE=$(git write-tree)
           unset GIT_INDEX_FILE
           PARENT=$(git rev-parse "$TAG^{commit}")
