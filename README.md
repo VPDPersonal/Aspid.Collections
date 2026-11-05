@@ -43,13 +43,11 @@ Requires Unity 2021.3.0f1 or newer.
 
 **The Console shows `Assembly with name 'Aspid.Collections.Observable' already exists`.** The project has a second copy of the package, for example its folder under `Assets`. Delete the copy.
 
-**Package Manager cannot resolve `com.unity.test-framework@1.6.0`.** Version 1.1.0 declares this dependency. See [the dependency fix](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
+**Package Manager cannot resolve `com.unity.test-framework@1.6.0`.** The published `#upm` release (1.1.0) declares this dependency. [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20) removed it from `main`.
 
 </details>
 
 ## Features
-
-Each example is a standalone C# snippet with top-level statements.
 
 ### Change notifications
 
@@ -58,9 +56,6 @@ Each example is a standalone C# snippet with top-level statements.
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-
 using var items = new ObservableList<string>();
 items.CollectionChanged += change =>
     Console.WriteLine(change.Action);
@@ -88,10 +83,6 @@ Subscribe to `CollectionChanged` to react to edits. Read `IsSingleItem` before c
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-using Aspid.Collections.Observable.Synchronizer;
-
 using var scores = new ObservableList<int>();
 using var labels = scores.CreateSync(n => $"Score {n}");
 
@@ -118,11 +109,6 @@ Console.WriteLine(labels[0]); // Score 20
 <td width="60%">
 
 ```csharp
-using System;
-using System.Collections.Generic;
-using Aspid.Collections.Observable;
-using Aspid.Collections.Observable.Filtered;
-
 using var scores = new ObservableList<int> { 25, 5, 15 };
 using var visible = scores.CreateFiltered(
     n => n >= 10, Comparer<int>.Default);
@@ -150,9 +136,6 @@ Console.WriteLine(string.Join(", ", visible));
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-
 using var items = new ObservableList<string>();
 using var events = items.SplitByEvents(
     added: (batch, _) =>
@@ -174,13 +157,18 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ## Collections
 
-| Type | Use it for |
-| --- | --- |
-| [`ObservableList<T>`](Runtime/Observable/ObservableList.cs) | Ordered items with indexes, moves and range operations |
-| [`ObservableDictionary<TKey, TValue>`](Runtime/Observable/ObservableDictionary.cs) | Items addressed by key, as in the [keyed leaderboard sample](Samples~/04_DictionaryKeyedTable) |
-| [`ObservableHashSet<T>`](Runtime/Observable/ObservableHashSet.cs) | Unique items and membership checks |
-| [`ObservableQueue<T>`](Runtime/Observable/ObservableQueue.cs) | First-in, first-out processing with range operations |
-| [`ObservableStack<T>`](Runtime/Observable/ObservableStack.cs) | Last-in, first-out processing with range operations |
+<table width="100%">
+<thead>
+<tr><th>Type</th><th width="100%">Use it for</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Ordered items with indexes, moves and range operations</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Items addressed by key, as in the <a href="Samples~/04_DictionaryKeyedTable">keyed leaderboard sample</a></td></tr>
+<tr><td><a href="Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Unique items and membership checks</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>First-in, first-out processing with range operations</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Last-in, first-out processing with range operations</td></tr>
+</tbody>
+</table>
 
 Expose `IReadOnlyObservableList<T>` or `IObservableCollection<T>` when consumers only need to read and subscribe. These interfaces are covariant for reference types. The dictionary interfaces keep both type parameters invariant.
 

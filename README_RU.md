@@ -43,13 +43,11 @@ URL указывает на последнюю версию. Кнопка **Upda
 
 **В Console появляется `Assembly with name 'Aspid.Collections.Observable' already exists`.** В проекте есть вторая копия пакета, например его папка в `Assets`. Удалите копию.
 
-**Package Manager не может разрешить `com.unity.test-framework@1.6.0`.** Эта зависимость указана в версии 1.1.0. См. [исправление зависимости](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
+**Package Manager не может разрешить `com.unity.test-framework@1.6.0`.** Эта зависимость указана в опубликованном релизе `#upm` (1.1.0). Из `main` её убрали в [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
 
 </details>
 
 ## Возможности
-
-Каждый пример можно запустить отдельно как программу C# с инструкциями верхнего уровня.
 
 ### Уведомления об изменениях
 
@@ -58,9 +56,6 @@ URL указывает на последнюю версию. Кнопка **Upda
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-
 using var items = new ObservableList<string>();
 items.CollectionChanged += change =>
     Console.WriteLine(change.Action);
@@ -88,10 +83,6 @@ items.RemoveAt(0);         // Remove
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-using Aspid.Collections.Observable.Synchronizer;
-
 using var scores = new ObservableList<int>();
 using var labels = scores.CreateSync(n => $"Score {n}");
 
@@ -118,11 +109,6 @@ Console.WriteLine(labels[0]); // Score 20
 <td width="60%">
 
 ```csharp
-using System;
-using System.Collections.Generic;
-using Aspid.Collections.Observable;
-using Aspid.Collections.Observable.Filtered;
-
 using var scores = new ObservableList<int> { 25, 5, 15 };
 using var visible = scores.CreateFiltered(
     n => n >= 10, Comparer<int>.Default);
@@ -150,9 +136,6 @@ Console.WriteLine(string.Join(", ", visible));
 <td width="60%">
 
 ```csharp
-using System;
-using Aspid.Collections.Observable;
-
 using var items = new ObservableList<string>();
 using var events = items.SplitByEvents(
     added: (batch, _) =>
@@ -174,13 +157,18 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ## Коллекции
 
-| Тип | Для чего подходит |
-| --- | --- |
-| [`ObservableList<T>`](Runtime/Observable/ObservableList.cs) | Упорядоченный список с индексами, перемещением и пакетными операциями |
-| [`ObservableDictionary<TKey, TValue>`](Runtime/Observable/ObservableDictionary.cs) | Доступ по ключу, как в [примере с таблицей лидеров](Samples~/04_DictionaryKeyedTable) |
-| [`ObservableHashSet<T>`](Runtime/Observable/ObservableHashSet.cs) | Уникальные элементы и проверка принадлежности множеству |
-| [`ObservableQueue<T>`](Runtime/Observable/ObservableQueue.cs) | Обработка в порядке добавления с пакетными операциями |
-| [`ObservableStack<T>`](Runtime/Observable/ObservableStack.cs) | Обработка в обратном порядке добавления с пакетными операциями |
+<table width="100%">
+<thead>
+<tr><th>Тип</th><th width="100%">Для чего подходит</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Упорядоченный список с индексами, перемещением и пакетными операциями</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Доступ по ключу, как в <a href="Samples~/04_DictionaryKeyedTable">примере с таблицей лидеров</a></td></tr>
+<tr><td><a href="Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Уникальные элементы и проверка принадлежности множеству</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>Обработка в порядке добавления с пакетными операциями</td></tr>
+<tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке добавления с пакетными операциями</td></tr>
+</tbody>
+</table>
 
 Предоставляйте `IReadOnlyObservableList<T>` или `IObservableCollection<T>`, если вызывающему коду нужны чтение и подписка на изменения. Эти интерфейсы ковариантны для ссылочных типов. У интерфейсов словаря оба параметра типа инвариантны.
 
