@@ -5,14 +5,26 @@
   "unity": "2021.3",
   "unityRelease": "0f1",
   "description": "Covariant observable collections for Unity with synchronization, filtering, and sorting. Pure C#, no engine dependency.",
+  "license": "MIT",
   "author": {
-    "name": "Vladislav Panin",
+    "name": "Aspid",
     "url": "https://github.com/VPDPersonal",
     "email": "vpd.aspid@gmail.com"
   },
   "changelogUrl": "https://github.com/VPDPersonal/Aspid.Collections/blob/main/CHANGELOG.md",
   "documentationUrl": "https://github.com/VPDPersonal/Aspid.Collections",
   "licensesUrl": "https://github.com/VPDPersonal/Aspid.Collections/blob/main/LICENSE",
+  "keywords": [
+    "unity",
+    "collections",
+    "observable-collections",
+    "change-notifications",
+    "mvvm",
+    "data-binding",
+    "synchronization",
+    "filtering",
+    "sorting"
+  ],
   "samples": [
     {
       "displayName": "01 Basic Change Notifications",
