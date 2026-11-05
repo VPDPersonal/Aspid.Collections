@@ -21,8 +21,10 @@ namespace Aspid.Collections.Observable.Synchronizer
             _converter = converter;
             _fromStack = fromStack;
 
-            foreach (var from in fromStack)
-                Push(_converter(from));
+            // The source enumerates top-first, so push bottom-up to keep the same top.
+            var items = fromStack.ToArray();
+            for (var i = items.Length - 1; i >= 0; i--)
+                Push(_converter(items[i]));
 
             Subscribe();
         }
