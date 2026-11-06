@@ -4,7 +4,7 @@
 </picture>
 
 [![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#installation)
-[![Release 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
+[![Release 1.1.1](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
 [![MIT License](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
@@ -41,7 +41,7 @@ Requires Unity 2021.3.0f1 or newer.
 
 **The Console shows `Assembly with name 'Aspid.Collections.Observable' already exists`.** The project has a second copy of the package, for example its folder under `Assets`. Delete the copy.
 
-**Package Manager cannot resolve `com.unity.test-framework@1.6.0`.** The published `#upm` release (1.1.0) declares this dependency. [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20) removed it from `main`.
+**Package Manager cannot resolve `com.unity.test-framework@1.6.0`.** If you pinned `#upm/1.1.0`, switch to `#upm/1.1.1` or update to the latest version on `#upm`. Version 1.1.1 removes this dependency. [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20)
 
 </details>
 
@@ -176,7 +176,7 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ### Installation options
 
-To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.0`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
+To pin a version, use its `upm/<version>` tag, for example `#upm/1.1.1`. See the [available releases](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
 Preview releases use the `upm-preview` branch when available.
 
