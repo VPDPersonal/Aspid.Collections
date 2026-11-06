@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-11-06
+
+### Changed
+- Added license and search keywords to the Unity package metadata and removed the dependency on the unpublished Unity Test Framework version.
+- Added a .NET CI job and expanded regression coverage for observable collections, filtered views, and synchronization wrappers.
+- Hardened release input handling and excluded `.gitignore` from published UPM trees. Prereleases now publish to `upm-preview`.
+- Updated the README layout and examples.
+
+### Fixed
+- Corrected subscription and unsubscription through covariant collection and `SplitByEvents` views.
+- Made `FilteredList.Count` reflect the current view and cleaned up the source subscription if initialization fails.
+- Preserved source comparers in dictionary and hash set synchronization and preserved the order of an existing stack when creating a synchronized view.
+- Prevented synchronization wrappers from releasing an item that a replacement keeps in use, or releasing hash set items twice on repeated disposal.
+- Validated list move indexes and queue and stack output buffer sizes before modifying the collection.
+- Suppressed notifications for empty batches and no-op moves, and made list range additions and insertions safe when the input is a live view of the same list.
+- Reported the stored item in removal notifications when the caller supplies an equal item.
+
 ## [1.1.0] — 2026-05-23
 
 ### Added
