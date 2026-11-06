@@ -69,7 +69,7 @@ items.RemoveAt(0);         // Remove
 
 `CollectionChanged` reports each edit. Use `IsSingleItem` to choose between the single-item and batch fields. Disposing the list emits `Reset`.
 
-[Basic Change Notifications →](Samples~/01_BasicChangeNotifications)
+[Basic Change Notifications →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/01_BasicChangeNotifications)
 
 </td>
 </tr>
@@ -92,9 +92,9 @@ Console.WriteLine(labels[0]); // Score 20
 </td>
 <td valign="top">
 
-`CreateSync` builds a read-only projection that follows the source. All five collection types support it. [Overloads](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
+`CreateSync` builds a read-only projection that follows the source. All five collection types support it. [Overloads](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
-[Inventory Sync →](Samples~/02_InventorySync)
+[Inventory Sync →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/02_InventorySync)
 
 </td>
 </tr>
@@ -120,7 +120,7 @@ Console.WriteLine(
 
 `CreateFiltered` filters and sorts a view of the source. Change `Filter` or `Comparer` at runtime. Call `Update()` after editing a source without notifications.
 
-[Filtered Inventory →](Samples~/03_FilteredInventory)
+[Filtered Inventory →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/03_FilteredInventory)
 
 </td>
 </tr>
@@ -146,7 +146,7 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 `SplitByEvents` gives each change type its own handler. Item handlers always receive a list.
 
-[Analytics Tap →](Samples~/05_SplitByEvents)
+[Analytics Tap →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/05_SplitByEvents)
 
 </td>
 </tr>
@@ -160,17 +160,21 @@ items.AddRange("Potion", "Elixir"); // Added 2
 <tr><th width="420">Type</th><th width="700">Use it for</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Ordered items with indexes, moves and range operations</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Items addressed by key, as in the <a href="Samples~/04_DictionaryKeyedTable">keyed leaderboard sample</a></td></tr>
-<tr><td><a href="Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Unique items and membership checks</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>First-in, first-out processing with range operations</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Last-in, first-out processing with range operations</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Ordered items with indexes, moves and range operations</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Items addressed by key, as in the <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/04_DictionaryKeyedTable">keyed leaderboard sample</a></td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Unique items and membership checks</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>First-in, first-out processing with range operations</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Last-in, first-out processing with range operations</td></tr>
 </tbody>
 </table>
 
+## Development
+
+Open `Aspid.Collections/` from a clone of the source repository in Unity 6000.6.5f1. Unity loads the embedded package from `Packages/tech.aspid.collections/`. Run the tests in the Test Runner's **PlayMode** tab or use `dotnet test DotnetTests/Aspid.Collections.Tests.csproj` from the repository root to run the unit tests outside Unity. [Source repository](https://github.com/VPDPersonal/Aspid.Collections)
+
 ## Resources
 
-| [Unity samples](Samples~) | [Runtime API](Runtime/Observable) | [Changelog](CHANGELOG.md) |
+| [Unity samples](Aspid.Collections/Packages/tech.aspid.collections/Samples~) | [Runtime API](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable) | [Changelog](CHANGELOG.md) |
 | --- | --- | --- |
 | In Package Manager, select **Aspid.Collections → Samples → Import**. Open the imported scene and enter Play mode. | Browse collection types, event arguments and extension methods. | See changes and fixes by release. |
 

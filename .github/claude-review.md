@@ -14,8 +14,8 @@ Check, in this order:
    - a renamed or moved file keeps its `.meta` GUID;
    - a renamed serialized field gets `[FormerlySerializedAs]`, a renamed or moved type stored through
      `[SerializeReference]` gets `[MovedFrom]`: without them user projects lose saved data;
-   - no C# feature or .NET API that Unity 2021.3 lacks (`package.json` minimum);
-   - no `UnityEngine` or `UnityEditor` reference in `Runtime/`: it sets `noEngineReferences: true`.
+   - no C# feature or .NET API that Unity 2021.3 lacks (the embedded package manifest minimum);
+   - no `UnityEngine` or `UnityEditor` reference in the embedded package's `Runtime/`: it sets `noEngineReferences: true`.
 3. Public API: XML docs on each new or changed member, a CHANGELOG entry that describes the change as a user sees it,
    and `README.md` and `README_RU.md` updated when they describe the API.
 4. Workflows: actions pinned to a full commit SHA, only the permissions a job uses, and no `pull_request_target` job

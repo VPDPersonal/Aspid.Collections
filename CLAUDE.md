@@ -6,9 +6,9 @@ collections with synchronization, filtering, and sorting.
 
 ## Package Info
 
-- **Package name**: `tech.aspid.collections` (`package.json`, v1.1.0)
-- **Unity**: `package.json` declares `2021.3` as the manifest minimum; the
-  active development target is 2022.3+ (matches the parent MVVM project).
+- **Package name**: `tech.aspid.collections`, embedded under `Aspid.Collections/Packages/`.
+- **Unity**: The package manifest declares `2021.3` as the minimum.
+  The development project uses Unity `6000.6.5f1`.
 - **Engine dependency**: none — `Aspid.Collections.Observable.asmdef` sets
   `noEngineReferences: true`. Runtime is pure C# and must stay that way
   so the package works in non-engine assemblies too.
@@ -16,37 +16,28 @@ collections with synchronization, filtering, and sorting.
 ## Directory Layout
 
 ```
-Collections/
-├── Runtime/Observable/                         # Pure C# runtime
-│   ├── ObservableList.cs                       # Core collections
-│   ├── ObservableDictionary.cs
-│   ├── ObservableHashSet.cs
-│   ├── ObservableQueue.cs
-│   ├── ObservableStack.cs
-│   ├── IObservableCollection.cs                # Core interfaces
-│   ├── IReadOnlyObservableList.cs
-│   ├── IReadOnlyObservableDictionary.cs
-│   ├── NotifyCollectionChangedEventArgs.cs     # Custom struct, not BCL
-│   ├── INotifyCollectionChangedEventArgs.cs
-│   ├── NotifyCollectionChangedEventHandler.cs
-│   ├── CollectionChangedEvent.cs
-│   ├── Events/                                 # IObservableEvents, ObservableCollectionEvents
-│   │   └── Extensions/                         # SplitEventsExtensions
-│   ├── Extensions/                             # ObservableListExtensions
-│   ├── Filtered/                               # FilteredList, IReadOnlyFilteredList
-│   │   └── Extensions/                         # CreateFilteredExtensions
-│   └── Synchronizer/                           # Observable*Sync, IReadOnly*Sync
-│       └── Extensions/                         # CreateSyncExtensions
-├── Tests/Runtime/Observable/                   # Unity Test Framework tests
-│   ├── Helpers/
-│   └── Performance/                            # Optional perf benchmarks (gated)
-└── Samples~/                                   # UPM-importable samples
-    ├── 01_BasicChangeNotifications/            # (Unity hides the `~` folder from
-    ├── 02_InventorySync/                       #  the AssetDatabase until imported
-    ├── 03_FilteredInventory/                   #  via Package Manager UI)
-    ├── 04_DictionaryKeyedTable/
-    └── 05_SplitByEvents/
+.
+├── Aspid.Collections/                          # Unity development project
+│   ├── Assets/
+│   ├── Packages/
+│   │   ├── manifest.json
+│   │   └── tech.aspid.collections/             # Embedded UPM package
+│   │       ├── package.json
+│   │       ├── Editor/
+│   │       ├── Runtime/Observable/
+│   │       │   ├── Events/
+│   │       │   ├── Extensions/
+│   │       │   ├── Filtered/
+│   │       │   └── Synchronizer/
+│   │       ├── Tests/Runtime/Observable/
+│   │       └── Samples~/
+│   └── ProjectSettings/
+├── DotnetTests/                                # .NET test harness for the package
+└── Documentation~/                            # Repository README assets
 ```
+
+The package paths below are relative to `Aspid.Collections/Packages/tech.aspid.collections/`.
+The release workflow publishes this subtree at the root of the UPM distribution refs.
 
 ## Namespaces
 
@@ -66,9 +57,12 @@ Collections/
 
 ## Testing
 
-Tests live in `Tests/Runtime/Observable/` and run via Unity Test Runner
-(the asmdef does not pin `includePlatforms`, so tests compile for every
-build target and can run as EditMode or PlayMode). Convention: one
+Open `Aspid.Collections/` in Unity Hub and run the tests and benchmarks in the Test Runner's PlayMode tab.
+From the repository root, run `dotnet test DotnetTests/Aspid.Collections.Tests.csproj --configuration Release`
+for the engine-free unit tests used by CI.
+
+Tests live in `Tests/Runtime/Observable/`. The asmdefs do not restrict
+`includePlatforms`, so Unity discovers the suites as PlayMode tests. Convention: one
 `FooTests.cs` per collection/extension (e.g. `ObservableListTests.cs`,
 `CreateSyncDictionaryTests.cs`, `FilteredListTests.cs`). Shared helpers
 in `Tests/Runtime/Observable/Helpers/`.
