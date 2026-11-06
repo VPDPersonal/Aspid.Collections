@@ -1,7 +1,0 @@
-.idea/
-.zed/
-.vscode/
-/LICENSE.meta
-
-# Override the global "*~" rule that hides Unity's Samples~ folder.
-!Samples~/

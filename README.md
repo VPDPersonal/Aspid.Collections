@@ -1,11 +1,11 @@
 <picture>
-  <source srcset="Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
+  <img src="https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#installation)
-[![Release 1.1.1](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
-[![MIT License](Documentation~/Images/status-badge-license.svg)](LICENSE)
+[![Unity 2021.3.0f1+](https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/status-badge-unity.svg)](#installation)
+[![Release 1.1.1](https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
+[![MIT License](https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
 
@@ -15,7 +15,7 @@ Aspid.Collections provides observable collections for Unity and .NET. React to c
 
 <table>
 <tr>
-<td width="56%"><img src="Documentation~/Images/install.webp" alt="Package Manager installs Aspid.Collections from its Git URL" width="100%"></td>
+<td width="56%"><img src="https://raw.githubusercontent.com/VPDPersonal/Aspid.Collections/v1.1.1/Documentation~/Images/install.webp" alt="Package Manager installs Aspid.Collections from its Git URL" width="100%"></td>
 <td width="44%">
 <ol>
 <li>Open <b>Window → Package Manager</b></li>
