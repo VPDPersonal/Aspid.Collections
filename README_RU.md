@@ -1,11 +1,11 @@
 <picture>
-  <source srcset="Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="Documentation/Images/aspid_collections_readme_banner_dark.webp" />
+  <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#установка)
-[![Стабильный релиз 1.1.1](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
-[![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
+[![Unity 2021.3.0f1+](Documentation/Images/status-badge-unity.svg)](#установка)
+[![Стабильный релиз 1.1.1](Documentation/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
+[![Лицензия MIT](Documentation/Images/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
 
@@ -15,7 +15,7 @@ Aspid.Collections — наблюдаемые коллекции для Unity и 
 
 <table>
 <tr>
-<td width="56%"><img src="Documentation~/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
+<td width="56%"><img src="Documentation/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
 <td width="44%">
 <ol>
 <li>Откройте <b>Window → Package Manager</b></li>

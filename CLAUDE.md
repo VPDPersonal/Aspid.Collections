@@ -33,7 +33,7 @@ collections with synchronization, filtering, and sorting.
 │   │       └── Samples~/
 │   └── ProjectSettings/
 ├── DotnetTests/                                # .NET test harness for the package
-└── Documentation~/                            # Repository README assets
+└── Documentation/                             # Repository README assets
 ```
 
 The package paths below are relative to `Aspid.Collections/Packages/tech.aspid.collections/`.

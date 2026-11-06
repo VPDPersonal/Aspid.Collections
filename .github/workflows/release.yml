@@ -177,11 +177,11 @@ jobs:
 
           # Make code links package-relative and load images from the source tag.
           PACKAGE_PATH_PATTERN="${PACKAGE_PATH//./\\.}"
-          README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation~/Images/"
+          README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation/Images/"
           for README_FILE in README.md README_RU.md; do
             README_BLOB=$(git show "$TAG:$README_FILE" \
               | sed -E -e "s|([\"(])${PACKAGE_PATH_PATTERN}/|\1|g" \
-                  -e "s|([\"(])Documentation~/Images/|\1${README_IMAGE_URL}|g" \
+                  -e "s|([\"(])Documentation/Images/|\1${README_IMAGE_URL}|g" \
               | git hash-object -w --stdin)
             git update-index --add --cacheinfo "100644,$README_BLOB,$README_FILE"
           done
