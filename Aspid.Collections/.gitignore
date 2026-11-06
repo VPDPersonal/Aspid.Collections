@@ -35,9 +35,7 @@
 *.slnx
 
 # IDE state.
-.idea/
 .vs/
-.vscode/
 .vsconfig
 *.suo
 *.user
