@@ -77,27 +77,21 @@ namespace Aspid.Collections.Observable
         
         protected virtual void OnAdded(in T item) { }
 
-        public void AddRange(params T[] items)
-        {
-            lock (SyncRoot)
-            {
-                var index = _list.Count;
-                
-                _list.AddRange(items);
-                if (items.Length is 0) return;
-
-                OnAddedRange(items);
-                
-                Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
-            }
-        }
+        public void AddRange(params T[] items) => AddRange((IReadOnlyList<T>)items);
 
         public void AddRange(IReadOnlyList<T> items)
         {
             lock (SyncRoot)
             {
-                // The input may be this list or a live projection over it.
-                AddRange(items as T[] ?? items.ToArray());
+                var batch = PrepareRange(items);
+                var index = _list.Count;
+
+                _list.AddRange(batch);
+                if (batch.Count is 0) return;
+
+                OnAddedRange(batch);
+
+                Invoke(NotifyCollectionChangedEventArgs<T>.Add(batch, index));
             }
         }
         
@@ -114,26 +108,30 @@ namespace Aspid.Collections.Observable
             }
         }
 
-        public void InsertRange(int index, params T[] items)
-        {
-            lock (SyncRoot)
-            {
-                _list.InsertRange(index, items);
-                if (items.Length is 0) return;
-
-                OnAddedRange(items);
-                
-                Invoke(NotifyCollectionChangedEventArgs<T>.Add(items, index));
-            }
-        }
+        public void InsertRange(int index, params T[] items) => InsertRange(index, (IReadOnlyList<T>)items);
 
         public void InsertRange(int index, IReadOnlyList<T> items)
         {
             lock (SyncRoot)
             {
                 if ((uint)index > (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(index));
-                InsertRange(index, items as T[] ?? items.ToArray());
+                var batch = PrepareRange(items);
+
+                _list.InsertRange(index, batch);
+                if (batch.Count is 0) return;
+
+                OnAddedRange(batch);
+
+                Invoke(NotifyCollectionChangedEventArgs<T>.Add(batch, index));
             }
+        }
+
+        private static IReadOnlyList<T> PrepareRange(IReadOnlyList<T> items)
+        {
+            if (items is null) throw new ArgumentNullException(nameof(items));
+
+            // A custom list can be a live view of this list, including a subclass of List<T>.
+            return items is T[] || items.GetType() == typeof(List<T>) ? items : items.ToArray();
         }
 
         public bool Remove(T item)

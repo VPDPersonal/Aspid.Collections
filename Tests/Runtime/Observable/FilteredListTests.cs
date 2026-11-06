@@ -567,6 +567,22 @@ namespace Aspid.Collections.Observable.Tests
         }
 
         [Test]
+        public void Constructor_WhenSourceRefreshesOnSubscription_BuildsViewFromRefreshedItems()
+        {
+            using var source = new ObservableListSource<int>();
+            source.Items.Add(1);
+            source.BeforeSubscribe = () =>
+            {
+                source.Items.Clear();
+                source.Items.AddRange(new[] { 4, 2, 3 });
+            };
+
+            using var view = source.CreateFiltered(value => value % 2 == 0, Comparer<int>.Default);
+
+            CollectionAssert.AreEqual(new[] { 2, 4 }, view);
+        }
+
+        [Test]
         public void Constructor_WhenInitialFilterThrows_LeavesNoSourceSubscription()
         {
             using var source = new ObservableListSource<int>();

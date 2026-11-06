@@ -57,8 +57,16 @@ namespace Aspid.Collections.Observable.Filtered
             _filter = filter;
             _comparer = comparer;
 
-            Update();
             SubscribeToSource();
+            try
+            {
+                Update();
+            }
+            catch
+            {
+                Dispose();
+                throw;
+            }
         }
 
         private void SubscribeToSource()
