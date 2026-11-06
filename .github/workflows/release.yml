@@ -12,15 +12,22 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   PACKAGE_PATH: .
   CHANGELOG_PATH: CHANGELOG.md
 
 jobs:
+  ci:
+    uses: ./.github/workflows/tests.yml
+
   release:
+    needs: ci
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
 
     steps:
       - name: Determine version
@@ -61,6 +68,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Verify release commit is on main
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD FETCH_HEAD; then
+            echo "::error::The release commit must be on main."
+            exit 1
+          fi
 
       - name: Check tag does not already exist
         if: github.event_name == 'workflow_dispatch'
@@ -148,13 +164,18 @@ jobs:
             exit 1
           fi
 
-          # Build a tree containing only the Unity package contents — strip
-          # repo-only paths so consumers don't pull workflows, CI configs, etc.
+          # Stage only Unity package paths from the tagged source tree.
           UPM_INDEX=$(mktemp)
           trap 'rm -f "$UPM_INDEX"' EXIT
           export GIT_INDEX_FILE="$UPM_INDEX"
-          git read-tree "$TAG"
-          git rm -r --cached --quiet --ignore-unmatch .github CLAUDE.md CLAUDE.md.meta .gitignore .gitignore.meta "Documentation~"
+          git read-tree --empty
+          git ls-tree -rz "$TAG" -- \
+            package.json package.json.meta LICENSE \
+            CHANGELOG.md CHANGELOG.md.meta README.md README.md.meta README_RU.md README_RU.md.meta \
+            Runtime Runtime.meta Editor Editor.meta Tests Tests.meta "Samples~" \
+            | git update-index -z --index-info
+          LICENSE_META_BLOB=$(git rev-parse "$TAG:.github/upm/LICENSE.meta")
+          git update-index --add --cacheinfo "100644,$LICENSE_META_BLOB,LICENSE.meta"
           # Keep README images working after their source directory is removed.
           README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation~/Images/"
           for README_FILE in README.md README_RU.md; do
@@ -175,11 +196,10 @@ jobs:
           else
             UPM_BRANCH="upm"
           fi
-          git push --force origin "$COMMIT:refs/heads/$UPM_BRANCH"
-
-          # Immutable per-version tag for users who pin to a specific release.
-          git tag "$UPM_TAG" "$COMMIT"
-          git push origin "$UPM_TAG"
+          # Publish the channel and its immutable version tag together.
+          git push --atomic origin \
+            "+$COMMIT:refs/heads/$UPM_BRANCH" \
+            "$COMMIT:refs/tags/$UPM_TAG"
 
           echo "Published $UPM_TAG and updated $UPM_BRANCH branch."
 

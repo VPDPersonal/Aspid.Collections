@@ -4,7 +4,7 @@
 </picture>
 
 [![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#установка)
-[![Релиз 1.1.0](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.0)
+[![Релиз 1.1.1](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
 [![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
@@ -41,7 +41,7 @@ URL указывает на последнюю версию. Кнопка **Upda
 
 **В Console появляется `Assembly with name 'Aspid.Collections.Observable' already exists`.** В проекте есть вторая копия пакета, например его папка в `Assets`. Удалите копию.
 
-**Package Manager не может разрешить `com.unity.test-framework@1.6.0`.** Эта зависимость указана в опубликованном релизе `#upm` (1.1.0). Из `main` её убрали в [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20).
+**Package Manager не может разрешить `com.unity.test-framework@1.6.0`.** Если вы закрепили `#upm/1.1.0`, переключитесь на `#upm/1.1.1` или обновитесь до актуальной версии в `#upm`. В 1.1.1 эту зависимость убрали. [PR #20](https://github.com/VPDPersonal/Aspid.Collections/pull/20)
 
 </details>
 
@@ -176,7 +176,7 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 ### Варианты установки
 
-Чтобы закрепить версию, укажите её тег `upm/<версия>`, например `#upm/1.1.0`. См. [список релизов](https://github.com/VPDPersonal/Aspid.Collections/releases).
+Чтобы закрепить версию, укажите её тег `upm/<версия>`, например `#upm/1.1.1`. См. [список релизов](https://github.com/VPDPersonal/Aspid.Collections/releases).
 
 Предварительные релизы публикуются в ветку `upm-preview`.
 
