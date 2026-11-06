@@ -170,5 +170,50 @@ namespace Aspid.Collections.Observable.Tests
             syncWithCb.Dispose();
         }
         #endregion
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SourcePopRange_PublishesOneBatchAndReleasesInRemovalOrder(bool isDisposable)
+        {
+            var released = new List<DisposableItem>();
+            var items = new[] { new DisposableItem(), new DisposableItem(), new DisposableItem() };
+            using var sync = isDisposable
+                ? _source.CreateSync(value => items[value - 1], isDisposable: true)
+                : _source.CreateSync(value => items[value - 1], released.Add);
+            using var capture = new EventCapture<DisposableItem>(sync);
+            _source.PushRange(new[] { 1, 2, 3 });
+
+            var removalOrder = System.Array.ConvertAll(new[] { 3, 2, 1 }, value => items[value - 1]);
+            Assert.That(capture.Count, Is.EqualTo(1));
+            Assert.That(capture.Last.IsSingleItem, Is.False);
+            Assert.That(capture.Last.NewStartingIndex, Is.Zero);
+            CollectionAssert.AreEqual(items, capture.Last.NewItems);
+            CollectionAssert.AreEqual(removalOrder, sync);
+
+            capture.Clear();
+            _source.PopRange(new int[2]);
+
+            Assert.That(capture.Count, Is.EqualTo(1));
+            Assert.That(capture.Last.IsSingleItem, Is.False);
+            Assert.That(capture.Last.OldStartingIndex, Is.Zero);
+            CollectionAssert.AreEqual(new[] { removalOrder[0], removalOrder[1] }, capture.Last.OldItems);
+            CollectionAssert.AreEqual(new[] { removalOrder[2] }, sync);
+            if (isDisposable)
+            {
+                Assert.That(System.Array.ConvertAll(removalOrder, item => item.DisposeCount), Is.EqualTo(new[] { 1, 1, 0 }));
+            }
+            else
+            {
+                CollectionAssert.AreEqual(new[] { removalOrder[0], removalOrder[1] }, released);
+            }
+
+            _source.Pop();
+            sync.Dispose();
+            if (isDisposable)
+                Assert.That(System.Array.ConvertAll(removalOrder, item => item.DisposeCount), Is.EqualTo(new[] { 1, 1, 1 }));
+            else
+                CollectionAssert.AreEqual(removalOrder, released);
+        }
+
     }
 }

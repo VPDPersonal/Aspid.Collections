@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -178,6 +179,41 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(4, _list.Count);
             Assert.AreEqual(2, _list[1]);
         }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CopyRange_PlainListWithPreallocatedDestination_AvoidsBatchSizedAllocation(bool insert)
+        {
+            const int itemCount = 100_000;
+            IReadOnlyList<int> items = new List<int>(Enumerable.Range(1, itemCount));
+            using var target = new ObservableList<int>(itemCount + 1);
+            using var capture = new EventCapture<int>(target);
+            void Copy()
+            {
+                if (insert) target.InsertRange(0, items);
+                else target.AddRange(items);
+            }
+
+            target.Add(0);
+            Copy();
+            target.Clear();
+            target.Add(0);
+            capture.Clear();
+
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            Copy();
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.That(allocated, Is.LessThan(32 * 1024L));
+            Assert.That(target.Count, Is.EqualTo(itemCount + 1));
+            Assert.That(target[insert ? itemCount : 0], Is.Zero);
+            Assert.That(target[insert ? 0 : 1], Is.EqualTo(1));
+            Assert.That(target[insert ? itemCount - 1 : itemCount], Is.EqualTo(itemCount));
+            Assert.That(capture.Count, Is.EqualTo(1));
+            Assert.That(capture.Last.Action, Is.EqualTo(NotifyCollectionChangedAction.Add));
+            Assert.That(capture.Last.NewStartingIndex, Is.EqualTo(insert ? 0 : 1));
+            CollectionAssert.AreEqual(items, capture.Last.NewItems);
+        }
         #endregion
 
         #region Remove
@@ -306,6 +342,19 @@ namespace Aspid.Collections.Observable.Tests
             _list.InsertRange(1, new List<int>());
 
             Assert.AreEqual(0, _events.Count);
+        }
+
+        [TestCase(-1)]
+        [TestCase(4)]
+        public void InsertRange_EmptyBatch_StillValidatesIndex(int index)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => _list.InsertRange(index, Array.Empty<int>()));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
         }
         #endregion
 
@@ -707,5 +756,32 @@ namespace Aspid.Collections.Observable.Tests
 
         private sealed class Cat : Animal { }
         #endregion
+
+        [TestCase(-1, 1, "startIndex")]
+        [TestCase(0, -1, "count")]
+        public void RemoveRange_NegativeArgument_LeavesContentsAndEventsUnchanged(int start, int count, string parameter)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            var error = Assert.Throws<System.ArgumentOutOfRangeException>(() => _list.RemoveRange(start, count));
+
+            Assert.That(error!.ParamName, Is.EqualTo(parameter));
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
+        [Test]
+        public void RemoveRange_ExtendsPastEnd_LeavesContentsAndEventsUnchanged()
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Catch<System.ArgumentException>(() => _list.RemoveRange(2, 2));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
+        }
+
     }
 }

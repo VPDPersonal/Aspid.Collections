@@ -1,4 +1,7 @@
+#nullable enable annotations
+
 using System;
+using System.Linq;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -501,82 +504,123 @@ namespace Aspid.Collections.Observable.Tests
             Assert.AreEqual(5, fl[2]);
         }
 
-        [Test]
-        public void AutoUpdate_ParityWithFullRebuild_RandomSequence()
+        [TestCase(false, false, 42)]
+        [TestCase(true, false, 42)]
+        [TestCase(false, true, 42)]
+        [TestCase(true, true, 42)]
+        [TestCase(false, false, 713)]
+        [TestCase(true, false, 713)]
+        [TestCase(false, true, 713)]
+        [TestCase(true, true, 713)]
+        public void AutoUpdate_MixedEdits_MatchIndependentProjection(bool filter, bool sort, int seed)
         {
-            // Validates that the incremental dispatcher produces the same view as a fresh
-            // full-rebuild FilteredList after each random operation, across all four
-            // (filter? × comparer?) combinations.
-            var combos = new (Predicate<int>? filter, IComparer<int>? comparer)[]
+            var random = new Random(seed);
+            var nextId = 0;
+            (int Key, int Id) NextItem() => (random.Next(4), nextId++);
+
+            using var source = new ObservableList<(int Key, int Id)>(Enumerable.Range(0, 8).Select(_ => NextItem()));
+            Predicate<(int Key, int Id)>? predicate = filter ? item => item.Key % 2 == 0 : null;
+            var comparer = sort
+                ? Comparer<(int Key, int Id)>.Create((left, right) => left.Key.CompareTo(right.Key))
+                : null;
+            using var view = new FilteredList<(int Key, int Id)>(source, predicate, comparer);
+            var notifications = 0;
+            view.CollectionChanged += () => notifications++;
+
+            for (var step = 0; step < 250; step++)
             {
-                (null, null),
-                (i => i % 3 != 0, null),
-                (null, Comparer<int>.Default),
-                (i => i > 25, Comparer<int>.Default),
-            };
+                var action = source.Count == 0 ? 0 : random.Next(10);
+                var index = random.Next(source.Count);
+                var expectedNotifications = 1;
+                notifications = 0;
 
-            foreach (var (filter, comparer) in combos)
-            {
-                var rng = new Random(42);
-                var src = new ObservableList<int>();
-                using var fl = new FilteredList<int>(src, filter, comparer);
-
-                for (var i = 0; i < 10; i++)
-                    src.Add(rng.Next(0, 100));
-
-                for (var op = 0; op < 200; op++)
+                switch (action)
                 {
-                    var action = rng.Next(0, 7);
-                    switch (action)
-                    {
-                        case 0:
-                            src.Add(rng.Next(0, 100));
-                            break;
-                        case 1:
-                            if (src.Count > 0) src.Insert(rng.Next(0, src.Count), rng.Next(0, 100));
-                            else src.Add(rng.Next(0, 100));
-                            break;
-                        case 2:
-                            if (src.Count > 0) src.RemoveAt(rng.Next(0, src.Count));
-                            break;
-                        case 3:
-                            if (src.Count > 0) src[rng.Next(0, src.Count)] = rng.Next(0, 100);
-                            break;
-                        case 4:
-                            if (src.Count >= 2)
-                            {
-                                var a = rng.Next(src.Count);
-                                var b = rng.Next(src.Count);
-                                src.Move(a, b);
-                            }
-                            break;
-                        case 5:
-                            if (src.Count > 5 && rng.Next(20) == 0) src.Clear();
-                            break;
-                        case 6:
-                            if (src.Count >= 2)
-                            {
-                                var start = rng.Next(0, src.Count);
-                                var maxCount = src.Count - start;
-                                src.RemoveRange(start, rng.Next(1, maxCount + 1));
-                            }
-                            break;
-                    }
-
-                    using var reference = new FilteredList<int>(src, filter, comparer);
-                    AssertViewEqual(reference, fl, op);
+                    case 0: source.Add(NextItem()); break;
+                    case 1: source.Insert(random.Next(source.Count + 1), NextItem()); break;
+                    case 2: source.AddRange(NextItem(), NextItem()); break;
+                    case 3: source.InsertRange(random.Next(source.Count + 1), NextItem(), NextItem()); break;
+                    case 4: source.RemoveAt(index); break;
+                    case 5: source.RemoveRange(index, random.Next(1, source.Count - index + 1)); break;
+                    case 6: source[index] = NextItem(); break;
+                    case 7:
+                        var target = random.Next(source.Count);
+                        source.Move(index, target);
+                        if (index == target) expectedNotifications = 0;
+                        break;
+                    case 8: source.Clear(); break;
+                    case 9: view.Update(); break;
                 }
 
-                src.Dispose();
+                IEnumerable<(int Key, int Id)> expected = source;
+                if (filter) expected = expected.Where(item => item.Key % 2 == 0);
+                if (sort) expected = expected.OrderBy(item => item.Key);
+                var expectedItems = expected.ToArray();
+                var context = $"Seed {seed}, step {step}, action {action}";
+
+                Assert.That(notifications, Is.EqualTo(expectedNotifications), context);
+                Assert.That(view.Count, Is.EqualTo(expectedItems.Length), context);
+                CollectionAssert.AreEqual(expectedItems, view, context);
+                for (var i = 0; i < expectedItems.Length; i++)
+                    Assert.That(view[i], Is.EqualTo(expectedItems[i]), $"{context}, index {i}");
             }
         }
 
-        private static void AssertViewEqual(FilteredList<int> expected, FilteredList<int> actual, int op)
+        [Test]
+        public void Constructor_WhenSourceRefreshesOnSubscription_BuildsViewFromRefreshedItems()
         {
-            Assert.AreEqual(expected.Count, actual.Count, $"Count mismatch after op {op}");
-            for (var i = 0; i < expected.Count; i++)
-                Assert.AreEqual(expected[i], actual[i], $"Item[{i}] mismatch after op {op}");
+            using var source = new ObservableListSource<int>();
+            source.Items.Add(1);
+            source.BeforeSubscribe = () =>
+            {
+                source.Items.Clear();
+                source.Items.AddRange(new[] { 4, 2, 3 });
+            };
+
+            using var view = source.CreateFiltered(value => value % 2 == 0, Comparer<int>.Default);
+
+            CollectionAssert.AreEqual(new[] { 2, 4 }, view);
         }
+
+        [Test]
+        public void Constructor_WhenInitialFilterThrows_LeavesNoSourceSubscription()
+        {
+            using var source = new ObservableListSource<int>();
+            source.Items.Add(1);
+            var calls = 0;
+
+            Assert.Throws<InvalidOperationException>(() => new FilteredList<int>(source, _ =>
+            {
+                calls++;
+                throw new InvalidOperationException();
+            }));
+
+            source.Items.Add(2);
+            Assert.DoesNotThrow(() => source.Publish(NotifyCollectionChangedEventArgs<int>.Reset()));
+            Assert.That(calls, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void AutoUpdate_BatchReplaceFromCustomSource_RebuildsAndNotifiesOnce()
+        {
+            using var source = new ObservableListSource<int>();
+            source.Items.AddRange(new[] { 6, 2, 3, 4 });
+            Predicate<int> filter = value => value % 2 == 0;
+            var comparer = Comparer<int>.Default;
+            using var view = source.CreateFiltered(comparer, filter);
+            var observed = new List<int[]>();
+            view.CollectionChanged += () => observed.Add(view.ToArray());
+
+            source.Items[1] = 8;
+            source.Items[2] = 1;
+            source.Publish(NotifyCollectionChangedEventArgs<int>.Replace(new[] { 2, 3 }, new[] { 8, 1 }, 1));
+
+            Assert.That(view.Filter, Is.SameAs(filter));
+            Assert.That(view.Comparer, Is.SameAs(comparer));
+            Assert.That(observed.Count, Is.EqualTo(1));
+            CollectionAssert.AreEqual(new[] { 4, 6, 8 }, observed[0]);
+        }
+
         #endregion
 
         #region Chaining
@@ -720,5 +764,23 @@ namespace Aspid.Collections.Observable.Tests
             CollectionAssert.AreEqual(source, filtered);
         }
         #endregion
+
+        [Test]
+        public void PlainListSource_Update_ReevaluatesChangedItemsAndNotifiesWithNewView()
+        {
+            var source = new List<int> { 2, 1, 4 };
+            using var view = source.CreateFiltered(value => value % 2 == 0, Comparer<int>.Default);
+            var observed = new List<int[]>();
+            view.CollectionChanged += () => observed.Add(view.ToArray());
+            source[0] = 7;
+            source[1] = 6;
+
+            Assert.That(observed, Is.Empty);
+            view.Update();
+
+            Assert.That(observed.Count, Is.EqualTo(1));
+            CollectionAssert.AreEqual(new[] { 4, 6 }, observed[0]);
+        }
+
     }
 }

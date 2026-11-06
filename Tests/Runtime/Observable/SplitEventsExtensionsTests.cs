@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -285,7 +287,6 @@ namespace Aspid.Collections.Observable.Tests
             source.Dispose();
         }
 
-#nullable enable annotations
         [Test]
         public void CovariantView_UnsubscribeCombinedDelegate_RemovesLastMatchingSequence()
         {
@@ -308,11 +309,67 @@ namespace Aspid.Collections.Observable.Tests
 
             CollectionAssert.AreEqual(new[] { "first", "second", "marker" }, log);
         }
-#nullable restore annotations
 
         private int _covariantCalls;
 
         private void OnAddedObjects(IReadOnlyList<object> items, int index) => _covariantCalls++;
         #endregion
+
+        [Test]
+        public void Replaced_Batch_PreservesOldAndNewPayloadsAndIndex()
+        {
+            using var source = new ObservableListSource<string>();
+            source.Items.AddRange(new[] { "prefix", "old-a", "old-b" });
+            var replacedCalls = 0;
+            using var events = source.SplitByEvents(replaced: (oldItems, newItems, index) =>
+            {
+                replacedCalls++;
+                Assert.That(index, Is.EqualTo(1));
+                CollectionAssert.AreEqual(new[] { "old-a", "old-b" }, oldItems);
+                CollectionAssert.AreEqual(new[] { "new-a", "new-b" }, newItems);
+            });
+
+            source.Items[1] = "new-a";
+            source.Items[2] = "new-b";
+            source.Publish(NotifyCollectionChangedEventArgs<string>.Replace(
+                new[] { "old-a", "old-b" }, new[] { "new-a", "new-b" }, 1));
+
+            Assert.That(replacedCalls, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void SplitEvents_NullItem_RemainsASingleItemInEveryPayload()
+        {
+            using var source = new ObservableList<string?>();
+            using var events = source.SplitByEvents();
+            var calls = new List<string>();
+
+            events.Added += (items, index) =>
+            {
+                Assert.That(index, Is.Zero);
+                CollectionAssert.AreEqual(new string?[] { null }, items);
+                calls.Add("add");
+            };
+            events.Replaced += (oldItems, newItems, index) =>
+            {
+                Assert.That(index, Is.Zero);
+                CollectionAssert.AreEqual(new string?[] { null }, oldItems);
+                CollectionAssert.AreEqual(new[] { "new" }, newItems);
+                calls.Add("replace");
+            };
+            events.Removed += (items, index) =>
+            {
+                Assert.That(index, Is.Zero);
+                CollectionAssert.AreEqual(new[] { "new" }, items);
+                calls.Add("remove");
+            };
+
+            source.Add(null);
+            source[0] = "new";
+            source.RemoveAt(0);
+
+            CollectionAssert.AreEqual(new[] { "add", "replace", "remove" }, calls);
+        }
+
     }
 }

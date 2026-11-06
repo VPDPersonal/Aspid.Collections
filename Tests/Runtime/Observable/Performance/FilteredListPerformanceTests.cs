@@ -79,7 +79,7 @@ namespace Aspid.Collections.Observable.Tests.Performance
         // test pins the gap so a future switch to an auxiliary reverse index would
         // show up as a large win here.
         [Test, Performance]
-        public void Remove_Middle_ComparerIsSlowerThanNoComparer()
+        public void Remove_Middle_FilteredVsSorted()
         {
             const int size = 10_000;
             ObservableList<int> source = null;
@@ -90,7 +90,7 @@ namespace Aspid.Collections.Observable.Tests.Performance
                 {
                     source = new ObservableList<int>();
                     for (var i = 0; i < size; i++) source.Add(i);
-                    filtered = new FilteredList<int>(source);
+                    filtered = new FilteredList<int>(source, _ => true);
                 })
                 .CleanUp(() =>
                 {
@@ -107,7 +107,7 @@ namespace Aspid.Collections.Observable.Tests.Performance
                 {
                     source = new ObservableList<int>();
                     for (var i = 0; i < size; i++) source.Add(i);
-                    filtered = new FilteredList<int>(source, Comparer<int>.Default);
+                    filtered = new FilteredList<int>(source, _ => true, Comparer<int>.Default);
                 })
                 .CleanUp(() =>
                 {
