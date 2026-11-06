@@ -343,6 +343,19 @@ namespace Aspid.Collections.Observable.Tests
 
             Assert.AreEqual(0, _events.Count);
         }
+
+        [TestCase(-1)]
+        [TestCase(4)]
+        public void InsertRange_EmptyBatch_StillValidatesIndex(int index)
+        {
+            _list.AddRange(1, 2, 3);
+            _events.Clear();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => _list.InsertRange(index, Array.Empty<int>()));
+
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, _list);
+            Assert.That(_events.Count, Is.Zero);
+        }
         #endregion
 
         #region Indexer

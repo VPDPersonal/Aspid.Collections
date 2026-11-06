@@ -84,10 +84,11 @@ namespace Aspid.Collections.Observable
             lock (SyncRoot)
             {
                 var batch = PrepareRange(items);
+                if (batch.Count is 0) return;
+
                 var index = _list.Count;
 
                 _list.AddRange(batch);
-                if (batch.Count is 0) return;
 
                 OnAddedRange(batch);
 
@@ -116,9 +117,9 @@ namespace Aspid.Collections.Observable
             {
                 if ((uint)index > (uint)_list.Count) throw new ArgumentOutOfRangeException(nameof(index));
                 var batch = PrepareRange(items);
+                if (batch.Count is 0) return;
 
                 _list.InsertRange(index, batch);
-                if (batch.Count is 0) return;
 
                 OnAddedRange(batch);
 
