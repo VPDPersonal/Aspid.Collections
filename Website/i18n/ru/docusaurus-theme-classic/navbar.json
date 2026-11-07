@@ -1,0 +1,30 @@
+{
+  "item.label.Docs": {
+    "message": "Документация",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Samples": {
+    "message": "Примеры",
+    "description": "Navbar item with label Samples"
+  },
+  "item.label.Changelog": {
+    "message": "Изменения",
+    "description": "Navbar item with label Changelog"
+  },
+  "title": {
+    "message": "Aspid.Collections",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Aspid.Collections",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.API": {
+    "message": "API",
+    "description": "Navbar item with label API"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

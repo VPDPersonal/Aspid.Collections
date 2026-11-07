@@ -1,0 +1,10 @@
+node_modules/
+build/
+.docusaurus/
+.cache-loader/
+changelog/
+static/img/samples/
+i18n/ru/docusaurus-plugin-content-docs-tutorials/current/*/README.md
+docfx/bin/
+docfx/obj/
+*.log

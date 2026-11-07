@@ -1,0 +1,117 @@
+/**
+ * Adapts the Markdown that `docfx metadata` writes into `Website/api/` for Docusaurus:
+ *
+ * - `<xref href="uid">` tags become Markdown links (to our own pages, learn.microsoft.com or the Unity
+ *   Scripting Reference of the Unity project's Editor version), since MDX does not know the element;
+ * - the "Inherited Members" list is dropped (dozens of `object`/`Attribute` members on every page);
+ * - an extension method is dropped from the pages of types it cannot extend: DocFX does not check a receiver
+ *   constraint like `where T : BaseSlider<TValue>` and lists the method on every type;
+ * - a `<p>` spread over several lines becomes one line, since MDX would nest its own `<p>` inside it;
+ * - `{` and `}` outside code are escaped, MDX would read them as expressions;
+ * - every page gets front matter with a short title for the sidebar;
+ * - `toc.yml` becomes `Website/api/sidebar.js`, the sidebar of the `api` docs plugin instance. Every namespace keeps
+ *   DocFX's Classes/Structs/… groups.
+ *
+ * Run after `docfx metadata` (see `npm run api`).
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { unityScriptReferenceUrl } from './unity-script-reference.mjs';
+import {
+  collectReceiverBases, disambiguateLabels, dropForeignExtensions, dropObjectExtensions, dropSection, escapeMdx,
+  headingAnchors, joinParagraphs, namespaceCategory, parseToc, preToFence, shortName, titleOf, uidToAnchor, uidToFile,
+  unescapeLinkTargets,
+} from './docfx-markdown.mjs';
+
+const siteDir = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const apiDir = path.join(siteDir, 'api');
+
+/** `6000.6` from the Unity project's `6000.6.5f1`: the Editor whose assemblies the Unity API links point into. */
+const unityVersion = fs
+  .readFileSync(path.resolve(siteDir, '../Aspid.Collections/ProjectSettings/ProjectVersion.txt'), 'utf8')
+  .match(/^m_EditorVersion: (\d+\.\d+)/m)?.[1];
+
+const files = new Set(fs.readdirSync(apiDir).filter((f) => f.endsWith('.md')));
+
+/** Anchors DocFX emitted per file (`<a id="…">`), so member links only carry anchors that exist. */
+const anchors = new Map(
+  [...files].map((f) => [f, new Set([...fs.readFileSync(path.join(apiDir, f), 'utf8').matchAll(/<a id="([^"]+)"/g)].map((m) => m[1]))]),
+);
+
+/** Generic types the receiver of an extension method must derive from, by the method's anchor; see `dropForeignExtensions`. */
+const receiverBases = new Map(
+  [...files].flatMap((f) => [...collectReceiverBases(fs.readFileSync(path.join(apiDir, f), 'utf8').replace(/\r\n?/g, '\n'))]),
+);
+
+function resolveXref(uid) {
+  const file = uidToFile(uid);
+  if (files.has(`${file}.md`)) return { href: `${file}.md`, text: shortName(uid, false) };
+
+  // A member: link to the declaring type's page with the member anchor.
+  const typeUid = uid.replace(/\(.*$/, '').replace(/\.[^.]+$/, '');
+  const typeFile = uidToFile(typeUid);
+  if (files.has(`${typeFile}.md`)) {
+    const anchor = uidToAnchor(uid);
+    const hash = anchors.get(`${typeFile}.md`).has(anchor) ? `#${anchor}` : '';
+    return { href: `${typeFile}.md${hash}`, text: shortName(uid, true) };
+  }
+
+  if (uid.startsWith('System.')) {
+    const apiPath = uid.replace(/\(.*$/, '').replace(/%60(\d+)/g, '-$1').toLowerCase();
+    return { href: `https://learn.microsoft.com/dotnet/api/${apiPath}`, text: shortName(uid, false) };
+  }
+  return { href: unityScriptReferenceUrl(uid, unityVersion), text: shortName(uid, false) };
+}
+
+function convertXrefs(markdown) {
+  return markdown.replace(/<xref href="([^"]+)"[^>]*><\/xref>/g, (_, rawUid) => {
+    const uid = rawUid.replace(/%7B/gi, '{').replace(/%7D/gi, '}').replace(/%2C/gi, ',');
+    const { href, text } = resolveXref(uid);
+    const label = `\`${text}\``;
+    return href ? `[${label}](${href})` : label;
+  });
+}
+
+for (const file of files) {
+  const filePath = path.join(apiDir, file);
+  let markdown = fs.readFileSync(filePath, 'utf8').replace(/\r\n?/g, '\n');
+  if (markdown.startsWith('---\n')) continue; // already processed
+
+  markdown = convertXrefs(markdown);
+  markdown = preToFence(markdown);
+  markdown = joinParagraphs(markdown);
+  markdown = unescapeLinkTargets(markdown);
+  markdown = dropSection(markdown, 'Inherited Members');
+  markdown = dropForeignExtensions(markdown, receiverBases);
+  markdown = dropObjectExtensions(markdown);
+  markdown = escapeMdx(markdown);
+  markdown = headingAnchors(markdown);
+
+  const fullTitle = titleOf(markdown, file);
+  const kind = fullTitle.split(' ')[0];
+  const label = fullTitle.replace(/^(Namespace|Class|Interface|Struct|Enum|Delegate) /, '');
+  const frontMatter = [
+    '---',
+    `title: ${JSON.stringify(fullTitle)}`,
+    `sidebar_label: ${JSON.stringify(label)}`,
+    `description: ${JSON.stringify(`${kind} ${label} — Aspid.Collections API reference`)}`,
+    'hide_title: true',
+    'pagination_prev: null',
+    'pagination_next: null',
+    '---',
+    '',
+  ].join('\n');
+  fs.writeFileSync(filePath, frontMatter + markdown.replace(/, +$/gm, ','));
+}
+
+// ---- toc.yml → sidebar.js ------------------------------------------------------------------------
+const toc = parseToc(fs.readFileSync(path.join(apiDir, 'toc.yml'), 'utf8'));
+const sidebar = toc.map(namespaceCategory);
+disambiguateLabels(sidebar);
+fs.writeFileSync(
+  path.join(apiDir, 'sidebar.js'),
+  `// Generated by scripts/docfx-postprocess.mjs from toc.yml. Do not edit.\nexport default { api: ${JSON.stringify(sidebar, null, 2)} };\n`,
+);
+fs.rmSync(path.join(apiDir, 'toc.yml'));
+console.log(`[docfx-postprocess] ${files.size} pages, ${sidebar.length} namespaces`);
