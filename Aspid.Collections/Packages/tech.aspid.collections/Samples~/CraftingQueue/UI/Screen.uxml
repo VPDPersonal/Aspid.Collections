@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="Screen.uss" />
+    <ui:VisualElement name="screen" class="screen theme-dark">
+        <ui:VisualElement class="masthead">
+            <ui:Label text="ASPID / COLLECTIONS / 03" class="brand" />
+            <ui:Button name="theme" text="Light" class="theme-toggle" tooltip="Switch to light theme" />
+        </ui:VisualElement>
+        <ui:VisualElement class="hero">
+            <ui:VisualElement><ui:Label text="Crafting queue" class="title" /><ui:Label text="Complete two orders, then undo the last one." class="subtitle" /></ui:VisualElement>
+            <ui:VisualElement class="metrics"><ui:VisualElement class="metric"><ui:Label text="Pending" class="metric-label" /><ui:Label name="metric0" text="0" class="metric-value" /></ui:VisualElement><ui:VisualElement class="metric"><ui:Label text="Completed" class="metric-label" /><ui:Label name="metric1" text="0" class="metric-value" /></ui:VisualElement></ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="workspace">
+            <ui:VisualElement class="toolbar"><ui:Button name="queue" text="Queue item" class="primary" /><ui:Button name="batch" text="Queue batch" class="" /><ui:Button name="complete" text="Complete next" class="" /><ui:Button name="undo" text="Undo last" class="" /><ui:Button name="clear" text="Clear workbench" class="danger" /></ui:VisualElement>
+            <ui:VisualElement class="lanes"><ui:VisualElement class="lane lane-first"><ui:Label text="Pending" class="lane-title" /><ui:ScrollView class="scroll" horizontal-scroller-visibility="Hidden"><ui:VisualElement name="pending" /></ui:ScrollView></ui:VisualElement><ui:VisualElement class="lane"><ui:Label text="Completed" class="lane-title" /><ui:ScrollView class="scroll" horizontal-scroller-visibility="Hidden"><ui:VisualElement name="history" /></ui:ScrollView></ui:VisualElement></ui:VisualElement>
+            <ui:Label name="status" text="Enter Play Mode." class="status" />
+        </ui:VisualElement>
+        <ui:Foldout name="events" text="+ Events" value="false" class="events">
+            <ui:VisualElement class="metrics"><ui:VisualElement class="metric"><ui:Label text="Actions" class="metric-label" /><ui:Label name="metric2" text="0" class="metric-value" /></ui:VisualElement></ui:VisualElement>
+            <ui:VisualElement name="log" class="log" />
+        </ui:Foldout>
+    </ui:VisualElement>
+</ui:UXML>

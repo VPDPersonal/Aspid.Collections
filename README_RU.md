@@ -69,7 +69,7 @@ items.RemoveAt(0);         // Remove
 
 `CollectionChanged` сообщает об изменениях. `IsSingleItem` помогает выбрать поля для одиночной или пакетной операции. При освобождении список отправляет `Reset`.
 
-[Пример с уведомлениями →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/01_BasicChangeNotifications)
+[Состав отряда →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/SquadRoster)
 
 </td>
 </tr>
@@ -94,7 +94,7 @@ Console.WriteLine(labels[0]); // Score 20
 
 `CreateSync` создаёт представление для чтения, которое обновляется вслед за источником. Поддерживаются все пять типов коллекций. [Перегрузки](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
-[Пример синхронизации инвентаря →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/02_InventorySync)
+[Состав отряда →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/SquadRoster)
 
 </td>
 </tr>
@@ -120,7 +120,7 @@ Console.WriteLine(
 
 `CreateFiltered` фильтрует и сортирует представление источника. Меняйте `Filter` или `Comparer` во время работы. Если источник не отправляет уведомления, после изменения вызовите `Update()`.
 
-[Пример фильтрации инвентаря →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/03_FilteredInventory)
+[Каталог предметов →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/ItemBrowser)
 
 </td>
 </tr>
@@ -146,7 +146,7 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 `SplitByEvents` вызывает отдельный обработчик для каждого типа изменения. Обработчики изменений элементов всегда получают список.
 
-[Пример подписки для аналитики →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/05_SplitByEvents)
+[Зона обнаружения →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/ZoneOccupancy)
 
 </td>
 </tr>
@@ -161,18 +161,22 @@ items.AddRange("Potion", "Elixir"); // Added 2
 </thead>
 <tbody>
 <tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Упорядоченный список с индексами, перемещением и пакетными операциями</td></tr>
-<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Доступ по ключу, как в <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/04_DictionaryKeyedTable">примере с таблицей лидеров</a></td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Доступ по ключу, как в <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/MatchScoreboard">примере с результатами матча</a></td></tr>
 <tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Уникальные элементы и проверка принадлежности множеству</td></tr>
-<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>Обработка в порядке добавления с пакетными операциями</td></tr>
-<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке добавления с пакетными операциями</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>Обработка в порядке добавления, как в <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/CraftingQueue">примере очереди крафта</a></td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке и история отмены, как в <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/CraftingQueue">примере очереди крафта</a></td></tr>
 </tbody>
 </table>
 
 ## Разработка
 
+Двуязычный сайт документации находится в [Website/](Website/README.md). Для локального просмотра выполните `npm --prefix Website ci` и `npm --prefix Website run start`.
+
 Откройте папку `Aspid.Collections/` из клона репозитория в Unity 6000.6.5f1. Unity загрузит встроенный пакет из `Packages/tech.aspid.collections/`. Запустите тесты на вкладке **PlayMode** в Test Runner. Для запуска модульных тестов вне Unity выполните `dotnet test DotnetTests/Aspid.Collections.Tests.csproj` из корня репозитория. [Исходный репозиторий](https://github.com/VPDPersonal/Aspid.Collections)
 
 ## Ресурсы
+
+Пять интерактивных сцен доступны в **Package Manager → Aspid.Collections → Samples**. Каждый пример импортируется отдельно: откройте `Scenes/<имя примера>.unity` и запустите Play Mode. В сценах есть кнопки действий, живые счётчики, журнал событий и задание для самостоятельной проверки. Подробнее — в [путеводителе по примерам](Aspid.Collections/Packages/tech.aspid.collections/Samples~/README.md).
 
 | [Примеры Unity](Aspid.Collections/Packages/tech.aspid.collections/Samples~) | [API библиотеки](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable) | [История изменений](CHANGELOG.md) |
 | --- | --- | --- |

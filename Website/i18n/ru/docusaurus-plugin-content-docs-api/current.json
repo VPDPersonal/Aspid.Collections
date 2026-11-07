@@ -1,0 +1,110 @@
+{
+  "version.label": {
+    "message": "1.1.1",
+    "description": "The label for version current"
+  },
+  "sidebar.api.category.Aspid.Collections.Observable": {
+    "message": "Observable",
+    "description": "The label for category 'Observable' in sidebar 'api'"
+  },
+  "sidebar.api.category.Aspid.Collections.Observable.Extensions": {
+    "message": "Observable.Extensions",
+    "description": "The label for category 'Observable.Extensions' in sidebar 'api'"
+  },
+  "sidebar.api.category.Aspid.Collections.Observable.Filtered": {
+    "message": "Observable.Filtered",
+    "description": "The label for category 'Observable.Filtered' in sidebar 'api'"
+  },
+  "sidebar.api.category.Aspid.Collections.Observable.Synchronizer": {
+    "message": "Observable.Synchronizer",
+    "description": "The label for category 'Observable.Synchronizer' in sidebar 'api'"
+  },
+  "sidebar.api.doc.CollectionChangedEvent<T>": {
+    "message": "CollectionChangedEvent<T>",
+    "description": "The label for the doc item 'CollectionChangedEvent<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.CollectionChangedEvent-1"
+  },
+  "sidebar.api.doc.ObservableDictionary<TKey, TValue>": {
+    "message": "ObservableDictionary<TKey, TValue>",
+    "description": "The label for the doc item 'ObservableDictionary<TKey, TValue>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.ObservableDictionary-2"
+  },
+  "sidebar.api.doc.ObservableHashSet<T>": {
+    "message": "ObservableHashSet<T>",
+    "description": "The label for the doc item 'ObservableHashSet<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.ObservableHashSet-1"
+  },
+  "sidebar.api.doc.ObservableList<T>": {
+    "message": "ObservableList<T>",
+    "description": "The label for the doc item 'ObservableList<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.ObservableList-1"
+  },
+  "sidebar.api.doc.ObservableQueue<T>": {
+    "message": "ObservableQueue<T>",
+    "description": "The label for the doc item 'ObservableQueue<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.ObservableQueue-1"
+  },
+  "sidebar.api.doc.ObservableStack<T>": {
+    "message": "ObservableStack<T>",
+    "description": "The label for the doc item 'ObservableStack<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.ObservableStack-1"
+  },
+  "sidebar.api.doc.SplitEventsExtensions": {
+    "message": "SplitEventsExtensions",
+    "description": "The label for the doc item 'SplitEventsExtensions' in sidebar 'api', linking to the doc Aspid.Collections.Observable.SplitEventsExtensions"
+  },
+  "sidebar.api.doc.NotifyCollectionChangedEventArgs<T>": {
+    "message": "NotifyCollectionChangedEventArgs<T>",
+    "description": "The label for the doc item 'NotifyCollectionChangedEventArgs<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.NotifyCollectionChangedEventArgs-1"
+  },
+  "sidebar.api.doc.INotifyCollectionChangedEventArgs<T>": {
+    "message": "INotifyCollectionChangedEventArgs<T>",
+    "description": "The label for the doc item 'INotifyCollectionChangedEventArgs<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.INotifyCollectionChangedEventArgs-1"
+  },
+  "sidebar.api.doc.IObservableCollection<T>": {
+    "message": "IObservableCollection<T>",
+    "description": "The label for the doc item 'IObservableCollection<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.IObservableCollection-1"
+  },
+  "sidebar.api.doc.IObservableEvents<T>": {
+    "message": "IObservableEvents<T>",
+    "description": "The label for the doc item 'IObservableEvents<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.IObservableEvents-1"
+  },
+  "sidebar.api.doc.IReadOnlyObservableDictionary<TKey, TValue>": {
+    "message": "IReadOnlyObservableDictionary<TKey, TValue>",
+    "description": "The label for the doc item 'IReadOnlyObservableDictionary<TKey, TValue>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.IReadOnlyObservableDictionary-2"
+  },
+  "sidebar.api.doc.IReadOnlyObservableList<T>": {
+    "message": "IReadOnlyObservableList<T>",
+    "description": "The label for the doc item 'IReadOnlyObservableList<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.IReadOnlyObservableList-1"
+  },
+  "sidebar.api.doc.NotifyCollectionChangedEventHandler<T>": {
+    "message": "NotifyCollectionChangedEventHandler<T>",
+    "description": "The label for the doc item 'NotifyCollectionChangedEventHandler<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.NotifyCollectionChangedEventHandler-1"
+  },
+  "sidebar.api.doc.ObservableListExtensions": {
+    "message": "ObservableListExtensions",
+    "description": "The label for the doc item 'ObservableListExtensions' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Extensions.ObservableListExtensions"
+  },
+  "sidebar.api.doc.CreateFilteredExtensions": {
+    "message": "CreateFilteredExtensions",
+    "description": "The label for the doc item 'CreateFilteredExtensions' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Filtered.CreateFilteredExtensions"
+  },
+  "sidebar.api.doc.FilteredList<T>": {
+    "message": "FilteredList<T>",
+    "description": "The label for the doc item 'FilteredList<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Filtered.FilteredList-1"
+  },
+  "sidebar.api.doc.IReadOnlyFilteredList<T>": {
+    "message": "IReadOnlyFilteredList<T>",
+    "description": "The label for the doc item 'IReadOnlyFilteredList<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Filtered.IReadOnlyFilteredList-1"
+  },
+  "sidebar.api.doc.CreateSyncExtensions": {
+    "message": "CreateSyncExtensions",
+    "description": "The label for the doc item 'CreateSyncExtensions' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Synchronizer.CreateSyncExtensions"
+  },
+  "sidebar.api.doc.IReadOnlyObservableCollectionSync<T>": {
+    "message": "IReadOnlyObservableCollectionSync<T>",
+    "description": "The label for the doc item 'IReadOnlyObservableCollectionSync<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Synchronizer.IReadOnlyObservableCollectionSync-1"
+  },
+  "sidebar.api.doc.IReadOnlyObservableDictionarySync<TKey, TValue>": {
+    "message": "IReadOnlyObservableDictionarySync<TKey, TValue>",
+    "description": "The label for the doc item 'IReadOnlyObservableDictionarySync<TKey, TValue>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Synchronizer.IReadOnlyObservableDictionarySync-2"
+  },
+  "sidebar.api.doc.IReadOnlyObservableListSync<T>": {
+    "message": "IReadOnlyObservableListSync<T>",
+    "description": "The label for the doc item 'IReadOnlyObservableListSync<T>' in sidebar 'api', linking to the doc Aspid.Collections.Observable.Synchronizer.IReadOnlyObservableListSync-1"
+  }
+}

@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="Screen.uss" />
+    <ui:VisualElement name="screen" class="screen theme-dark">
+        <ui:VisualElement class="masthead">
+            <ui:Label text="ASPID / COLLECTIONS / 02" class="brand" />
+            <ui:Button name="theme" text="Light" class="theme-toggle" tooltip="Switch to light theme" />
+        </ui:VisualElement>
+        <ui:VisualElement class="hero">
+            <ui:VisualElement><ui:Label text="Item browser" class="title" /><ui:Label text="Search, choose a category, or change the price." class="subtitle" /></ui:VisualElement>
+            <ui:VisualElement class="metrics"><ui:VisualElement class="metric"><ui:Label text="Visible" class="metric-label" /><ui:Label name="metric0" text="0" class="metric-value" /></ui:VisualElement><ui:VisualElement class="metric"><ui:Label text="In stock" class="metric-label" /><ui:Label name="metric1" text="0" class="metric-value" /></ui:VisualElement></ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="workspace">
+            <ui:VisualElement class="filters"><ui:TextField name="search" label="Search" class="search" value="" tooltip="Search item names" /><ui:Button name="all" text="All" class="selected" /><ui:Button name="gear" text="Gear" /><ui:Button name="supplies" text="Supplies" /><ui:Button name="sort" text="Price: low first" /></ui:VisualElement>
+            <ui:VisualElement class="toolbar"><ui:Button name="add" text="New delivery" class="primary" /><ui:Button name="discount" text="Discount first" class="" /><ui:Button name="remove" text="Remove first" class="" /><ui:Button name="reset" text="Restock" class="" /></ui:VisualElement>
+            <ui:ScrollView class="scroll" horizontal-scroller-visibility="Hidden"><ui:VisualElement name="items" class="cards" /></ui:ScrollView>
+            <ui:Label name="status" text="Enter Play Mode." class="status" />
+        </ui:VisualElement>
+        <ui:Foldout name="events" text="+ Events" value="false" class="events">
+            <ui:VisualElement class="metrics"><ui:VisualElement class="metric"><ui:Label text="Refreshes" class="metric-label" /><ui:Label name="metric2" text="0" class="metric-value" /></ui:VisualElement></ui:VisualElement>
+            <ui:VisualElement name="log" class="log" />
+        </ui:Foldout>
+    </ui:VisualElement>
+</ui:UXML>

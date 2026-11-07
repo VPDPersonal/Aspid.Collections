@@ -1,0 +1,11 @@
+{
+  "metadata": [{
+    "src": [{"files": ["Aspid.Collections.Api.csproj"]}],
+    "dest": "../api",
+    "outputFormat": "markdown",
+    "includePrivateMembers": false,
+    "disableGitFeatures": true,
+    "namespaceLayout": "flattened",
+    "memberLayout": "samePage"
+  }]
+}

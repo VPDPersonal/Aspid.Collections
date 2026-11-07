@@ -1,0 +1,65 @@
+{
+  "name": "aspid-collections-docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "sync-content": "node scripts/sync-content.mjs",
+    "check-content": "node scripts/sync-content.mjs --check",
+    "api": "dotnet tool restore && node scripts/generate-api.mjs",
+    "prestart": "npm run sync-content",
+    "prestart:ru": "npm run sync-content",
+    "prebuild": "npm run sync-content",
+    "start": "docusaurus start",
+    "start:ru": "docusaurus start --locale ru",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve",
+    "test": "node --test scripts/*.test.mjs",
+    "clear": "docusaurus clear",
+    "write-translations": "docusaurus write-translations"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.9.1",
+    "@docusaurus/preset-classic": "^3.9.1",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/ibm-plex-sans": "5.3.0",
+    "@fontsource/ibm-plex-serif": "5.3.0",
+    "@mdx-js/react": "^3.1.0",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remark-github-admonitions-to-directives": "^2.1.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.9.1",
+    "@docusaurus/types": "^3.9.1",
+    "@docusaurus/utils": "^3.9.1",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "overrides": {
+    "tinypool": "^2.1.2",
+    "serialize-javascript": "^7.0.5",
+    "postcss-selector-parser": "^7.1.6",
+    "sockjs": {
+      "uuid": "^11.1.1"
+    }
+  }
+}

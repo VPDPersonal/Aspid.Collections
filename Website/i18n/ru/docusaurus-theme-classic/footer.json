@@ -1,0 +1,18 @@
+{
+  "link.item.label.Vladislav Panin": {
+    "message": "Vladislav Panin",
+    "description": "The label of footer link with label=Vladislav Panin linking to https://github.com/VPDPersonal"
+  },
+  "link.item.label.Email": {
+    "message": "Email",
+    "description": "The label of footer link with label=Email linking to mailto:vpd.aspid@gmail.com"
+  },
+  "link.item.label.MIT License": {
+    "message": "MIT License",
+    "description": "The label of footer link with label=MIT License linking to https://github.com/VPDPersonal/Aspid.Collections/blob/main/LICENSE"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 Vladislav Panin. MIT License.",
+    "description": "The footer copyright"
+  }
+}
