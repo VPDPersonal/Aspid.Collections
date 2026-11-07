@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 env:
-  PACKAGE_PATH: .
+  PACKAGE_PATH: Aspid.Collections/Packages/tech.aspid.collections
   CHANGELOG_PATH: CHANGELOG.md
 
 jobs:
@@ -164,25 +164,26 @@ jobs:
             exit 1
           fi
 
-          # Stage only Unity package paths from the tagged source tree.
+          # Start the release tree at the embedded package root.
           UPM_INDEX=$(mktemp)
           trap 'rm -f "$UPM_INDEX"' EXIT
           export GIT_INDEX_FILE="$UPM_INDEX"
-          git read-tree --empty
-          git ls-tree -rz "$TAG" -- \
-            package.json package.json.meta LICENSE \
-            CHANGELOG.md CHANGELOG.md.meta README.md README.md.meta README_RU.md README_RU.md.meta \
-            Runtime Runtime.meta Editor Editor.meta Tests Tests.meta "Samples~" \
-            | git update-index -z --index-info
-          LICENSE_META_BLOB=$(git rev-parse "$TAG:.github/upm/LICENSE.meta")
-          git update-index --add --cacheinfo "100644,$LICENSE_META_BLOB,LICENSE.meta"
-          # Keep README images working after their source directory is removed.
-          README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation~/Images/"
+          git read-tree "$TAG:$PACKAGE_PATH"
+          git ls-tree -rz "$TAG" -- "$CHANGELOG_PATH" LICENSE | git update-index -z --index-info
+          for FILE in CHANGELOG.md LICENSE README.md README_RU.md; do
+            META_BLOB=$(git rev-parse "$TAG:.github/upm/$FILE.meta")
+            git update-index --add --cacheinfo "100644,$META_BLOB,$FILE.meta"
+          done
+
+          # Make code links package-relative and load images from the source tag.
+          PACKAGE_PATH_PATTERN="${PACKAGE_PATH//./\\.}"
+          README_IMAGE_URL="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${TAG}/Documentation/Images/"
           for README_FILE in README.md README_RU.md; do
             README_BLOB=$(git show "$TAG:$README_FILE" \
-              | sed -E "s|([\"(])Documentation~/Images/|\1${README_IMAGE_URL}|g" \
+              | sed -E -e "s|([\"(])${PACKAGE_PATH_PATTERN}/|\1|g" \
+                  -e "s|([\"(])Documentation/Images/|\1${README_IMAGE_URL}|g" \
               | git hash-object -w --stdin)
-            git update-index --cacheinfo "100644,$README_BLOB,$README_FILE"
+            git update-index --add --cacheinfo "100644,$README_BLOB,$README_FILE"
           done
           TREE=$(git write-tree)
           unset GIT_INDEX_FILE

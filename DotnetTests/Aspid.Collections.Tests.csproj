@@ -7,8 +7,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../Tests/Runtime/Observable/**/*.cs"
-             Exclude="../../Tests/Runtime/Observable/Performance/**/*.cs" />
+    <Compile Include="../Aspid.Collections/Packages/tech.aspid.collections/Tests/Runtime/Observable/**/*.cs"
+             Exclude="../Aspid.Collections/Packages/tech.aspid.collections/Tests/Runtime/Observable/Performance/**/*.cs" />
     <ProjectReference Include="Runtime/Aspid.Collections.Observable.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />

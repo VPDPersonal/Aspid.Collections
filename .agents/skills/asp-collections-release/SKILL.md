@@ -13,9 +13,9 @@ Fetch `origin/main` and check the remote for the exact `refs/tags/v<version>` re
 
 ## Prepare the release PR
 
-1. Start from a clean checkout. Verify that the requested version is greater than the version in `origin/main:package.json` using SemVer precedence. Create a release branch from `origin/main` using the repository branch naming guidance.
-2. Set the version in the root `package.json`. In `CHANGELOG.md`, keep `## [Unreleased]` and add a nonempty `## [<version>] — YYYY-MM-DD` section. Move applicable Unreleased notes there and fill gaps from the commits since the preceding release tag. Link each entry to its corresponding merged PRs when available.
-3. Check that the manifest and changelog versions match, run `git diff --check`, and run `dotnet test .github/tests/Aspid.Collections.Tests.csproj --configuration Release`. Stop on a failed check and report the cause.
+1. Start from a clean checkout. Verify that the requested version is greater than the version in `origin/main:Aspid.Collections/Packages/tech.aspid.collections/package.json` using SemVer precedence. Create a release branch from `origin/main` using the repository branch naming guidance.
+2. Set the version in `Aspid.Collections/Packages/tech.aspid.collections/package.json`. In `CHANGELOG.md`, keep `## [Unreleased]` and add a nonempty `## [<version>] — YYYY-MM-DD` section. Move applicable Unreleased notes there and fill gaps from the commits since the preceding release tag. Link each entry to its corresponding merged PRs when available.
+3. Check that the manifest and changelog versions match, run `git diff --check`, and run `dotnet test DotnetTests/Aspid.Collections.Tests.csproj --configuration Release`. Stop on a failed check and report the cause.
 4. Commit the release changes with `asp-commit` and open a draft PR into `main` with `asp-pr`. Report the PR link, selected channel, and checks. Wait for the release PR to merge before proceeding.
 
 ## Publish the tag

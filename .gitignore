@@ -3,5 +3,10 @@
 .vscode/
 /LICENSE.meta
 
+# .NET test build output.
+/DotnetTests/**/bin/
+/DotnetTests/**/obj/
+/DotnetTests/**/TestResults/
+
 # Override the global "*~" rule that hides Unity's Samples~ folder.
 !Samples~/

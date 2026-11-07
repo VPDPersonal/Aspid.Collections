@@ -1,11 +1,11 @@
 <picture>
-  <source srcset="Documentation~/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation~/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="Documentation/Images/aspid_collections_readme_banner_dark.webp" />
+  <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity 2021.3.0f1+](Documentation~/Images/status-badge-unity.svg)](#установка)
-[![Стабильный релиз 1.1.1](Documentation~/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
-[![Лицензия MIT](Documentation~/Images/status-badge-license.svg)](LICENSE)
+[![Unity 2021.3.0f1+](Documentation/Images/status-badge-unity.svg)](#установка)
+[![Стабильный релиз 1.1.1](Documentation/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
+[![Лицензия MIT](Documentation/Images/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
 
@@ -15,7 +15,7 @@ Aspid.Collections — наблюдаемые коллекции для Unity и 
 
 <table>
 <tr>
-<td width="56%"><img src="Documentation~/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
+<td width="56%"><img src="Documentation/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
 <td width="44%">
 <ol>
 <li>Откройте <b>Window → Package Manager</b></li>
@@ -69,7 +69,7 @@ items.RemoveAt(0);         // Remove
 
 `CollectionChanged` сообщает об изменениях. `IsSingleItem` помогает выбрать поля для одиночной или пакетной операции. При освобождении список отправляет `Reset`.
 
-[Пример с уведомлениями →](Samples~/01_BasicChangeNotifications)
+[Пример с уведомлениями →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/01_BasicChangeNotifications)
 
 </td>
 </tr>
@@ -92,9 +92,9 @@ Console.WriteLine(labels[0]); // Score 20
 </td>
 <td valign="top">
 
-`CreateSync` создаёт представление для чтения, которое обновляется вслед за источником. Поддерживаются все пять типов коллекций. [Перегрузки](Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
+`CreateSync` создаёт представление для чтения, которое обновляется вслед за источником. Поддерживаются все пять типов коллекций. [Перегрузки](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/Synchronizer/Extensions/CreateSyncExtensions.cs)
 
-[Пример синхронизации инвентаря →](Samples~/02_InventorySync)
+[Пример синхронизации инвентаря →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/02_InventorySync)
 
 </td>
 </tr>
@@ -120,7 +120,7 @@ Console.WriteLine(
 
 `CreateFiltered` фильтрует и сортирует представление источника. Меняйте `Filter` или `Comparer` во время работы. Если источник не отправляет уведомления, после изменения вызовите `Update()`.
 
-[Пример фильтрации инвентаря →](Samples~/03_FilteredInventory)
+[Пример фильтрации инвентаря →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/03_FilteredInventory)
 
 </td>
 </tr>
@@ -146,7 +146,7 @@ items.AddRange("Potion", "Elixir"); // Added 2
 
 `SplitByEvents` вызывает отдельный обработчик для каждого типа изменения. Обработчики изменений элементов всегда получают список.
 
-[Пример подписки для аналитики →](Samples~/05_SplitByEvents)
+[Пример подписки для аналитики →](Aspid.Collections/Packages/tech.aspid.collections/Samples~/05_SplitByEvents)
 
 </td>
 </tr>
@@ -160,17 +160,21 @@ items.AddRange("Potion", "Elixir"); // Added 2
 <tr><th width="420">Тип</th><th width="700">Для чего подходит</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Упорядоченный список с индексами, перемещением и пакетными операциями</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Доступ по ключу, как в <a href="Samples~/04_DictionaryKeyedTable">примере с таблицей лидеров</a></td></tr>
-<tr><td><a href="Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Уникальные элементы и проверка принадлежности множеству</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>Обработка в порядке добавления с пакетными операциями</td></tr>
-<tr><td><a href="Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке добавления с пакетными операциями</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableList.cs"><code>ObservableList&lt;T&gt;</code></a></td><td>Упорядоченный список с индексами, перемещением и пакетными операциями</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableDictionary.cs"><code>ObservableDictionary&lt;TKey, TValue&gt;</code></a></td><td>Доступ по ключу, как в <a href="Aspid.Collections/Packages/tech.aspid.collections/Samples~/04_DictionaryKeyedTable">примере с таблицей лидеров</a></td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableHashSet.cs"><code>ObservableHashSet&lt;T&gt;</code></a></td><td>Уникальные элементы и проверка принадлежности множеству</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableQueue.cs"><code>ObservableQueue&lt;T&gt;</code></a></td><td>Обработка в порядке добавления с пакетными операциями</td></tr>
+<tr><td><a href="Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable/ObservableStack.cs"><code>ObservableStack&lt;T&gt;</code></a></td><td>Обработка в обратном порядке добавления с пакетными операциями</td></tr>
 </tbody>
 </table>
 
+## Разработка
+
+Откройте папку `Aspid.Collections/` из клона репозитория в Unity 6000.6.5f1. Unity загрузит встроенный пакет из `Packages/tech.aspid.collections/`. Запустите тесты на вкладке **PlayMode** в Test Runner. Для запуска модульных тестов вне Unity выполните `dotnet test DotnetTests/Aspid.Collections.Tests.csproj` из корня репозитория. [Исходный репозиторий](https://github.com/VPDPersonal/Aspid.Collections)
+
 ## Ресурсы
 
-| [Примеры Unity](Samples~) | [API библиотеки](Runtime/Observable) | [История изменений](CHANGELOG.md) |
+| [Примеры Unity](Aspid.Collections/Packages/tech.aspid.collections/Samples~) | [API библиотеки](Aspid.Collections/Packages/tech.aspid.collections/Runtime/Observable) | [История изменений](CHANGELOG.md) |
 | --- | --- | --- |
 | В Package Manager выберите **Aspid.Collections → Samples → Import**. Откройте импортированную сцену и запустите Play Mode. | Типы коллекций, аргументы событий и методы расширения. | Изменения и исправления по релизам. |
 
