@@ -65,7 +65,7 @@ Button:disabled { opacity: 0.4; }
 .scroll { flex-grow: 1; flex-basis: 0; min-height: 60px; overflow: hidden; }
 .scroll .unity-scroll-view__content-and-vertical-scroll-container { flex-direction: row; flex-grow: 1; min-height: 0; }
 .scroll .unity-scroll-view__content-viewport { flex-grow: 1; min-width: 0; overflow: hidden; }
-.scroll .unity-scroll-view__content-container { padding-right: 8px; flex-shrink: 0; }
+.scroll .unity-scroll-view__content-container { flex-shrink: 0; }
 .scroll .unity-scroller--vertical { width: 10px; flex-shrink: 0; }
 .scroll .unity-scroller__low-button, .scroll .unity-scroller__high-button { display: none; }
 .scroll .unity-scroller__slider { flex-grow: 1; min-height: 20px; }
