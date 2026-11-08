@@ -3,9 +3,9 @@
   <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Минимальная версия Unity](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/aspid-collections/status-badge-unity.svg)](#установка)
-[![Стабильный релиз](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
-[![Лицензия MIT](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/status-badge-license.svg)](LICENSE)
+[![Минимальная версия Unity](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-unity.svg)](#установка)
+[![Стабильный релиз](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
+[![Лицензия MIT](https://vpdpersonal.github.io/VPDPersonal/badges/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
 

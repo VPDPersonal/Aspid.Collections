@@ -3,9 +3,9 @@
   <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Minimum Unity version](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/aspid-collections/status-badge-unity.svg)](#installation)
-[![Stable release](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
-[![MIT License](https://raw.githubusercontent.com/VPDPersonal/VPDPersonal/main/badges/status-badge-license.svg)](LICENSE)
+[![Minimum Unity version](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-unity.svg)](#installation)
+[![Stable release](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
+[![MIT License](https://vpdpersonal.github.io/VPDPersonal/badges/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
 
