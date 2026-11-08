@@ -1,6 +1,6 @@
 <picture>
-  <source srcset="Documentation/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.webp" type="image/webp" />
+  <img src="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.png" alt="Aspid.Collections" />
 </picture>
 
 [![Minimum Unity version](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-unity.svg)](#installation)
