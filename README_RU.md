@@ -1,11 +1,11 @@
 <picture>
-  <source srcset="Documentation/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.webp" type="image/webp" />
+  <img src="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity 2021.3.0f1+](Documentation/Images/status-badge-unity.svg)](#установка)
-[![Стабильный релиз 1.1.1](Documentation/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
-[![Лицензия MIT](Documentation/Images/status-badge-license.svg)](LICENSE)
+[![Минимальная версия Unity](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-unity.svg)](#установка)
+[![Стабильный релиз](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
+[![Лицензия MIT](https://vpdpersonal.github.io/VPDPersonal/badges/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections — наблюдаемые коллекции для Unity и .NET. Реагируйте на изменения инвентаря или таблицы лидеров, преобразуйте модели в модели представления и обновляйте отфильтрованные и отсортированные списки вслед за источником. Библиотека написана на C# и работает без зависимостей от движка Unity.
 

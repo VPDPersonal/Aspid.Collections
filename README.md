@@ -1,11 +1,11 @@
 <picture>
-  <source srcset="Documentation/Images/aspid_collections_readme_banner_dark.webp" />
-  <img src="Documentation/Images/aspid_collections_readme_banner.png" alt="Aspid.Collections" />
+  <source srcset="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.webp" type="image/webp" />
+  <img src="https://vpdpersonal.github.io/VPDPersonal/banners/aspid-collections/banner.png" alt="Aspid.Collections" />
 </picture>
 
-[![Unity 2021.3.0f1+](Documentation/Images/status-badge-unity.svg)](#installation)
-[![Stable 1.1.1](Documentation/Images/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/tag/v1.1.1)
-[![MIT License](Documentation/Images/status-badge-license.svg)](LICENSE)
+[![Minimum Unity version](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-unity.svg)](#installation)
+[![Stable release](https://vpdpersonal.github.io/VPDPersonal/badges/aspid-collections/status-badge-release.svg)](https://github.com/VPDPersonal/Aspid.Collections/releases/latest)
+[![MIT License](https://vpdpersonal.github.io/VPDPersonal/badges/status-badge-license.svg)](LICENSE)
 
 Aspid.Collections provides observable collections for Unity and .NET. React to changes in an inventory or leaderboard, project models into view models, and keep filtered and sorted views up to date. The runtime is pure C# and has no Unity engine dependency.
 
