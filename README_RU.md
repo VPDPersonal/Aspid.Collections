@@ -15,7 +15,7 @@ Aspid.Collections — наблюдаемые коллекции для Unity и 
 
 <table>
 <tr>
-<td width="56%"><img src="Documentation/Images/install.webp" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></td>
+<td width="56%"><picture><source srcset="https://vpdpersonal.github.io/VPDPersonal/installation/aspid-collections/install.webp" type="image/webp"><img src="https://vpdpersonal.github.io/VPDPersonal/installation/aspid-collections/install.png" alt="Установка Aspid.Collections по Git URL в Package Manager" width="100%"></picture></td>
 <td width="44%">
 <ol>
 <li>Откройте <b>Window → Package Manager</b></li>
