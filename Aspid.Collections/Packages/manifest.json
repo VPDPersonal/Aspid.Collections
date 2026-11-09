@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "com.unity.test-framework": "1.8.0",
-    "com.unity.test-framework.performance": "6.6.0"
+    "com.unity.test-framework.performance": "6.6.0",
+    "com.unity.modules.uielements": "1.0.0"
   },
   "testables": [
     "tech.aspid.collections"

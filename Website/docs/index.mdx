@@ -1,0 +1,55 @@
+---
+id: README
+slug: /
+title: Aspid.Collections
+description: Covariant observable collections, synchronized projections, filtering and sorting for Unity and .NET.
+hide_title: true
+---
+import Link from '@docusaurus/Link';
+
+<IntroBanner alt="Aspid.Collections" />
+
+<div className="collections-status"><StatusBadge kind="unity" label="Unity 2021.3+" /><StatusBadge kind="license" label="MIT License" /><span>Pure C# · No engine dependency</span></div>
+
+<p className="readme-lede">Keep your data, views and filtered lists in step. Aspid.Collections adds change notifications to familiar collections, projects models into disposable views, and keeps search and sort results up to date.</p>
+
+## Try a change
+
+Add a pair, move the first member, then filter the view. The data stays in one source; its consumers react to changes.
+
+<CollectionsDemo />
+
+## Install
+
+<InstallPanel url="https://github.com/VPDPersonal/Aspid.Collections.git#upm" />
+
+Requires **Unity 2021.3.0f1+**. The runtime has no Unity engine references and can also be compiled in a .NET project. [Installation and version pinning](installation.md).
+
+## Build around your data
+
+<div className="collections-features">
+<Link className="collections-feature" to="/docs/events"><h3>React to the change</h3><p>Know what was added, removed, replaced or moved. Handle one item and a batch explicitly.</p></Link>
+<Link className="collections-feature" to="/docs/synchronization"><h3>Let the view follow</h3><p>Turn models into cards or view models. Keep existing objects on moves and release removed views.</p></Link>
+<Link className="collections-feature" to="/docs/filtering"><h3>Search without editing the source</h3><p>Chain filters, switch the comparer and refresh after an item property changes.</p></Link>
+<Link className="collections-feature" to="/docs/lifecycle"><h3>Own the subscription</h3><p>Dispose the wrapper you created. Detach one consumer while the others keep listening.</p></Link>
+</div>
+
+## Five collections. Real examples.
+
+<SampleAvailability />
+
+| Collection | A practical use | Explore |
+| --- | --- | --- |
+| `ObservableList<T>` | Ordered members with batch recruitment and stable card identities | [Squad Roster](/tutorials/squad-roster) |
+| `ObservableDictionary<TKey, TValue>` | Player scores keyed by persistent ID | [Match Scoreboard](/tutorials/match-scoreboard) |
+| `ObservableHashSet<T>` | Unique visitors and a detachable alarm | [Zone Occupancy](/tutorials/zone-occupancy) |
+| `ObservableQueue<T>` | First-in, first-out work orders | [Crafting Queue](/tutorials/crafting-queue) |
+| `ObservableStack<T>` | Last-in, first-out undo history | [Crafting Queue](/tutorials/crafting-queue) |
+
+For search and sorting, start with [Item Browser](/tutorials/item-browser). Each sample ships a complete Unity scene, local fonts, controls, live metrics and a walkthrough. [Browse all samples](/tutorials).
+
+## Go deeper
+
+[Quick start](quick-start.md) · [Choose a collection](collections.md) · [API reference](/api/Aspid.Collections.Observable) · [Changelog](/changelog)
+
+<SupportPanel issues="https://github.com/VPDPersonal/Aspid.Collections/issues" repo="https://github.com/VPDPersonal/Aspid.Collections" />

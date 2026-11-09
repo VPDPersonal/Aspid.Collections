@@ -1,0 +1,8 @@
+/* Keep the document stretched without depending on a built-in theme. */
+.unity-ui-document__root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}

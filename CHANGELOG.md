@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Bilingual Docusaurus documentation website in `Website/`, with the Aspid.FastTools theme, local search, interactive collection illustration, generated runtime API reference, sample walkthroughs and previews, and a GitHub Pages workflow.
+
+### Changed
+- Simplified the five sample interfaces with flexible full-width card rows, moved diagnostics into a collapsed Events panel, and added switchable light/dark palettes with paired website previews.
+- Replaced the introductory samples with five self-contained interactive UI Toolkit scenes: Squad Roster, Item Browser, Crafting Queue, Match Scoreboard, and Zone Occupancy. Each includes local fonts, live events and metrics, a guided exercise, and a walkthrough. Together they demonstrate all five collection types, synchronization ownership, chained filtering, batch notifications, and disposable event subscriptions.
+
 ## [1.1.1] — 2026-11-06
 
 ### Changed

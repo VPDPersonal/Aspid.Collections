@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "1.1.1",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Get started": {
+    "message": "Начало работы",
+    "description": "The label for category 'Get started' in sidebar 'docs'"
+  },
+  "sidebar.docs.category.Use the collections": {
+    "message": "Работа с коллекциями",
+    "description": "The label for category 'Use the collections' in sidebar 'docs'"
+  },
+  "sidebar.docs.doc.Introduction": {
+    "message": "Введение",
+    "description": "The label for the doc item 'Introduction' in sidebar 'docs', linking to the doc README"
+  }
+}

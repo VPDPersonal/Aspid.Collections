@@ -1,0 +1,55 @@
+---
+id: README
+slug: /
+title: Aspid.Collections
+description: Ковариантные наблюдаемые коллекции, синхронизация представлений, фильтрация и сортировка для Unity и .NET.
+hide_title: true
+---
+import Link from '@docusaurus/Link';
+
+<IntroBanner alt="Aspid.Collections" />
+
+<div className="collections-status"><StatusBadge kind="unity" label="Unity 2021.3+" /><StatusBadge kind="license" label="MIT License" /><span>Чистый C# · Без зависимостей от движка</span></div>
+
+<p className="readme-lede">Данные, представления и результаты поиска обновляются вместе. Aspid.Collections добавляет уведомления к привычным коллекциям, преобразует модели в освобождаемые представления и поддерживает фильтрацию и сортировку.</p>
+
+## Попробуйте изменение
+
+Добавьте пару участников, переместите первого и включите фильтр. Данные остаются в одном источнике, а его потребители реагируют на изменения.
+
+<CollectionsDemo />
+
+## Установка
+
+<InstallPanel url="https://github.com/VPDPersonal/Aspid.Collections.git#upm" />
+
+Нужна **Unity 2021.3.0f1+**. Runtime не ссылается на движок Unity и может быть собран в проекте .NET. [Установка и закрепление версии](installation.md).
+
+## Стройте интерфейс вокруг данных
+
+<div className="collections-features">
+<Link className="collections-feature" to="/docs/events"><h3>Реагируйте на изменение</h3><p>Получайте добавленные, удалённые, заменённые и перемещённые элементы. Различайте одиночную операцию и пакет.</p></Link>
+<Link className="collections-feature" to="/docs/synchronization"><h3>Синхронизируйте представление</h3><p>Преобразуйте модели в карточки или ViewModel. Сохраняйте объекты при перемещении и освобождайте при удалении.</p></Link>
+<Link className="collections-feature" to="/docs/filtering"><h3>Ищите без изменения источника</h3><p>Соединяйте фильтры, меняйте comparer и обновляйте результат после изменения свойства предмета.</p></Link>
+<Link className="collections-feature" to="/docs/lifecycle"><h3>Управляйте подпиской</h3><p>Освобождайте созданную обёртку. Отключайте одного потребителя, сохраняя остальных подключёнными.</p></Link>
+</div>
+
+## Пять коллекций. Практические примеры.
+
+<SampleAvailability />
+
+| Коллекция | Задача | Пример |
+| --- | --- | --- |
+| `ObservableList<T>` | Состав отряда с пакетным добавлением и сохранением карточек | [Squad Roster](/tutorials/squad-roster) |
+| `ObservableDictionary<TKey, TValue>` | Результаты игроков по постоянному ID | [Match Scoreboard](/tutorials/match-scoreboard) |
+| `ObservableHashSet<T>` | Уникальные посетители и отключаемая сигнализация | [Zone Occupancy](/tutorials/zone-occupancy) |
+| `ObservableQueue<T>` | Обработка заказов в порядке поступления | [Crafting Queue](/tutorials/crafting-queue) |
+| `ObservableStack<T>` | История отмены в обратном порядке | [Crafting Queue](/tutorials/crafting-queue) |
+
+Для поиска и сортировки начните с [Item Browser](/tutorials/item-browser). Каждый пример содержит готовую сцену Unity, локальные шрифты, кнопки, живые счётчики и упражнение. [Все примеры](/tutorials).
+
+## Дальше
+
+[Быстрый старт](quick-start.md) · [Выбор коллекции](collections.md) · [Справочник API](/api/Aspid.Collections.Observable) · [История изменений](/changelog)
+
+<SupportPanel issues="https://github.com/VPDPersonal/Aspid.Collections/issues" repo="https://github.com/VPDPersonal/Aspid.Collections" />
