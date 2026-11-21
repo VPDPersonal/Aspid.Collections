@@ -1,0 +1,14 @@
+{
+  "sidebar.docs.category.Getting started": {
+    "message": "Начало работы"
+  },
+  "sidebar.docs.category.Working with changes": {
+    "message": "Работа с изменениями"
+  },
+  "sidebar.docs.category.API reference": {
+    "message": "Справочник API"
+  },
+  "sidebar.docs.category.Resources": {
+    "message": "Материалы"
+  }
+}

@@ -1,0 +1,140 @@
+---
+title: Aspid.Collections
+hide_title: true
+sidebar_label: Введение
+pagination_label: Введение
+slug: /
+description: Наблюдаемые коллекции для Unity и .NET. Обновляйте инвентарь, таблицу лидеров или модель представления при каждом изменении исходных данных.
+---
+
+import Link from "@docusaurus/Link";
+import IntroBanner from "@site/src/components/IntroBanner";
+import InstallPanel from "@site/src/components/InstallPanel";
+import StatusBadge from "@site/src/components/StatusBadge";
+import SupportPanel from "@site/src/components/SupportPanel";
+import DonatePanel from "@site/src/components/DonatePanel";
+
+<IntroBanner alt="Aspid.Collections" />
+
+<p>
+  <StatusBadge kind="unity" label="Unity 2021.3.0f1+" />
+  <StatusBadge kind="release" label="Release 1.1.1" href="https://github.com/VPDPersonal/Aspid.Collections/releases" />
+  <StatusBadge kind="license" label="MIT License" href="https://github.com/VPDPersonal/Aspid.Collections/blob/main/LICENSE" />
+</p>
+
+<p className="readme-lede">Наблюдаемые коллекции для Unity и .NET. Обновляйте инвентарь, таблицу лидеров или модель представления при каждом изменении исходных данных.</p>
+
+## Установка
+
+<InstallPanel url="https://github.com/VPDPersonal/Aspid.Collections.git#upm" />
+
+Требуется Unity 2021.3.0f1 или новее. [Варианты установки](./installation.md)
+
+<details>
+<summary>Решение проблем</summary>
+
+Если Unity сообщает о дубликате сборки, проверьте, есть ли в Assets вторая копия пакета. [Подробнее](./troubleshooting.md)
+
+</details>
+
+## Возможности
+
+<div className="feature-cards">
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+items.CollectionChanged += change => Log(change.Action);
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/events/">Обработать изменения</Link>
+</p>
+<p className="feature-card__text">Получайте одиночные и пакетные изменения через одно событие.</p>
+<Link className="feature-card__more" to="/docs/events/">Подробнее</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var labels = scores.CreateSync(n => n.ToString());
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/synchronization/">Преобразовать модели</Link>
+</p>
+<p className="feature-card__text">Поддерживайте список моделей представления в актуальном состоянии.</p>
+<Link className="feature-card__more" to="/docs/synchronization/">Подробнее</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var visible = scores.CreateFiltered(n => n >= 10);
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/filtering/">Отфильтровать список</Link>
+</p>
+<p className="feature-card__text">Показывайте подходящие элементы в нужном порядке при изменениях источника.</p>
+<Link className="feature-card__more" to="/docs/filtering/">Подробнее</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var scores = new ObservableDictionary<string, int>();
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/api/">Выбрать коллекцию</Link>
+</p>
+<p className="feature-card__text">Сравните списки, словари, множества, очереди и стеки.</p>
+<Link className="feature-card__more" to="/api/">Подробнее</Link>
+</div>
+</div>
+</div>
+
+## Ресурсы
+
+<div className="resource-cards">
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/docs/quick-start/">Быстрый старт</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/tutorials/">Примеры Unity</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/api/">Справочник API</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/changelog/">История версий</Link>
+</p>
+</div>
+</div>
+
+## Помощь и поддержка
+
+<SupportPanel issues="https://github.com/VPDPersonal/Aspid.Collections/issues" repo="https://github.com/VPDPersonal/Aspid.Collections" />
+
+## Поддержать проект
+
+<DonatePanel href="https://ko-fi.com/vpdaspid">Поддержите разработку Aspid.Collections.</DonatePanel>

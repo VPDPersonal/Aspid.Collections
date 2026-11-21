@@ -1,0 +1,59 @@
+---
+slug: /
+title: "Unity samples"
+hide_title: true
+hide_table_of_contents: true
+---
+
+import Link from "@docusaurus/Link";
+import styles from "@site/src/components/SamplesGallery/styles.module.css";
+
+<div className={styles.page}>
+<header className={styles.header}>
+<h1>Samples</h1>
+
+In **Window → Package Manager**, select **Aspid.Collections**, open **Samples** and click **Import** next to the example you want. In the Project window, find the named scene under `Assets/Samples`, open it and press **Play**. Read the output in **Window → General → Console**.
+
+</header>
+<div className={styles.grid}>
+<Link className={styles.card} to="/tutorials/basic-change-notifications/">
+<div className={styles.preview}><pre>[+] Added "apple" at 0
+[+] Added "banana" at 1</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Change notifications</p>
+<p>Scene · BasicChangeNotificationsSample.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/inventory-sync/">
+<div className={styles.preview}><pre>Model size = 2, view size = 2</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Inventory views</p>
+<p>Scene · InventorySync.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/filtered-inventory/">
+<div className={styles.preview}><pre>Iron Sword
+Steel Sword</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Search and categories</p>
+<p>Scene · FilteredInventory.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/keyed-table/">
+<div className={styles.preview}><pre>[~] p-001: 100 → 150
+Leaderboard size = 1</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Leaderboard by player ID</p>
+<p>Scene · Leaderboard.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/split-by-events/">
+<div className={styles.preview}><pre>[analytics:add] start=0 items=[first]
+[analytics:add] start=1 items=[second,third]</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Analytics callbacks</p>
+<p>Scene · AnalyticsTap.unity</p>
+</div>
+</Link>
+</div>
+</div>
