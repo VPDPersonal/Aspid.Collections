@@ -1,0 +1,140 @@
+---
+title: Aspid.Collections
+hide_title: true
+sidebar_label: Introduction
+pagination_label: Introduction
+slug: /
+description: Observable collections for Unity and .NET. Update an inventory, a leaderboard or a view model when its source changes.
+---
+
+import Link from "@docusaurus/Link";
+import IntroBanner from "@site/src/components/IntroBanner";
+import InstallPanel from "@site/src/components/InstallPanel";
+import StatusBadge from "@site/src/components/StatusBadge";
+import SupportPanel from "@site/src/components/SupportPanel";
+import DonatePanel from "@site/src/components/DonatePanel";
+
+<IntroBanner alt="Aspid.Collections" />
+
+<p>
+  <StatusBadge kind="unity" label="Unity 2021.3.0f1+" />
+  <StatusBadge kind="release" label="Release 1.1.1" href="https://github.com/VPDPersonal/Aspid.Collections/releases" />
+  <StatusBadge kind="license" label="MIT License" href="https://github.com/VPDPersonal/Aspid.Collections/blob/main/LICENSE" />
+</p>
+
+<p className="readme-lede">Observable collections for Unity and .NET. Update an inventory, a leaderboard or a view model when its source changes.</p>
+
+## Installation
+
+<InstallPanel url="https://github.com/VPDPersonal/Aspid.Collections.git#upm" />
+
+Requires Unity 2021.3.0f1 or newer. [Installation options](./installation.md)
+
+<details>
+<summary>Troubleshooting</summary>
+
+If Unity reports a duplicate assembly, check for a second copy in Assets. [Troubleshooting guide](./troubleshooting.md)
+
+</details>
+
+## Features
+
+<div className="feature-cards">
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+items.CollectionChanged += change => Log(change.Action);
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/events/">React to changes</Link>
+</p>
+<p className="feature-card__text">Read individual edits and batches from the same event.</p>
+<Link className="feature-card__more" to="/docs/events/">Read more</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var labels = scores.CreateSync(n => n.ToString());
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/synchronization/">Project models into views</Link>
+</p>
+<p className="feature-card__text">Keep an inventory of view models in step with its source.</p>
+<Link className="feature-card__more" to="/docs/synchronization/">Read more</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var visible = scores.CreateFiltered(n => n >= 10);
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/docs/filtering/">Filter and sort a list</Link>
+</p>
+<p className="feature-card__text">Show the matching items in order as the source changes.</p>
+<Link className="feature-card__more" to="/docs/filtering/">Read more</Link>
+</div>
+</div>
+<div className="feature-card">
+<div className="feature-card__preview">
+
+```csharp
+using var scores = new ObservableDictionary<string, int>();
+```
+
+</div>
+<div className="feature-card__body">
+<p className="feature-card__title">
+<Link to="/api/">Choose a collection</Link>
+</p>
+<p className="feature-card__text">Compare lists, dictionaries, sets, queues and stacks.</p>
+<Link className="feature-card__more" to="/api/">Read more</Link>
+</div>
+</div>
+</div>
+
+## Resources
+
+<div className="resource-cards">
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/docs/quick-start/">Quick start</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/tutorials/">Unity samples</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/api/">API reference</Link>
+</p>
+</div>
+<div className="resource-card">
+<p className="resource-card__title">
+<Link to="/changelog/">Changelog</Link>
+</p>
+</div>
+</div>
+
+## Help and support
+
+<SupportPanel issues="https://github.com/VPDPersonal/Aspid.Collections/issues" repo="https://github.com/VPDPersonal/Aspid.Collections" />
+
+## Support the project
+
+<DonatePanel href="https://ko-fi.com/vpdaspid">Support development of Aspid.Collections.</DonatePanel>

@@ -1,0 +1,59 @@
+---
+slug: /
+title: "Примеры Unity"
+hide_title: true
+hide_table_of_contents: true
+---
+
+import Link from "@docusaurus/Link";
+import styles from "@site/src/components/SamplesGallery/styles.module.css";
+
+<div className={styles.page}>
+<header className={styles.header}>
+<h1>Примеры</h1>
+
+В **Window → Package Manager** выберите **Aspid.Collections**, откройте **Samples** и нажмите **Import** у нужного примера. В окне Project найдите сцену по имени в папке `Assets/Samples`, откройте её и нажмите **Play**. Результаты выводятся в **Window → General → Console**.
+
+</header>
+<div className={styles.grid}>
+<Link className={styles.card} to="/tutorials/basic-change-notifications/">
+<div className={styles.preview}><pre>[+] Added "apple" at 0
+[+] Added "banana" at 1</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Уведомления об изменениях</p>
+<p>Сцена · BasicChangeNotificationsSample.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/inventory-sync/">
+<div className={styles.preview}><pre>Model size = 2, view size = 2</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Представления предметов</p>
+<p>Сцена · InventorySync.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/filtered-inventory/">
+<div className={styles.preview}><pre>Iron Sword
+Steel Sword</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Поиск и категории</p>
+<p>Сцена · FilteredInventory.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/keyed-table/">
+<div className={styles.preview}><pre>[~] p-001: 100 → 150
+Leaderboard size = 1</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Таблица очков по ID игрока</p>
+<p>Сцена · Leaderboard.unity</p>
+</div>
+</Link>
+<Link className={styles.card} to="/tutorials/split-by-events/">
+<div className={styles.preview}><pre>[analytics:add] start=0 items=[first]
+[analytics:add] start=1 items=[second,third]</pre></div>
+<div className={styles.content}>
+<p className={styles.feature}>Обработчики для аналитики</p>
+<p>Сцена · AnalyticsTap.unity</p>
+</div>
+</Link>
+</div>
+</div>
